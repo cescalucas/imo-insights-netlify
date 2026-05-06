@@ -1,0 +1,16 @@
+{
+  "name": "imo-insights-netlify",
+  "version": "1.0.0",
+  "description": "IMO Insights — site institucional + área logada de clientes (Supabase + Netlify Functions).",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "_": "Site é estático; este package.json existe apenas para as Netlify Functions."
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "busboy": "^1.6.0"
+  }
+}

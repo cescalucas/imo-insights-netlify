@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eu vi o Brasil. IMO Insights</title>
+<meta name="description" content="No meio do caminho tem um Brasil. Um estudo proprietário da IMO Insights sobre as cidades médias. onde o país pulsa no intervalo, entre o dado e a história.">
+<link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700;800&family=Anton&family=Archivo+Black&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="evb">
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="index.html" aria-label="IMO" style="display:flex;align-items:center;gap:14px">
+      <span class="imo-logo"></span>
+    </a>
+    <nav class="links">
+      <a href="index.html">Home</a>
+      <a href="sobre.html">Sobre</a>
+      <a href="produtos.html">Produtos</a>
+      <a href="evb.html" class="active">Eu vi o Brasil</a>
+      <a href="abordagem.html">Abordagem</a>
+      <a href="time.html">Time</a>
+      <a href="contato.html">Contato</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:12px"><a href="contato.html" class="nav-cta">Fale com a IMO →</a><a href="login.html" class="nav-cta login-cta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Área do Cliente</a></div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="evob-hero">
+  <div class="evob-hero-grid">
+    <div>
+      <div class="kicker">EVOB25 · IMO INSIGHTS</div>
+      <h1><span class="l1">EU VI</span><span class="l2">O BRASIL.</span></h1>
+      <p class="lead">Um estudo que nasce para escutar esse país que pulsa no intervalo. Nas cidades médias que vivem a complexidade do trânsito, do desejo e da construção do futuro. Mais que um estudo. um radar vivo.</p>
+      <div class="hero-actions">
+        <a href="#estudos" class="btn primary">Ver os estudos →</a>
+        <a href="#conceito" class="btn ghost">Conceito & ID Visual</a>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end">
+      <div class="evob-interactive" style="width:min(700px,58vw);aspect-ratio:1/1">
+        <div class="evob-q eq-e">
+          <img src="assets/evob-gente-feira.jpg" alt="" class="evob-q-photo">
+          <div class="evob-q-color" style="background:#4485FF">
+            <div class="evob-stripe" style="top:33.3%;"></div>
+            <div class="evob-stripe" style="top:66.6%;"></div>
+          </div>
+        </div>
+        <div class="evob-q eq-v">
+          <img src="assets/evob-cidade.jpg" alt="" class="evob-q-photo">
+          <div class="evob-q-color" style="background:#F5B994">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%"><polygon points="0,0 100,0 50,100" fill="#FF9600"/></svg>
+          </div>
+        </div>
+        <div class="evob-q eq-o">
+          <img src="assets/evob-cotidiano.jpg" alt="" class="evob-q-photo">
+          <div class="evob-q-color" style="background:#008773">
+            <div class="evob-circle"></div>
+          </div>
+        </div>
+        <div class="evob-q eq-b">
+          <img src="assets/evob-mercado.jpg" alt="" class="evob-q-photo">
+          <div class="evob-q-color" style="background:#FAD2E4">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%"><rect x="0" y="0" width="35" height="100" fill="#F064A0"/><circle cx="58" cy="25" r="25" fill="#F064A0"/><rect x="0" y="0" width="58" height="50" fill="#F064A0"/><circle cx="60" cy="75" r="26" fill="#F064A0"/><rect x="0" y="50" width="60" height="50" fill="#F064A0"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <style>
+    .evob-interactive{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:0;border-radius:8px;overflow:hidden}
+    .evob-q{position:relative;overflow:hidden;cursor:pointer}
+    .evob-q-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+    .evob-q-color{position:absolute;inset:0;z-index:1;transition:opacity .45s ease}
+    .evob-q:hover .evob-q-color{opacity:0}
+    .evob-stripe{position:absolute;left:0;right:0;height:12%;background:#73A8FF}
+    .evob-circle{position:absolute;top:50%;left:50%;width:90%;height:90%;border-radius:50%;background:#D7E48C;transform:translate(-50%,-50%)}
+    </style>
+  </div>
+</section>
+
+<!-- POR QUE FALAR SOBRE O BRASIL -->
+<section class="evob-why" id="por-que-brasil">
+  <div class="inner">
+    <div class="head">
+      <div>
+        <div class="eyebrow">Por que falar sobre o Brasil</div>
+        <h2>FALAR DO BRASIL<br>NÃO É <span class="acc">ÓBVIO.</span></h2>
+      </div>
+      <div>
+        <p class="lead">Parece natural falar do Brasil. Mas na prática, falar do Brasil é quase sempre falar de uma parte dele. geralmente a parte mais próxima de quem está falando. Marcas, agências, conselhos, redações e times de estratégia decidem todos os dias sobre o país inteiro a partir de um recorte minúsculo dele: o eixo Rio-São Paulo, a classe média urbana, a perspectiva do observador de capital.</p>
+        <p class="body">O Eu vi o Brasil nasce para corrigir esse desequilíbrio. Acreditamos que entender o Brasil de verdade exige sair do lugar confortável de onde ele costuma ser lido. e ir ao encontro do país que pulsa fora dos holofotes, nas cidades médias, nas fronteiras econômicas, nos territórios que puxam o crescimento e escrevem o próximo capítulo da história nacional.</p>
+        <p class="body">Mais do que uma pesquisa, é um exercício de restituição: devolver ao Brasil a densidade que ele perde quando é tratado como um agregado homogêneo. Um país de 212 milhões de pessoas, 5.570 municípios, cinco regiões com tempos econômicos distintos e dezenas de culturas regionais não cabe em uma média nacional. e o custo de tentar caber é tomar decisões sobre um país que não existe.</p>
+      </div>
+    </div>
+    <div class="evob-why-grid">
+      <div class="evob-why-card">
+        <div class="idx">01</div>
+        <h4>PORQUE O BRASIL MUDOU DE FORMA</h4>
+        <p>O Censo 2022 confirmou uma virada histórica: capitais tradicionais perdem peso relativo e o crescimento passa a se concentrar em cidades médias, fronteiras agroindustriais e periferias metropolitanas. Quem continua lendo o país pelo mapa de 2010 está decidindo sobre um Brasil que já não existe.</p>
+      </div>
+      <div class="evob-why-card">
+        <div class="idx">02</div>
+        <h4>PORQUE MARCAS DECIDEM SEM VER</h4>
+        <p>A maior parte das decisões empresariais sobre o Brasil é tomada por times concentrados no eixo Rio-São Paulo, com base em amostras urbanas e painéis enviesados. O resultado é uma leitura que confunde classe média paulistana com classe média nacional, e que subestima sistematicamente quem vive longe das capitais.</p>
+      </div>
+      <div class="evob-why-card">
+        <div class="idx">03</div>
+        <h4>PORQUE O FUTURO ESTÁ NO INTERVALO</h4>
+        <p>É no intervalo. entre o urbano e o rural, entre a tradição e a tecnologia, entre a aspiração metropolitana e o orgulho do lugar. que estão as tendências que vão definir o consumo, a cultura e a política da próxima década. Quem enxerga o intervalo antecipa. Quem só enxerga os extremos, reage.</p>
+      </div>
+    </div>
+    <div class="evob-why-foot">
+      <h3>UM ESTUDO<br>SOBRE O <span class="acc">BRASIL INTEIRO.</span></h3>
+      <p>Ao falar do Brasil, o Eu vi o Brasil assume um compromisso com a complexidade. Não com a média, mas com a distribuição. Não com a capital, mas com o conjunto. Não com o estereótipo, mas com a escuta. Cada um dos estudos publicados. das cidades médias ao futebol, da plataforma contínua de movimento populacional às edições temáticas. é uma camada desse esforço coletivo de devolver densidade à conversa sobre o país.</p>
+    </div>
+  </div>
+</section>
+
+<!-- STATEMENT. Quem não olha -->
+<section class="evob-statement blue">
+  <h2>E QUEM NÃO OLHA PARA O BRASIL INTEIRO,<br>FICA PARA TRÁS.</h2>
+</section>
+
+<!-- STATEMENT 3. Antecipa tendências -->
+<section class="evob-statement green">
+  <h2>UM BRASIL QUE<br>ANTECIPA TENDÊNCIAS.</h2>
+  <p>É nessas cidades que conseguimos ver com mais clareza os desejos, os hábitos e os conflitos que moldam o presente e que antecipam o futuro do país.</p>
+</section>
+
+<!-- CONCEITO. "No meio do caminho tem um Brasil" -->
+<section class="evob-manifesto" id="conceito">
+  <div style="font-size:12px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--evob-cream);margin-bottom:28px">Conceito criativo</div>
+  <h2>NO MEIO DO CAMINHO<br><span class="k2">TEM UM BRASIL.</span></h2>
+  <p>Nos apropriando de Carlos Drummond, falamos das cidades médias, que historicamente sempre foram vistas como lugares de passagem. Reforçamos o poder do estudo e das cidades pesquisadas, colocando-as em um lugar de potência nacional.</p>
+</section>
+
+<!-- CÍCERO DIAS. Inspiração -->
+<section style="background:#F4E7C9;padding:80px var(--pad)">
+  <div style="max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:1fr 1.2fr;gap:60px;align-items:center">
+    <!-- Painel "Eu vi o Mundo" de Cícero Dias. janela que revela a obra -->
+    <div class="cicero-window" id="ciceroWindow">
+      <img src="assets/cicero-dias2.png" alt="Eu vi o Mundo... Ele Começava no Recife. Cícero Dias, 1926–1929" draggable="false" id="ciceroImg">
+      <div class="cicero-hint" id="ciceroHint">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8L22 12L18 16"/><path d="M6 8L2 12L6 16"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+        Arraste para explorar
+      </div>
+      <div class="cicero-label">Cícero Dias · Eu vi o Mundo, 1926–29</div>
+    </div>
+    <style>
+    .cicero-window{
+      position:relative;
+      width:100%;
+      height:100%;
+      overflow:hidden;
+      border-radius:6px;
+      cursor:grab;
+      user-select:none;
+      -webkit-user-select:none;
+      background:#1a1206;
+    }
+    .cicero-window:active{cursor:grabbing}
+    .cicero-window img{
+      position:absolute;
+      top:0;left:0;
+      height:100%;
+      width:auto;
+      max-width:none;
+      pointer-events:none;
+      will-change:left;
+    }
+    .cicero-hint{
+      position:absolute;
+      bottom:48px;left:50%;
+      transform:translateX(-50%);
+      background:rgba(0,0,0,.65);
+      color:#F4E7C9;
+      font-size:11px;font-weight:700;
+      letter-spacing:.08em;text-transform:uppercase;
+      padding:9px 18px;border-radius:100px;
+      display:flex;align-items:center;gap:8px;
+      backdrop-filter:blur(6px);
+      transition:opacity .5s;pointer-events:none;
+      z-index:2;
+    }
+    .cicero-hint.hide{opacity:0}
+    .cicero-label{
+      position:absolute;
+      bottom:12px;left:50%;
+      transform:translateX(-50%);
+      background:rgba(0,0,0,.5);
+      color:#F4E7C9;
+      font-size:10px;font-weight:600;
+      letter-spacing:.12em;text-transform:uppercase;
+      padding:5px 16px;border-radius:3px;
+      pointer-events:none;
+      white-space:nowrap;
+    }
+    </style>
+    <script>
+    (function(){
+      var win=document.getElementById('ciceroWindow'),
+          img=document.getElementById('ciceroImg'),
+          hint=document.getElementById('ciceroHint'),
+          ox=0,sx=0,sox=0,
+          drag=false,mxX=0,
+          aid=null,hh=false;
+
+      function bounds(){
+        mxX=Math.max(0,img.offsetWidth - win.offsetWidth);
+      }
+
+      function move(x){
+        ox=Math.max(0,Math.min(x,mxX));
+        img.style.left=-ox+'px';
+      }
+
+      img.onload=function(){
+        bounds();
+        move(0);
+        /* gentle auto-scroll to hint at interactivity */
+        aid=setInterval(function(){
+          ox+=0.5;
+          if(ox>=mxX*0.2){clearInterval(aid);aid=null}
+          move(ox);
+        },16);
+      };
+      window.addEventListener('resize',function(){bounds();move(ox)});
+
+      /* Mouse drag */
+      win.addEventListener('mousedown',function(e){
+        drag=true;sx=e.clientX;sox=ox;
+        if(aid){clearInterval(aid);aid=null}
+        if(!hh){hint.classList.add('hide');hh=true}
+        e.preventDefault();
+      });
+      document.addEventListener('mousemove',function(e){
+        if(!drag)return;
+        move(sox-(e.clientX-sx));
+      });
+      document.addEventListener('mouseup',function(){drag=false});
+
+      /* Touch drag */
+      win.addEventListener('touchstart',function(e){
+        drag=true;sx=e.touches[0].clientX;sox=ox;
+        if(aid){clearInterval(aid);aid=null}
+        if(!hh){hint.classList.add('hide');hh=true}
+      },{passive:true});
+      win.addEventListener('touchmove',function(e){
+        if(!drag)return;
+        move(sox-(e.touches[0].clientX-sx));
+      },{passive:true});
+      win.addEventListener('touchend',function(){drag=false});
+    })();
+    </script>
+    <div>
+      <div style="font-size:11px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:#8B1414;margin-bottom:16px">Inspiração</div>
+      <h3 style="font-family:'Rethink Sans',sans-serif;font-size:clamp(28px,3vw,42px);font-weight:800;line-height:1;letter-spacing:-.03em;color:#0B0B0B;margin-bottom:24px">"Eu vi o Mundo...<br>Ele Começava no Recife."</h3>
+      <p style="font-size:16px;line-height:1.7;color:#333;margin-bottom:16px">O painel de <strong>Cícero Dias</strong> (1907–2003), pintado entre 1926 e 1929, é uma das obras mais importantes do modernismo brasileiro. Com quase 15 metros de largura por 2 metros de altura, feito em guache e aquarela sobre papel, o painel se desdobra como um mural contínuo. uma sequência de cenas que partem do Recife para contar o Brasil inteiro.</p>
+      <p style="font-size:16px;line-height:1.7;color:#333;margin-bottom:16px">Exibido pela primeira vez no Salão Revolucionário de 1931, a obra causou escândalo pela ousadia das cenas e pela escala monumental. Chegou a ser vandalizada, tendo parte cortada. Chamada por muitos de <em>"a Guernica brasileira"</em>, só voltou a ser exibida em 1965, na 8ª Bienal de São Paulo.</p>
+      <p style="font-size:16px;line-height:1.7;color:#333">Assim como Cícero partiu do seu Recife para enxergar o mundo, o <strong>Eu vi o Brasil</strong> parte do brasileiro e suas tensões para revelar o país que pulsa em toda a sua essência. A mesma intuição modernista: começar de onde se está para ver o todo com mais verdade.</p>
+    </div>
+  </div>
+</section>
+
+<!-- KEY VISUAL POSTER -->
+<section class="evob-poster">
+  <div class="evob-poster-inner">
+    <div>
+      <img src="assets/evob-logo.png" alt="Key visual EVOB" style="width:100%;max-width:500px;height:auto;border-radius:8px">
+    </div>
+    <div>
+      <div class="evob-stamp"><span class="top">EVOB25</span><span class="bot"><span class="mark"></span>IMO INSIGHTS</span></div>
+      <h2>O BRASIL DE<br><span class="acc">VERDADE</span>.</h2>
+      <p>Entre o urbano e o rural. Entre o que já foi e o que está por vir. Entre o dado e a história. É aí, nesse entre, que o Brasil se mostra com mais verdade. Inspirados no universo Adinkra e na obra de Rubem Valentim, o key visual valoriza o "meio" como potência criativa.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MÉTODO -->
+<section class="evob-method">
+  <div class="inner">
+    <div class="head">
+      <h2>RADAR <span class="acc">VIVO</span>.<br>QUATRO CAMADAS<br>DE ESCUTA.</h2>
+      <p class="intro">O Eu vi o Brasil não cabe em uma técnica só. Combinamos quatro camadas de evidência para garantir que o que vemos em campo se sustenta quantitativamente. e que os números não escondem a nuance que só a imersão captura.</p>
+    </div>
+    <div class="evob-method-grid">
+      <div class="evob-method-card">
+        <div class="num">01</div>
+        <h4>IMERSÃO ETNOGRÁFICA</h4>
+        <p>Pesquisadores sêniores moram 7 a 14 dias em cada cidade média, acompanhando famílias no cotidiano: compras, refeições, trabalho, fé, lazer, rituais.</p>
+      </div>
+      <div class="evob-method-card">
+        <div class="num">02</div>
+        <h4>ENTREVISTAS EM PROFUNDIDADE</h4>
+        <p>Mil entrevistas quantitativas no estudo fundacional de cidades médias, com recortes de gênero, geração, classe e relação com a cidade. Território, trabalho, família, fé, dinheiro, marcas, digital.</p>
+      </div>
+      <div class="evob-method-card">
+        <div class="num">03</div>
+        <h4>QUANTITATIVO DE BASE</h4>
+        <p>Amostra de 3.000+ casos representativos, estratificada por renda, geração e tipo de município. Valida e dimensiona as hipóteses qualitativas.</p>
+      </div>
+      <div class="evob-method-card">
+        <div class="num">04</div>
+        <h4>SÍNTESE CARTOGRÁFICA</h4>
+        <p>Texto, fotografia, vídeo, mapas e dados convergem em um atlas contínuo. organizado por cidade, tema e tensão cultural. Material de consulta permanente.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ESTUDOS ATUAIS. 3 cards -->
+<section class="evob-studies" id="estudos">
+  <div class="inner">
+    <div class="head">
+      <h2>OS ESTUDOS <span class="acc">ATUAIS</span>.</h2>
+      <p>Dois anos de campo estruturado, três estudos que se complementam: o retrato das cidades médias, a plataforma contínua de movimento populacional e a leitura da paixão que atravessa o país. Clique em cada card para conhecer em detalhe.</p>
+    </div>
+    <div class="evob-studies-grid">
+      <a href="evb-brasil-movimento.html" class="evob-study">
+        <div class="arch" style="padding:0"><img src="assets/evob-gente-feira.jpg" alt="Brasil em Movimento" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0"><span class="tag" style="position:relative;z-index:2;margin-bottom:22px">PLATAFORMA CONTÍNUA</span></div>
+        <div class="body">
+          <div class="year">EVOB · 2023</div>
+          <h4>BRASIL EM MOVIMENTO</h4>
+          <p>Uma plataforma viva de observação contínua sobre o país que se move. Desmetropolização, novos centros de gravidade e leituras do Censo 2022 que mudam o mapa da decisão.</p>
+          <div class="cta">Ler o estudo <span class="arrow">→</span></div>
+        </div>
+      </a>
+      <a href="evb-cidades-medias.html" class="evob-study">
+        <div class="arch" style="padding:0"><img src="assets/evob-cidade.jpg" alt="Cidades Médias" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0"><span class="tag" style="position:relative;z-index:2;margin-bottom:22px">ESTUDO FUNDACIONAL</span></div>
+        <div class="body">
+          <div class="year">EVOB · 2024</div>
+          <h4>CIDADES MÉDIAS, GRANDES PISTAS</h4>
+          <p>O retrato qualitativo e quantitativo do Brasil que vive entre 100 mil e 500 mil habitantes. Quatro imersões etnográficas, mil entrevistas quantitativas e quatro territórios que resumem o interior.</p>
+          <div class="cta">Ler o estudo <span class="arrow">→</span></div>
+        </div>
+      </a>
+      <a href="evb-futebol.html" class="evob-study">
+        <div class="arch" style="padding:0"><img src="assets/evob-futebol.jpg" alt="A Frequência da Torcida" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0"><span class="tag" style="position:relative;z-index:2;margin-bottom:22px">REPORT TEMÁTICO</span></div>
+        <div class="body">
+          <div class="year">EVOB · 2025</div>
+          <h4>A FREQUÊNCIA DA TORCIDA</h4>
+          <p>Quatrocentas entrevistas em cidades médias para entender como o futebol sintoniza gerações. do clube-peça-central à Seleção distanciada, da Copa do Mundo ao streaming fragmentado.</p>
+          <div class="cta">Ler o estudo <span class="arrow">→</span></div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- NÚMEROS -->
+<section class="evob-numbers">
+  <div class="inner">
+    <div class="head">
+      <div style="font-size:12px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:#0B0B0B;margin-bottom:18px">EM NÚMEROS · EVOB25</div>
+      <h2>DOIS ANOS. TRÊS ESTUDOS. UM BRASIL INTEIRO.</h2>
+    </div>
+    <div class="evob-num-grid">
+      <div class="evob-num"><div class="n">2</div><div class="lbl">Anos de campo estruturado<br>em ciclo contínuo</div></div>
+      <div class="evob-num"><div class="n">3</div><div class="lbl">Estudos complementares<br>publicados até 2025</div></div>
+      <div class="evob-num"><div class="n">2.4K</div><div class="lbl">Entrevistas realizadas<br>entre quali e quanti</div></div>
+      <div class="evob-num"><div class="n">4</div><div class="lbl">Cidades em imersão<br>etnográfica profunda</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- USOS -->
+<section class="evob-usos">
+  <div class="inner">
+    <h2>QUATRO USOS <span class="acc">CONCRETOS</span> PARA MARCAS QUE DECIDEM SOBRE O BRASIL INTEIRO.</h2>
+    <div class="evob-usos-grid">
+      <div class="evob-uso">
+        <div class="tag">01</div>
+        <h4>EXPANSÃO GEOGRÁFICA</h4>
+        <p>Para marcas saindo do eixo RJ-SP que precisam entender preço, sortimento e comunicação em mercados regionais.</p>
+      </div>
+      <div class="evob-uso">
+        <div class="tag">02</div>
+        <h4>TERRITÓRIOS CRIATIVOS</h4>
+        <p>Para agências e times de marca que querem ancorar campanhas em repertório cultural real. não em estereótipos.</p>
+      </div>
+      <div class="evob-uso">
+        <div class="tag">03</div>
+        <h4>FORMAÇÃO DE TIMES</h4>
+        <p>Onboarding cultural para times de marketing, trade e inovação que decidem sobre o país sem terem rodado o país.</p>
+      </div>
+      <div class="evob-uso">
+        <div class="tag">04</div>
+        <h4>PLANEJAMENTO ESTRATÉGICO</h4>
+        <p>Insumo para revisões trienais de estratégia, mapas de oportunidade geográfica e decisões de portfólio regional.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<section class="evob-quote">
+  <blockquote>É ENTRE O DADO E A HISTÓRIA<br>QUE O BRASIL SE MOSTRA COM <em>MAIS VERDADE</em>.</blockquote>
+  <cite>Manifesto EVOB25 · IMO Insights</cite>
+</section>
+
+<!-- CTA -->
+<section class="evob-cta">
+  <div class="kicker">BAIXE O ESTUDO COMPLETO</div>
+  <h2>TEM UM NOVO BRASIL<br><span class="acc">NO MEIO DO CAMINHO.</span></h2>
+  <p>O Eu vi o Brasil pode ser licenciado como estudo completo, apresentado em imersão dedicada ao seu time ou customizado para as cidades médias onde a sua marca mais precisa enxergar.</p>
+  <div class="actions">
+    <a href="contato.html" class="btn primary">Solicitar o estudo →</a>
+    <a href="produtos.html" class="btn ghost">Ver outros produtos</a>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-brand">
+      <div style="display:flex;align-items:center;gap:14px">
+        <span class="evb-mark">EVB</span>
+        <span style="font-family:'Anton',Impact,sans-serif;font-size:24px;letter-spacing:.02em;text-transform:uppercase">EU VI O BRASIL</span>
+      </div>
+      <p class="tag">EVOB25 · Estudo proprietário da IMO Insights sobre as cidades médias brasileiras. No meio do caminho tem um Brasil.</p>
+    </div>
+    <div class="foot-col">
+      <h5>Estudo</h5>
+      <ul>
+        <li><a href="#conceito">Conceito</a></li>
+        <li><a href="#estudos">Estudos</a></li>
+        <li><a href="evb-cidades-medias.html">Cidades Médias</a></li>
+        <li><a href="evb-brasil-movimento.html">Brasil em Movimento</a></li>
+        <li><a href="evb-futebol.html">A Frequência da Torcida</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h5>IMO</h5>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="sobre.html">Manifesto</a></li>
+        <li><a href="produtos.html">Produtos</a></li>
+        <li><a href="time.html">Time</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h5>Contato</h5>
+      <ul>
+        <li><a href="contato.html">Fale com a IMO</a></li>
+        <li>evob@imoinsights.com.br</li>
+        <li>São Paulo · Brasil</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <div>© IMO Insights · EVOB25 · No meio do caminho tem um Brasil</div>
+    <div class="socials">
+      <a href="#">LinkedIn</a>
+      <a href="#">Instagram</a>
+      <a href="index.html">imoinsights.com.br</a>
+    </div>
+  </div>
+</footer>
+</body></html>

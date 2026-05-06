@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>imo insights. Não tente adivinhar, escolha saber.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ============ REBU DESIGN TOKENS ============ */
+  :root{
+    --orange:#FF8000;
+    --blue:#3E81F8;
+    --gray:#D6D6D6;
+    --lime:#A1EA00;
+    --pink:#FF89C2;
+    --black:#0A0A0A;
+    --white:#FFFFFF;
+    --max:1440px;
+    --pad:40px;
+    --font:'Rethink Sans',-apple-system,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--white);color:var(--black);font-family:var(--font);-webkit-font-smoothing:antialiased;}
+  body{font-size:16px;line-height:1.45;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+  button{font:inherit;cursor:pointer;border:0;background:0}
+
+  /* Side vertical labels (REBU-style) */
+  .side-rail{
+    position:fixed;left:0;top:0;bottom:0;width:28px;
+    display:flex;flex-direction:column;justify-content:space-between;
+    padding:20px 0;z-index:50;pointer-events:none;mix-blend-mode:difference;
+  }
+  .side-rail span{
+    writing-mode:vertical-rl;transform:rotate(180deg);
+    font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    font-weight:600;color:#fff;text-align:center;width:28px;
+  }
+
+  /* ============ LOGO BLOCK ============ */
+  .imo-logo{
+    display:inline-flex;align-items:center;justify-content:center;
+    background:var(--orange);color:var(--black);
+    font-weight:900;font-size:28px;line-height:.85;
+    padding:14px 16px 12px;letter-spacing:-.04em;
+  }
+  .imo-logo.small{font-size:20px;padding:10px 12px 8px}
+
+  /* ============ HEADER ============ */
+  header.nav{
+    position:sticky;top:0;z-index:40;
+    background:var(--white);
+    border-bottom:1px solid var(--black);
+  }
+  .nav-inner{
+    max-width:var(--max);margin:0 auto;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px var(--pad);gap:30px;
+  }
+  nav.links{display:flex;gap:40px;font-size:14px;font-weight:600;letter-spacing:-.01em}
+  nav.links a{position:relative;padding:4px 0}
+  nav.links a:hover:after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:3px;background:var(--orange)}
+  .nav-cta{
+    background:var(--black);color:var(--white);
+    padding:12px 22px;font-weight:700;font-size:13px;
+    letter-spacing:.02em;text-transform:uppercase;
+    transition:background .2s;
+  }
+  .nav-cta:hover{background:var(--orange);color:var(--black)}
+
+  /* ============ HERO ============ */
+  .hero{
+    position:relative;
+    border-bottom:1px solid var(--black);
+    overflow:hidden;
+  }
+  .hero-grid{
+    max-width:var(--max);margin:0 auto;
+    display:grid;grid-template-columns:1.15fr 1fr;
+    min-height:78vh;
+  }
+  .hero-left{
+    padding:90px var(--pad) 60px;
+    display:flex;flex-direction:column;justify-content:space-between;
+    background:var(--white);
+    position:relative;
+  }
+  .hero-eyebrow{
+    font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+    display:flex;align-items:center;gap:14px;margin-bottom:40px;
+  }
+  .hero-eyebrow:before{content:"";width:40px;height:3px;background:var(--orange)}
+  h1.hero-title{
+    font-size:clamp(64px,9vw,148px);
+    font-weight:800;line-height:.86;letter-spacing:-.045em;
+    margin-bottom:28px;
+  }
+  h1.hero-title .accent{color:var(--orange);display:inline-block}
+  .hero-sub{
+    max-width:520px;font-size:19px;line-height:1.45;
+    color:#1a1a1a;margin-bottom:40px;
+  }
+  .hero-ctas{display:flex;gap:16px;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:12px;
+    padding:18px 28px;font-weight:700;font-size:14px;
+    text-transform:uppercase;letter-spacing:.04em;
+    border:2px solid var(--black);transition:.2s;
+  }
+  .btn.primary{background:var(--black);color:var(--white)}
+  .btn.primary:hover{background:var(--orange);color:var(--black);border-color:var(--orange)}
+  .btn.ghost:hover{background:var(--black);color:var(--white)}
+  .btn .arr{font-size:18px;line-height:1}
+
+  .hero-right{
+    position:relative;background:var(--gray);
+    display:grid;grid-template-rows:1fr auto;overflow:hidden;
+  }
+  .duotone{
+    position:relative;background:var(--gray);
+    display:grid;grid-template-columns:1fr 1fr;
+  }
+  .duotone .half{position:relative;overflow:hidden}
+  .duotone .half.pink{background:linear-gradient(180deg,#ffe3f0 0%,#ff89c2 55%,#e4659f 100%)}
+  .duotone .half.orange{background:linear-gradient(180deg,#ffd0a8 0%,#ff8000 55%,#d25d00 100%)}
+  .duotone svg{position:absolute;inset:0;width:100%;height:100%}
+  .hero-tag-block{
+    background:var(--blue);color:var(--black);
+    padding:26px 30px;display:flex;justify-content:space-between;
+    align-items:center;border-top:2px solid var(--black);
+  }
+  .hero-tag-block .tag{font-size:28px;font-weight:800;letter-spacing:-.02em}
+  .hero-tag-block .meta{font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+
+  /* Floating marquee */
+  .marquee{
+    background:var(--black);color:var(--white);
+    overflow:hidden;border-bottom:1px solid var(--black);
+  }
+  .marquee-track{
+    display:flex;gap:60px;padding:22px 0;
+    white-space:nowrap;animation:scroll 40s linear infinite;
+    font-size:28px;font-weight:800;letter-spacing:-.02em;
+  }
+  .marquee-track span{display:inline-flex;align-items:center;gap:60px}
+  .marquee-track .dot{width:12px;height:12px;background:var(--orange);border-radius:50%}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* ============ MANIFESTO ============ */
+  section.manifesto{
+    background:var(--white);
+    padding:120px var(--pad);
+    border-bottom:1px solid var(--black);
+  }
+  .manifesto-inner{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:1fr 2fr;gap:60px}
+  .section-label{
+    font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
+    display:flex;align-items:flex-start;gap:12px;
+  }
+  .section-label:before{content:"";width:30px;height:3px;background:var(--orange);margin-top:8px;flex-shrink:0}
+  .manifesto-text{
+    font-size:clamp(32px,3.4vw,52px);
+    font-weight:700;line-height:1.08;letter-spacing:-.02em;
+  }
+  .manifesto-text em{font-style:normal;color:var(--orange)}
+  .manifesto-text .hl-blue{background:var(--blue);padding:2px 10px;color:var(--black)}
+  .pill-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:40px}
+  .pill{
+    padding:10px 20px;border:2px solid var(--black);
+    font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+  }
+  .pill.fill{background:var(--black);color:var(--white)}
+
+  /* ============ CLIENTS STRIP ============ */
+  .clients{
+    background:var(--gray);padding:50px var(--pad);
+    border-bottom:1px solid var(--black);
+  }
+  .clients-inner{max-width:var(--max);margin:0 auto}
+  .clients-label{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin-bottom:26px}
+  .clients-grid{
+    display:grid;grid-template-columns:repeat(6,1fr);gap:0;
+    border-top:1px solid var(--black);
+  }
+  .clients-grid div{
+    border-bottom:1px solid var(--black);border-right:1px solid var(--black);
+    padding:28px 16px;text-align:center;font-weight:800;font-size:16px;
+    letter-spacing:-.01em;background:var(--gray);
+  }
+  .clients-grid div:nth-child(6n){border-right:0}
+
+  /* ============ PRODUTOS ============ */
+  section.produtos{background:var(--white);padding:140px var(--pad) 0;border-bottom:1px solid var(--black)}
+  .produtos-inner{max-width:var(--max);margin:0 auto}
+  .section-head{
+    display:grid;grid-template-columns:1fr 1.6fr;gap:60px;
+    align-items:end;margin-bottom:80px;
+  }
+  h2.section-title{
+    font-size:clamp(56px,7vw,112px);font-weight:800;
+    line-height:.9;letter-spacing:-.04em;
+  }
+  h2.section-title .orange{color:var(--orange)}
+  .section-intro{font-size:18px;max-width:520px;line-height:1.5;color:#333}
+
+  .produto-stack{display:grid;grid-template-columns:1fr;gap:0;border-top:2px solid var(--black)}
+  .produto-row{
+    display:grid;grid-template-columns:120px 1fr 1.4fr 200px;
+    gap:40px;padding:50px 30px;border-bottom:2px solid var(--black);
+    align-items:center;transition:background .3s;
+  }
+  .produto-row:hover{background:var(--orange)}
+  .produto-row:hover .produto-num{color:var(--black)}
+  .produto-num{font-size:48px;font-weight:800;letter-spacing:-.03em;color:#999}
+  .produto-name{font-size:38px;font-weight:800;line-height:1;letter-spacing:-.03em}
+  .produto-desc{font-size:15px;line-height:1.55;color:#333}
+  .produto-arrow{font-size:52px;text-align:right;font-weight:300;line-height:.6}
+
+  /* Funis grid */
+  .funis-wrapper{background:var(--black);color:var(--white);padding:120px var(--pad);border-bottom:1px solid var(--black)}
+  .funis-inner{max-width:var(--max);margin:0 auto}
+  .funis-head{margin-bottom:70px;max-width:760px}
+  .funis-head .kicker{font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--orange);margin-bottom:20px;display:block}
+  .funis-head h3{font-size:clamp(40px,5vw,72px);font-weight:800;line-height:.92;letter-spacing:-.03em}
+  .funis-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid #333}
+  .funil{
+    padding:40px 32px 44px;border-right:1px solid #333;border-bottom:1px solid #333;
+    display:flex;flex-direction:column;gap:20px;min-height:320px;
+    transition:background .3s;position:relative;
+  }
+  .funil:nth-child(4n){border-right:0}
+  .funil:hover{background:var(--orange);color:var(--black)}
+  .funil .idx{
+    font-size:11px;letter-spacing:.2em;font-weight:700;
+    display:flex;align-items:center;gap:10px;
+  }
+  .funil .idx:before{content:"";width:24px;height:2px;background:var(--orange)}
+  .funil:hover .idx:before{background:var(--black)}
+  .funil h4{font-size:26px;font-weight:800;line-height:1;letter-spacing:-.02em}
+  .funil ul{list-style:none;font-size:13px;line-height:1.6;color:#bbb;margin-top:auto}
+  .funil:hover ul{color:#1a1a1a}
+  .funil ul li{padding:4px 0;border-bottom:1px dashed #333}
+  .funil:hover ul li{border-color:#1a1a1a}
+
+  /* ============ ABORDAGEM ============ */
+  .abordagem{background:var(--blue);padding:140px var(--pad);border-bottom:1px solid var(--black)}
+  .abordagem-inner{max-width:var(--max);margin:0 auto}
+  .abord-head{margin-bottom:80px;display:grid;grid-template-columns:1fr 1.6fr;gap:60px;align-items:end}
+  .abord-head h3{font-size:clamp(48px,6vw,96px);font-weight:800;line-height:.9;letter-spacing:-.035em}
+  .abord-head p{font-size:18px;max-width:480px;line-height:1.5}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--black)}
+  .step{background:var(--blue);padding:36px 28px 40px;min-height:260px;display:flex;flex-direction:column}
+  .step-num{font-size:14px;font-weight:800;letter-spacing:.04em;margin-bottom:30px;display:flex;align-items:center;gap:10px}
+  .step-num:before{content:"";width:20px;height:20px;background:var(--orange);display:inline-block;border-radius:50%}
+  .step h4{font-size:28px;font-weight:800;line-height:1;letter-spacing:-.02em;margin-bottom:18px}
+  .step p{font-size:14px;line-height:1.5;color:#0a0a0a;opacity:.85}
+
+  /* ============ NUMBERS ============ */
+  .numbers{background:var(--white);padding:130px var(--pad);border-bottom:1px solid var(--black)}
+  .numbers-inner{max-width:var(--max);margin:0 auto}
+  .numbers-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:2px solid var(--black);margin-top:60px}
+  .stat{padding:50px 30px 54px;border-right:1px solid var(--black);border-bottom:2px solid var(--black)}
+  .stat:last-child{border-right:0}
+  .stat .big{font-size:88px;font-weight:800;line-height:.85;letter-spacing:-.04em;margin-bottom:14px}
+  .stat:nth-child(1) .big{color:var(--orange)}
+  .stat:nth-child(2) .big{color:var(--blue)}
+  .stat:nth-child(3) .big{color:var(--black)}
+  .stat:nth-child(4) .big{color:var(--orange)}
+  .stat .label{font-size:13px;font-weight:600;line-height:1.4;color:#333;text-transform:uppercase;letter-spacing:.04em}
+
+  /* ============ TEAM ============ */
+  .team-section{background:var(--gray);padding:140px var(--pad);border-bottom:1px solid var(--black)}
+  .team-inner{max-width:var(--max);margin:0 auto}
+  .team-head{margin-bottom:70px;display:grid;grid-template-columns:1fr 1.6fr;gap:60px;align-items:end}
+  .team-head h3{font-size:clamp(48px,6vw,96px);font-weight:800;line-height:.9;letter-spacing:-.035em}
+  .team-head p{font-size:17px;max-width:480px;line-height:1.5}
+  .team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--black)}
+  .member{background:var(--white);padding:0;overflow:hidden;display:flex;flex-direction:column}
+  .member-photo{aspect-ratio:1/1;position:relative;background:var(--gray);display:grid;grid-template-columns:1fr 1fr;overflow:hidden}
+  .member-photo .p1{background:linear-gradient(160deg,#ffd0a8,#ff8000 60%,#c55000)}
+  .member-photo .p2{background:linear-gradient(160deg,#ffe3f0,#ff89c2 60%,#b74780)}
+  .member-photo svg{position:absolute;inset:0;width:100%;height:100%}
+  .member-info{padding:26px 28px 32px;border-top:2px solid var(--black)}
+  .member-info .name{font-size:24px;font-weight:800;letter-spacing:-.02em;line-height:1;margin-bottom:6px}
+  .member-info .role{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--orange);margin-bottom:14px}
+  .member-info .bio{font-size:13px;line-height:1.55;color:#333}
+
+  /* ============ CTA ============ */
+  .big-cta{background:var(--orange);padding:140px var(--pad) 160px;border-bottom:1px solid var(--black);position:relative;overflow:hidden}
+  .big-cta-inner{max-width:var(--max);margin:0 auto;position:relative;z-index:2}
+  .big-cta .kicker{font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin-bottom:30px}
+  .big-cta h2{font-size:clamp(64px,10vw,180px);font-weight:800;line-height:.85;letter-spacing:-.045em;margin-bottom:50px}
+  .big-cta h2 .u{border-bottom:6px solid var(--black);padding-bottom:4px}
+  .big-cta .sub{font-size:20px;max-width:640px;line-height:1.4;margin-bottom:50px}
+  .big-cta-actions{display:flex;gap:18px;flex-wrap:wrap}
+  .big-cta .btn.primary{background:var(--black);color:var(--white);border-color:var(--black);padding:24px 40px;font-size:15px}
+  .big-cta .btn.primary:hover{background:var(--white);color:var(--black)}
+  .big-cta .btn.ghost{border-color:var(--black);padding:24px 40px;font-size:15px}
+
+  /* ============ FOOTER ============ */
+  footer{background:var(--black);color:var(--white);padding:90px var(--pad) 40px}
+  .foot-inner{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:50px;padding-bottom:70px;border-bottom:1px solid #333}
+  .foot-brand{display:flex;flex-direction:column;gap:30px}
+  .foot-brand .tag{font-size:22px;font-weight:700;line-height:1.25;max-width:280px;letter-spacing:-.01em}
+  .foot-col h5{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:22px;font-weight:700}
+  .foot-col ul{list-style:none;display:flex;flex-direction:column;gap:11px;font-size:14px;color:#ccc}
+  .foot-col ul li:hover{color:var(--orange)}
+  .foot-bottom{
+    max-width:var(--max);margin:0 auto;padding-top:30px;
+    display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#888;
+    letter-spacing:.04em;flex-wrap:wrap;gap:20px;
+  }
+  .foot-bottom .socials{display:flex;gap:24px}
+  .foot-bottom .socials a:hover{color:var(--orange)}
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width:1080px){
+    .hero-grid{grid-template-columns:1fr}
+    .hero-right{min-height:420px}
+    .section-head,.abord-head,.team-head,.manifesto-inner{grid-template-columns:1fr;gap:30px}
+    .produto-row{grid-template-columns:60px 1fr;gap:20px;padding:34px 20px}
+    .produto-desc,.produto-arrow{display:none}
+    .funis-grid,.steps{grid-template-columns:repeat(2,1fr)}
+    .team-grid,.numbers-grid{grid-template-columns:repeat(2,1fr)}
+    .clients-grid{grid-template-columns:repeat(3,1fr)}
+    .clients-grid div:nth-child(6n){border-right:1px solid var(--black)}
+    .clients-grid div:nth-child(3n){border-right:0}
+    .foot-inner{grid-template-columns:1fr 1fr;gap:40px}
+    nav.links{display:none}
+  }
+  @media (max-width:640px){
+    :root{--pad:22px}
+    .side-rail{display:none}
+    .funis-grid,.steps,.team-grid,.numbers-grid,.clients-grid{grid-template-columns:1fr}
+    .clients-grid div{border-right:0 !important}
+    .stat{border-right:0}
+    .foot-inner{grid-template-columns:1fr}
+    h1.hero-title{font-size:64px}
+    .nav-cta{padding:10px 14px;font-size:11px}
+  }
+</style>
+</head>
+<body>
+
+<aside class="side-rail" aria-hidden="true">
+  <span>imo</span>
+  <span>insights / 2026</span>
+  <span>rollouts</span>
+</aside>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#" class="imo-logo small" aria-label="imo insights">imo</a>
+    <nav class="links">
+      <a href="#manifesto">Sobre</a>
+      <a href="#produtos">Produtos</a>
+      <a href="#abordagem">Abordagem</a>
+      <a href="#time">Time</a>
+      <a href="#contato">Insights</a>
+    </nav>
+    <a href="#contato" class="nav-cta">Fale com a gente →</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-grid">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Pesquisa &amp; Insights · desde 2009</div>
+      <h1 class="hero-title">
+        Não tente<br>
+        adivinhar,<br>
+        <span class="accent">escolha saber.</span>
+      </h1>
+      <p class="hero-sub">
+        A imo é pesquisa e insights para empresas com sede de novos caminhos.
+        Democratizamos o uso de dados para alcançarmos novos olhares e novas verdades.
+      </p>
+      <div class="hero-ctas">
+        <a href="#contato" class="btn primary">Começar um projeto <span class="arr">→</span></a>
+        <a href="#produtos" class="btn ghost">Ver produtos</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="duotone">
+        <div class="half orange">
+          <svg viewBox="0 0 200 300" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <radialGradient id="face1" cx="50%" cy="40%" r="55%">
+                <stop offset="0" stop-color="#ffb366"/>
+                <stop offset="1" stop-color="#c25500"/>
+              </radialGradient>
+            </defs>
+            <circle cx="100" cy="110" r="72" fill="url(#face1)"/>
+            <ellipse cx="100" cy="250" rx="120" ry="90" fill="#a04400"/>
+          </svg>
+        </div>
+        <div class="half pink">
+          <svg viewBox="0 0 200 300" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <radialGradient id="face2" cx="50%" cy="40%" r="55%">
+                <stop offset="0" stop-color="#ffc8df"/>
+                <stop offset="1" stop-color="#b74780"/>
+              </radialGradient>
+            </defs>
+            <circle cx="100" cy="110" r="72" fill="url(#face2)"/>
+            <ellipse cx="100" cy="250" rx="120" ry="90" fill="#8e3564"/>
+          </svg>
+        </div>
+      </div>
+      <div class="hero-tag-block">
+        <div class="tag">We adapt, we impact.</div>
+        <div class="meta">jan · 2026</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee">
+  <div class="marquee-track">
+    <span>Ouvir para descobrir.<span class="dot"></span>We impact for real.<span class="dot"></span>Partimos do ponto essencial.<span class="dot"></span>Questionar · Mediar · Transformar<span class="dot"></span>We adapt, we impact.<span class="dot"></span></span>
+    <span>Ouvir para descobrir.<span class="dot"></span>We impact for real.<span class="dot"></span>Partimos do ponto essencial.<span class="dot"></span>Questionar · Mediar · Transformar<span class="dot"></span>We adapt, we impact.<span class="dot"></span></span>
+  </div>
+</div>
+
+<section class="manifesto" id="manifesto">
+  <div class="manifesto-inner">
+    <div class="section-label">Manifesto / O que somos</div>
+    <div>
+      <p class="manifesto-text">
+        Existimos para <em>questionar</em> e instigar negócios a tomarem decisões baseadas no conhecimento aprofundado de <span class="hl-blue">múltiplas visões da realidade</span>.
+      </p>
+      <div class="pill-row">
+        <span class="pill fill">Questionadora</span>
+        <span class="pill">Mediadora</span>
+        <span class="pill fill">Transformadora</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="clients">
+  <div class="clients-inner">
+    <div class="clients-label">+ de 120 marcas confiaram na imo</div>
+    <div class="clients-grid">
+      <div>Globo</div><div>Natura</div><div>Spotify</div><div>Ambev</div><div>Itaú</div><div>iFood</div>
+      <div>Magalu</div><div>Nestlé</div><div>Unilever</div><div>Boticário</div><div>BRF</div><div>Heineken</div>
+    </div>
+  </div>
+</section>
+
+<section class="produtos" id="produtos">
+  <div class="produtos-inner">
+    <div class="section-head">
+      <div>
+        <div class="section-label" style="margin-bottom:30px">O que fazemos</div>
+        <h2 class="section-title">Três<br>frentes.<br><span class="orange">Uma obsessão.</span></h2>
+      </div>
+      <p class="section-intro">
+        Combinamos pesquisa tradicional, dados comportamentais e times dedicados para transformar perguntas difíceis em decisões confiantes.
+      </p>
+    </div>
+    <div class="produto-stack">
+      <a href="#" class="produto-row">
+        <div class="produto-num">01</div>
+        <div class="produto-name">Projetos para Insights</div>
+        <div class="produto-desc">Pesquisas sob medida para resolver questões de inovação, comunicação, shopper e tracking de marca. Desenho metodológico customizado.</div>
+        <div class="produto-arrow">→</div>
+      </a>
+      <a href="#" class="produto-row">
+        <div class="produto-num">02</div>
+        <div class="produto-name">Times de Insights &amp; BI</div>
+        <div class="produto-desc">Outsourcing de pesquisadores e analistas integrados à sua operação. Squads sob demanda, com governança clara e entrega contínua.</div>
+        <div class="produto-arrow">→</div>
+      </a>
+      <a href="#" class="produto-row">
+        <div class="produto-num">03</div>
+        <div class="produto-name">Treinamento em Insights</div>
+        <div class="produto-desc">Formação prática para times de marketing, produto e pesquisa. Do briefing à leitura estratégica dos dados.</div>
+        <div class="produto-arrow">→</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="funis-wrapper">
+  <div class="funis-inner">
+    <div class="funis-head">
+      <span class="kicker">Dentro de Projetos para Insights</span>
+      <h3>Quatro funis para perguntas de negócio reais.</h3>
+    </div>
+    <div class="funis-grid">
+      <div class="funil">
+        <div class="idx">01 / Inovação</div>
+        <h4>Funil de Inovação</h4>
+        <ul>
+          <li>Tendências &amp; cool hunting</li>
+          <li>U&amp;A</li>
+          <li>Segmentação</li>
+          <li>Conjoint · Max Diff · Turf</li>
+        </ul>
+      </div>
+      <div class="funil">
+        <div class="idx">02 / Marca</div>
+        <h4>Funil de Comunicação</h4>
+        <ul>
+          <li>Personas</li>
+          <li>Equity de marca</li>
+          <li>Fit de celebridades</li>
+          <li>Tracking de campanha</li>
+        </ul>
+      </div>
+      <div class="funil">
+        <div class="idx">03 / Shopper</div>
+        <h4>Jornada de Compra</h4>
+        <ul>
+          <li>Etnografia</li>
+          <li>Drivers de decisão</li>
+          <li>Pós-compra</li>
+          <li>Experiência no PDV</li>
+        </ul>
+      </div>
+      <div class="funil">
+        <div class="idx">04 / Tracking</div>
+        <h4>Conhecimento Otimizado</h4>
+        <ul>
+          <li>Tracking contínuo de marca</li>
+          <li>Dashboards BI</li>
+          <li>Benchmarks de categoria</li>
+          <li>Alerta de mudança</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="abordagem" id="abordagem">
+  <div class="abordagem-inner">
+    <div class="abord-head">
+      <h3>Como a<br>imo trabalha.</h3>
+      <p>Um processo que parte do ponto essencial: a pergunta certa. Do briefing à ativação, cada etapa é pensada para gerar decisão. não relatório.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">Etapa 01</div>
+        <h4>Pergunta</h4>
+        <p>Imersão no problema de negócio. Redesenhamos o brief junto com o cliente até achar a pergunta que importa.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">Etapa 02</div>
+        <h4>Desenho</h4>
+        <p>Metodologia sob medida combinando quanti, quali, comportamental e cultural. Sem receita pronta.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">Etapa 03</div>
+        <h4>Campo</h4>
+        <p>Execução rigorosa, painéis próprios e curadoria humana. A qualidade do dado é inegociável.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">Etapa 04</div>
+        <h4>Ativação</h4>
+        <p>Entregamos insight acionável: workshops, playbooks e acompanhamento até o impacto no negócio.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="numbers">
+  <div class="numbers-inner">
+    <div class="section-head" style="margin-bottom:0">
+      <div>
+        <div class="section-label" style="margin-bottom:30px">Impacto</div>
+        <h2 class="section-title">Números<br>que <span class="orange">importam.</span></h2>
+      </div>
+      <p class="section-intro">
+        Mais de 5 anos ouvindo pessoas, mercados e culturas. Cada projeto é uma oportunidade de mudar um olhar.
+      </p>
+    </div>
+    <div class="numbers-grid">
+      <div class="stat">
+        <div class="big">+5</div>
+        <div class="label">Anos de estrada em pesquisa</div>
+      </div>
+      <div class="stat">
+        <div class="big">+120</div>
+        <div class="label">Marcas atendidas no Brasil e LatAm</div>
+      </div>
+      <div class="stat">
+        <div class="big">+400</div>
+        <div class="label">Projetos entregues nos últimos 5 anos</div>
+      </div>
+      <div class="stat">
+        <div class="big">17k</div>
+        <div class="label">Entrevistas por ano em nossos painéis</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="team-section" id="time">
+  <div class="team-inner">
+    <div class="team-head">
+      <h3>Quem faz a imo.</h3>
+      <p>A imo é feita de pessoas. Time multidisciplinar de pesquisadores, antropólogos, cientistas de dados e estrategistas. unidos pela obsessão de ouvir para descobrir.</p>
+    </div>
+    <div class="team-grid">
+      <div class="member">
+        <div class="member-photo">
+          <div class="p1"></div><div class="p2"></div>
+          <svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice">
+            <circle cx="200" cy="160" r="95" fill="#0a0a0a" opacity=".25"/>
+            <ellipse cx="200" cy="360" rx="180" ry="110" fill="#0a0a0a" opacity=".2"/>
+          </svg>
+        </div>
+        <div class="member-info">
+          <div class="name">Zé Lucas</div>
+          <div class="role">Founder · CEO</div>
+          <div class="bio">+5 anos construindo projetos de pesquisa para grandes marcas. Fundador da IMO.</div>
+        </div>
+      </div>
+      <div class="member">
+        <div class="member-photo">
+          <div class="p1"></div><div class="p2"></div>
+          <svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice">
+            <circle cx="200" cy="160" r="95" fill="#0a0a0a" opacity=".25"/>
+            <ellipse cx="200" cy="360" rx="180" ry="110" fill="#0a0a0a" opacity=".2"/>
+          </svg>
+        </div>
+        <div class="member-info">
+          <div class="name">Simona Karen</div>
+          <div class="role">Head de Consumer Insights</div>
+          <div class="bio">18 anos em consumer insights. Graduada pela FIA-USP, especialista em inovação e jornada.</div>
+        </div>
+      </div>
+      <div class="member">
+        <div class="member-photo">
+          <div class="p1"></div><div class="p2"></div>
+          <svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice">
+            <circle cx="200" cy="160" r="95" fill="#0a0a0a" opacity=".25"/>
+            <ellipse cx="200" cy="360" rx="180" ry="110" fill="#0a0a0a" opacity=".2"/>
+          </svg>
+        </div>
+        <div class="member-info">
+          <div class="name">Giorgio Berardi</div>
+          <div class="role">Strategy Lead</div>
+          <div class="bio">Formado pela ESPM. Especialista em mobilidade, tech e varejo. Conecta dados e narrativa.</div>
+        </div>
+      </div>
+      <div class="member">
+        <div class="member-photo">
+          <div class="p1"></div><div class="p2"></div>
+          <svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice">
+            <circle cx="200" cy="160" r="95" fill="#0a0a0a" opacity=".25"/>
+            <ellipse cx="200" cy="360" rx="180" ry="110" fill="#0a0a0a" opacity=".2"/>
+          </svg>
+        </div>
+        <div class="member-info">
+          <div class="name">Thais Lima</div>
+          <div class="role">Qualitative Research Lead</div>
+          <div class="bio">UNIFESP · Mestra em Sociologia. Traz a lente antropológica para dentro de cada projeto.</div>
+        </div>
+      </div>
+      <div class="member">
+        <div class="member-photo">
+          <div class="p1"></div><div class="p2"></div>
+          <svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice">
+            <circle cx="200" cy="160" r="95" fill="#0a0a0a" opacity=".25"/>
+            <ellipse cx="200" cy="360" rx="180" ry="110" fill="#0a0a0a" opacity=".2"/>
+          </svg>
+        </div>
+        <div class="member-info">
+          <div class="name">Rodrigo De Jesus</div>
+          <div class="role">Comunicação &amp; Cultura</div>
+          <div class="bio">Comunicação e social listening. Traduz o que as redes dizem em recomendação acionável.</div>
+        </div>
+      </div>
+      <div class="member">
+        <div class="member-photo">
+          <div class="p1"></div><div class="p2"></div>
+          <svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice">
+            <circle cx="200" cy="160" r="95" fill="#0a0a0a" opacity=".25"/>
+            <ellipse cx="200" cy="360" rx="180" ry="110" fill="#0a0a0a" opacity=".2"/>
+          </svg>
+        </div>
+        <div class="member-info">
+          <div class="name">Higor</div>
+          <div class="role">Data &amp; BI</div>
+          <div class="bio">Dados, BI e dashboards. Garante que cada número conte uma história útil ao cliente.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="big-cta" id="contato">
+  <div class="big-cta-inner">
+    <div class="kicker">Vamos começar?</div>
+    <h2>Ouvir para<br><span class="u">descobrir.</span></h2>
+    <p class="sub">Conte o desafio do seu negócio. A gente responde com uma proposta desenhada sob medida. sem receita pronta, sem enrolação.</p>
+    <div class="big-cta-actions">
+      <a href="mailto:contato@imoinsights.com.br" class="btn primary">contato@imoinsights.com.br →</a>
+      <a href="#" class="btn ghost">Agendar conversa</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-brand">
+      <div class="imo-logo small">imo</div>
+      <p class="tag">Não tente adivinhar, escolha saber.</p>
+    </div>
+    <div class="foot-col">
+      <h5>Produtos</h5>
+      <ul>
+        <li>Projetos para Insights</li>
+        <li>Times de Insights &amp; BI</li>
+        <li>Treinamento em Insights</li>
+        <li>Tracking de Marca</li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h5>Empresa</h5>
+      <ul>
+        <li>Sobre</li>
+        <li>Time</li>
+        <li>Cases</li>
+        <li>Carreira</li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h5>Contato</h5>
+      <ul>
+        <li>contato@imoinsights.com.br</li>
+        <li>São Paulo · SP</li>
+        <li>LinkedIn</li>
+        <li>Instagram</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <div>© 2026 imo insights · Todos os direitos reservados</div>
+    <div class="socials">
+      <a href="#">LinkedIn</a><a href="#">Instagram</a><a href="#">Behance</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

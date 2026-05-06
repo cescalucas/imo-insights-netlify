@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Entrar · IMO Insights</title>
+<meta name="description" content="Acesse a área exclusiva de clientes da IMO Insights.">
+<meta name="robots" content="noindex,nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<aside class="side-rail" aria-hidden="true">
+  <span>IMO · INSIGHTS</span>
+  <span>NÃO ADIVINHE · SAIBA</span>
+</aside>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="index.html" aria-label="IMO Insights — voltar para home" style="display:flex;align-items:center;gap:14px">
+      <span class="imo-logo"></span>
+    </a>
+    <nav class="links">
+      <a href="index.html">Home</a>
+      <a href="sobre.html">Sobre</a>
+      <a href="produtos.html">Produtos</a>
+      <a href="evb.html">Eu vi o Brasil</a>
+      <a href="abordagem.html">Abordagem</a>
+      <a href="time.html">Time</a>
+      <a href="contato.html">Contato</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:12px">
+      <a href="contato.html" class="nav-cta">Fale com a IMO →</a>
+      <a href="login.html" class="nav-cta login-cta active">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Área do Cliente
+      </a>
+    </div>
+  </div>
+</header>
+
+<section class="wg-login" aria-label="Tela de login">
+  <div class="wg-login-bg" aria-hidden="true">
+    <div class="wg-orb wg-orb-1"></div>
+    <div class="wg-orb wg-orb-2"></div>
+    <div class="wg-orb wg-orb-3"></div>
+  </div>
+
+  <div class="wg-login-grid">
+
+    <div class="wg-login-hero">
+      <div class="wg-login-hero-content">
+        <div class="wg-eyebrow">IMO INSIGHTS · ÁREA DO CLIENTE</div>
+        <h1>Onde dados<br>viram<br><span>decisão.</span></h1>
+        <p>A plataforma exclusiva da IMO para clientes. Reports, estudos, dashboards e todos os entregáveis dos seus projetos em um só lugar.</p>
+        <div class="wg-login-pills">
+          <span class="wg-pill">Reports</span>
+          <span class="wg-pill">Estudos</span>
+          <span class="wg-pill">Dashboards</span>
+          <span class="wg-pill">Entregáveis</span>
+        </div>
+      </div>
+      <div class="wg-float-cards" aria-hidden="true">
+        <div class="wg-float-card fc-1"><div class="wg-fc-color" style="background:#E8D5B7"></div><div class="wg-fc-body"><span class="wg-fc-tag">PROJETO ATIVO</span><span class="wg-fc-name">Em andamento</span></div></div>
+        <div class="wg-float-card fc-2"><div class="wg-fc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF8000" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="wg-fc-body"><span class="wg-fc-tag">NOVO REPORT</span><span class="wg-fc-name">Disponível agora</span></div></div>
+        <div class="wg-float-card fc-3"><div class="wg-fc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3E81F8" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><div class="wg-fc-body"><span class="wg-fc-tag">ENTREGA</span><span class="wg-fc-name">Q1 2025 pronto</span></div></div>
+        <div class="wg-float-card fc-4"><div class="wg-fc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A1EA00" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div class="wg-fc-body"><span class="wg-fc-tag">CAMPO CONCLUÍDO</span><span class="wg-fc-name">1.200 entrevistas</span></div></div>
+        <div class="wg-float-card fc-5"><div class="wg-fc-color" style="background:#FF89C2"></div><div class="wg-fc-body"><span class="wg-fc-tag">DASHBOARD</span><span class="wg-fc-name">Atualizado hoje</span></div></div>
+      </div>
+    </div>
+
+    <div class="wg-login-form-wrap">
+      <div class="wg-login-card">
+
+        <div id="reasonBanner" class="wg-error" style="display:none;margin-bottom:18px"></div>
+
+        <!-- Estágio 1: e-mail + senha -->
+        <div id="loginStage">
+          <div class="wg-login-card-head">
+            <span class="imo-logo sm"></span>
+            <h2>Entrar</h2>
+            <p>Acesse sua área exclusiva</p>
+          </div>
+          <form id="loginForm" novalidate>
+            <div class="wg-field">
+              <label for="email">E-mail</label>
+              <div class="wg-input-wrap">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+                <input type="email" id="email" name="email" placeholder="seu@email.com" required autocomplete="email" autofocus>
+              </div>
+            </div>
+            <div class="wg-field">
+              <label for="password">Senha</label>
+              <div class="wg-input-wrap">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <input type="password" id="password" name="password" placeholder="••••••••" required autocomplete="current-password" minlength="10">
+              </div>
+            </div>
+            <div class="wg-form-row">
+              <label class="wg-check">
+                <input type="checkbox" name="remember" id="remember"><span class="wg-checkmark"></span> Manter conectado
+              </label>
+              <a href="recuperar-senha.html" class="wg-forgot">Esqueci a senha</a>
+            </div>
+            <button type="submit" class="wg-submit" id="submitBtn">
+              Continuar
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+            <div id="loginError" class="wg-error" role="alert" style="display:none"></div>
+          </form>
+        </div>
+
+        <!-- Estágio 2: verificação por e-mail (OTP) -->
+        <div id="otpStage" hidden>
+          <div class="wg-login-card-head">
+            <span class="imo-logo sm"></span>
+            <h2>Código de verificação</h2>
+            <p>Enviamos um código de 6 dígitos para <strong id="otpDestEmail" style="color:#FF8000"></strong>. Verifique sua caixa de entrada e a pasta de spam.</p>
+          </div>
+          <form id="otpForm" novalidate>
+            <div class="wg-field">
+              <label for="otpCode">Código recebido</label>
+              <div class="wg-input-wrap">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <input type="text" id="otpCode" name="otpCode" placeholder="000000" required
+                       inputmode="numeric" pattern="\d{6}" maxlength="6" autocomplete="one-time-code" autofocus
+                       style="letter-spacing:.4em;font-size:18px;text-align:center">
+              </div>
+            </div>
+            <button type="submit" class="wg-submit" id="otpSubmitBtn">
+              Verificar e entrar
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            </button>
+            <div style="display:flex;justify-content:space-between;margin-top:14px;font-size:13px">
+              <button type="button" id="otpResend" style="background:transparent;border:none;color:#bbb;text-decoration:underline;cursor:pointer;padding:0">Reenviar código</button>
+              <button type="button" id="otpCancel" style="background:transparent;border:none;color:#bbb;text-decoration:underline;cursor:pointer;padding:0">Voltar para login</button>
+            </div>
+            <div id="otpError" class="wg-error" role="alert" style="display:none;margin-top:14px"></div>
+            <div id="otpInfo"  style="display:none;margin-top:14px;background:rgba(15,126,94,.18);color:#A1EA00;border:1px solid rgba(161,234,0,.3);padding:12px 14px;border-radius:6px;font-size:13px"></div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/env-config.js"></script>
+<script src="/assets/js/supabase-client.js"></script>
+<script src="/assets/js/role-helpers.js"></script>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+
+  var loginStage = $('loginStage');
+  var otpStage   = $('otpStage');
+  var loginForm  = $('loginForm');
+  var otpForm    = $('otpForm');
+  var submitBtn  = $('submitBtn');
+  var otpBtn     = $('otpSubmitBtn');
+  var loginError = $('loginError');
+  var otpError   = $('otpError');
+  var otpInfo    = $('otpInfo');
+  var reasonBanner = $('reasonBanner');
+  var origSubmit = submitBtn.innerHTML;
+  var origOtp    = otpBtn.innerHTML;
+
+  function showError(el, msg) { if(el){el.textContent=msg; el.style.display='flex';} }
+  function hideError(el) { if(el) el.style.display='none'; }
+  function showInfo(msg) { otpInfo.textContent=msg; otpInfo.style.display='block'; }
+  function hideInfo() { otpInfo.style.display='none'; }
+  function setBusy(btn, busy, original) {
+    if (busy) { btn.disabled=true; btn.innerHTML='Aguarde…'; }
+    else      { btn.disabled=false; btn.innerHTML=original; }
+  }
+  function showStage(which) {
+    if (which === 'otp') {
+      loginStage.hidden = true;  loginStage.style.display = 'none';
+      otpStage.hidden  = false;  otpStage.style.display  = 'block';
+      try { $('otpCode').focus(); } catch (e) {}
+    } else {
+      otpStage.hidden  = true;  otpStage.style.display  = 'none';
+      loginStage.hidden = false; loginStage.style.display = 'block';
+      try { $('email').focus(); } catch (e) {}
+    }
+  }
+  function nextUrlOrHome(role) {
+    var qs = new URLSearchParams(window.location.search);
+    var next = qs.get('next');
+    if (next && /^\/[^/]/.test(next) && !/^\/\//.test(next)) return next;
+    return (window.IMO && IMO.helpers && IMO.helpers.homeForRole(role)) || '/area-cliente.html';
+  }
+  function translateAuthError(e) {
+    var msg = (e && e.message) || '';
+    if (/Invalid login credentials/i.test(msg))    return 'E-mail ou senha incorretos.';
+    if (/Email not confirmed/i.test(msg))           return 'Confirme seu e-mail antes de entrar.';
+    if (/Too many requests/i.test(msg))             return 'Muitas tentativas. Aguarde alguns instantes.';
+    if (/User not found/i.test(msg))                return 'Não encontramos uma conta com esse e-mail.';
+    if (/network|fetch/i.test(msg))                 return 'Erro de rede. Verifique sua conexão e tente de novo.';
+    return msg || 'Não foi possível entrar. Tente de novo em alguns instantes.';
+  }
+
+  // --- Banner motivo (?reason=...) ---
+  (function showReason() {
+    var r = new URLSearchParams(window.location.search).get('reason');
+    if (!r) return;
+    var msg = '';
+    if (r === 'inactivity')   msg = 'Sessão encerrada por inatividade. Faça login novamente.';
+    else if (r === 'expired') msg = 'Sua sessão expirou. Entre novamente.';
+    else if (r === 'signed-out') msg = 'Você saiu da plataforma.';
+    else if (r === 'no-session') msg = 'Faça login para acessar a área do cliente.';
+    else if (r === 'mfa-required') msg = 'Verificação de segurança necessária. Faça login novamente.';
+    if (msg) { reasonBanner.textContent = msg; reasonBanner.style.display = 'flex'; }
+  })();
+
+  // --- API helper sem session-guard.js ---
+  async function callApi(path, opts) {
+    opts = opts || {};
+    var sess = await IMO.client.auth.getSession();
+    var token = sess && sess.data && sess.data.session && sess.data.session.access_token;
+    var headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+    var res = await fetch('/api/' + path.replace(/^\//,''), {
+      method: opts.method || (opts.body ? 'POST' : 'GET'),
+      headers: headers,
+      body: opts.body ? JSON.stringify(opts.body) : undefined
+    });
+    var payload = null;
+    try { payload = await res.json(); } catch (e) {}
+    if (!res.ok) {
+      var err = new Error((payload && payload.error) || ('HTTP ' + res.status));
+      err.status = res.status; err.payload = payload;
+      throw err;
+    }
+    return payload;
+  }
+
+  // --- Bootstrap: se já logado e com mfa válido → redireciona ---
+  async function bootstrap() {
+    if (!window.IMO || !IMO.client) {
+      showError(loginError, 'Falha ao inicializar. Verifique env-config.js.');
+      return;
+    }
+    try {
+      var sess = await IMO.client.auth.getSession();
+      if (sess && sess.data && sess.data.session) {
+        // Verifica MFA via API
+        var mfa = await callApi('check-mfa', { method: 'GET' });
+        if (mfa && mfa.has_mfa) {
+          // Tudo certo, redireciona
+          var profile = await IMO.helpers.getProfile(true);
+          window.location.replace(nextUrlOrHome(profile && profile.role));
+          return;
+        }
+        // Sessão sem MFA — pede OTP imediatamente
+        var profile2 = await IMO.helpers.getProfile(true);
+        if (profile2) {
+          $('otpDestEmail').textContent = maskEmail(profile2.email);
+          showStage('otp');
+          await requestOtp();
+        }
+      }
+    } catch (e) {
+      console.warn('[IMO login] bootstrap warn:', e);
+    }
+  }
+
+  function maskEmail(email) {
+    if (!email) return '';
+    var at = email.indexOf('@');
+    if (at < 2) return email;
+    return email.slice(0, 2) + '***' + email.slice(at);
+  }
+
+  // --- Login ---
+  loginForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    hideError(loginError); hideError(reasonBanner);
+
+    var email    = $('email').value.trim();
+    var password = $('password').value;
+    var remember = $('remember').checked;
+
+    if (!email || !password) return showError(loginError, 'Preencha e-mail e senha.');
+    if (password.length < 10) return showError(loginError, 'A senha deve ter pelo menos 10 caracteres.');
+
+    setBusy(submitBtn, true);
+    try {
+      var resp = await IMO.client.auth.signInWithPassword({ email: email, password: password });
+      if (resp.error) throw resp.error;
+
+      // Marca preferência de "manter conectado"
+      try {
+        if (remember) localStorage.setItem('imo_remember', '1');
+        else          localStorage.removeItem('imo_remember');
+        sessionStorage.setItem('imo_session_active', '1');
+      } catch (storageErr) {}
+
+      // Carrega perfil para validar status
+      var profile = await IMO.helpers.getProfile(true);
+      if (!profile) {
+        showError(loginError, 'Conta sem perfil de aplicação. Fale com o administrador.');
+        await IMO.client.auth.signOut();
+        return;
+      }
+      if (profile.status === 'invited') {
+        showError(loginError, 'Sua conta ainda não foi ativada. Use o link enviado por e-mail para definir sua senha.');
+        await IMO.client.auth.signOut();
+        return;
+      }
+      if (profile.status !== 'active') {
+        showError(loginError, 'Sua conta está desativada. Fale com o administrador.');
+        await IMO.client.auth.signOut();
+        return;
+      }
+
+      // Verifica se já tem mfa_grant válido (2FA não expirou)
+      var mfa = await callApi('check-mfa', { method: 'GET' });
+      if (mfa && mfa.has_mfa) {
+        // Pula OTP e vai direto
+        window.location.replace(nextUrlOrHome(profile.role));
+        return;
+      }
+
+      // Mostra estágio OTP
+      $('otpDestEmail').textContent = maskEmail(profile.email);
+      showStage('otp');
+      await requestOtp();
+    } catch (err) {
+      console.error('[IMO login] erro:', err);
+      showError(loginError, translateAuthError(err));
+    } finally {
+      setBusy(submitBtn, false, origSubmit);
+    }
+  });
+
+  // --- Solicitar OTP ---
+  async function requestOtp() {
+    hideError(otpError); hideInfo();
+    try {
+      var resp = await callApi('request-email-otp', { method: 'POST', body: {} });
+      if (resp && resp.throttled) {
+        showInfo('Já enviamos um código recentemente. Verifique sua caixa de entrada.');
+      } else {
+        showInfo('Código enviado. Pode demorar até 1 minuto para chegar.');
+      }
+    } catch (err) {
+      console.error('[IMO login] requestOtp erro:', err);
+      showError(otpError, err.message || 'Não foi possível enviar o código.');
+    }
+  }
+
+  // --- Verificar OTP ---
+  otpForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    hideError(otpError); hideInfo();
+
+    var code = ($('otpCode').value || '').replace(/\D/g, '');
+    if (!/^\d{6}$/.test(code)) return showError(otpError, 'Digite o código de 6 dígitos.');
+
+    setBusy(otpBtn, true);
+    try {
+      await callApi('verify-email-otp', { method:'POST', body: { code: code } });
+      var profile = await IMO.helpers.getProfile(true);
+      window.location.replace(nextUrlOrHome(profile && profile.role));
+    } catch (err) {
+      console.error('[IMO login] verify erro:', err);
+      var msg = err && err.message ? err.message : '';
+      if (err && err.status === 429) msg = 'Muitas tentativas erradas. Solicite um novo código.';
+      showError(otpError, msg || 'Código inválido.');
+    } finally {
+      setBusy(otpBtn, false, origOtp);
+    }
+  });
+
+  // --- Reenviar código ---
+  $('otpResend').addEventListener('click', async function () {
+    $('otpResend').disabled = true;
+    setTimeout(function () { $('otpResend').disabled = false; }, 30000); // 30s cooldown UI
+    await requestOtp();
+  });
+
+  // --- Cancelar / voltar para login ---
+  $('otpCancel').addEventListener('click', async function () {
+    try { await IMO.client.auth.signOut(); } catch (e) {}
+    showStage('login');
+    hideError(otpError); hideInfo();
+  });
+
+  // Bootstrap
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bootstrap);
+  else bootstrap();
+})();
+</script>
+
+</body>
+</html>

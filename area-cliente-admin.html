@@ -1,0 +1,1161 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Administração · IMO Insights</title>
+<meta name="robots" content="noindex,nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+:root{
+  --ad-bg:#0f0f1a; --ad-surface:#16162a; --ad-border:#2a2a3e; --ad-line:#1a1a2e;
+  --ad-text:#fff; --ad-muted:#bbb; --ad-dim:#777; --ad-accent:#FF8000;
+  --ad-ok:#A1EA00; --ad-err:#ff7676; --ad-info:#3E81F8;
+}
+.ad-wrap{min-height:100vh;background:var(--ad-bg);color:var(--ad-text);font-family:'Inter',sans-serif}
+.ad-container{max-width:1280px;margin:0 auto;padding:0 40px}
+
+.ad-hero{padding:48px 0 28px;border-bottom:1px solid var(--ad-line)}
+.ad-eye{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--ad-accent);margin-bottom:10px}
+.ad-hero h1{font-family:'Rethink Sans',sans-serif;font-size:36px;line-height:1.05;font-weight:800;margin:0 0 8px;letter-spacing:-.01em}
+.ad-hero p{color:var(--ad-muted);font-size:14px;margin:0}
+
+/* Tabs */
+.ad-tabs{display:flex;gap:0;border-bottom:1px solid var(--ad-line);margin:24px 0 0;overflow-x:auto}
+.ad-tab{background:transparent;border:none;color:var(--ad-dim);padding:14px 22px;font-family:inherit;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:8px}
+.ad-tab:hover{color:#fff}
+.ad-tab.active{color:var(--ad-accent);border-bottom-color:var(--ad-accent)}
+.ad-tab-count{display:inline-flex;align-items:center;justify-content:center;background:var(--ad-accent);color:#fff;font-size:10px;font-weight:800;padding:1px 7px;min-width:18px;height:18px;border-radius:9px}
+
+.ad-panel{padding:32px 0 100px}
+
+/* Métricas */
+.ad-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:28px}
+.ad-stat{background:var(--ad-surface);border:1px solid var(--ad-border);border-radius:10px;padding:20px}
+.ad-stat-num{font-family:'Rethink Sans',sans-serif;font-size:36px;font-weight:800;line-height:1}
+.ad-stat-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ad-dim);margin-top:6px}
+.ad-stat-sub{font-size:12px;color:var(--ad-muted);margin-top:8px}
+.ad-stat.warn .ad-stat-num{color:var(--ad-accent)}
+
+/* Listas/tabelas */
+.ad-tools{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:18px}
+.ad-search{background:var(--ad-surface);border:1px solid var(--ad-border);border-radius:6px;padding:10px 14px;color:#fff;font-family:inherit;font-size:13px;min-width:240px}
+.ad-search:focus{outline:none;border-color:var(--ad-accent)}
+.ad-filter{background:transparent;border:1px solid var(--ad-border);color:var(--ad-muted);padding:8px 14px;font-family:inherit;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border-radius:20px;cursor:pointer;transition:all .15s}
+.ad-filter:hover{border-color:var(--ad-accent);color:var(--ad-accent)}
+.ad-filter.active{background:var(--ad-accent);border-color:var(--ad-accent);color:#fff}
+
+.ad-btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;background:var(--ad-accent);color:#fff;border:none;font-family:inherit;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border-radius:6px;cursor:pointer;transition:background .15s;text-decoration:none}
+.ad-btn:hover{background:#e87100}
+.ad-btn:disabled{background:#666;cursor:not-allowed}
+.ad-btn.ghost{background:transparent;border:1px solid var(--ad-border);color:var(--ad-muted)}
+.ad-btn.ghost:hover{border-color:var(--ad-accent);color:var(--ad-accent);background:transparent}
+.ad-btn.danger{background:transparent;border:1px solid var(--ad-err);color:var(--ad-err)}
+.ad-btn.danger:hover{background:rgba(255,118,118,.08)}
+.ad-btn.success{background:var(--ad-ok);color:#0f0f1a}
+.ad-btn.success:hover{background:#88c700}
+.ad-btn.sm{padding:7px 12px;font-size:11px}
+
+.ad-table{width:100%;border-collapse:collapse;background:var(--ad-surface);border:1px solid var(--ad-border);border-radius:10px;overflow:hidden}
+.ad-table th,.ad-table td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--ad-line);font-size:13px;vertical-align:middle}
+.ad-table th{background:var(--ad-line);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ad-dim)}
+.ad-table tr:last-child td{border-bottom:none}
+.ad-table tr.clickable{cursor:pointer;transition:background .12s}
+.ad-table tr.clickable:hover{background:var(--ad-line)}
+.ad-table td.right{text-align:right}
+.ad-table td.actions{text-align:right;white-space:nowrap}
+.ad-table td.actions .ad-btn{margin-left:6px}
+
+.ad-empty{padding:60px;text-align:center;color:var(--ad-dim)}
+.ad-empty h3{color:#fff;font-size:18px;margin:0 0 8px;font-family:'Rethink Sans',sans-serif}
+
+.ad-status{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:4px;border:1px solid transparent}
+.ad-status.active   ,.ad-status.approved{background:rgba(161,234,0,.12);color:var(--ad-ok);border-color:rgba(161,234,0,.3)}
+.ad-status.pending_approval{background:rgba(255,128,0,.15);color:var(--ad-accent);border-color:rgba(255,128,0,.3)}
+.ad-status.rejected ,.ad-status.disabled{background:rgba(255,118,118,.12);color:var(--ad-err);border-color:rgba(255,118,118,.3)}
+.ad-status.archived ,.ad-status.inactive{background:rgba(153,153,153,.12);color:#999;border-color:#444}
+.ad-status.invited  ,.ad-status.draft{background:rgba(62,129,248,.12);color:var(--ad-info);border-color:rgba(62,129,248,.3)}
+
+.ad-skeleton{background:linear-gradient(90deg,var(--ad-surface) 0%,#1f1f33 50%,var(--ad-surface) 100%);background-size:200% 100%;animation:adShimmer 1.6s ease-in-out infinite;border-radius:6px;height:14px}
+@keyframes adShimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+/* Approval queue cards */
+.ad-q-list{display:flex;flex-direction:column;gap:14px}
+.ad-q-card{background:var(--ad-surface);border:1px solid var(--ad-border);border-radius:10px;padding:22px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+.ad-q-meta{font-size:12px;color:var(--ad-dim);display:flex;flex-wrap:wrap;gap:14px;margin-top:10px}
+.ad-q-meta strong{color:#fff;font-weight:600}
+.ad-q-card h4{font-family:'Rethink Sans',sans-serif;font-size:18px;font-weight:700;margin:0 0 4px}
+.ad-q-card .ad-q-sub{font-size:13px;color:var(--ad-muted)}
+.ad-q-actions{display:flex;flex-direction:column;gap:8px;min-width:180px}
+.ad-q-pill{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:rgba(62,129,248,.12);color:var(--ad-info);margin-bottom:6px}
+.ad-q-pill.newver{background:rgba(255,128,0,.12);color:var(--ad-accent)}
+
+/* Drawer */
+.ad-drawer-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .2s;z-index:200}
+.ad-drawer-bg.open{opacity:1;pointer-events:auto}
+.ad-drawer{position:fixed;top:0;right:0;bottom:0;width:min(620px,100%);background:var(--ad-bg);border-left:1px solid var(--ad-border);transform:translateX(100%);transition:transform .26s ease-out;z-index:201;display:flex;flex-direction:column;overflow:hidden}
+.ad-drawer.open{transform:translateX(0)}
+.ad-drawer-head{padding:22px 28px;border-bottom:1px solid var(--ad-line);display:flex;justify-content:space-between;align-items:center}
+.ad-drawer-head h3{font-family:'Rethink Sans',sans-serif;font-size:20px;font-weight:700;margin:0}
+.ad-drawer-close{background:transparent;border:none;color:var(--ad-muted);cursor:pointer;padding:6px;display:flex}
+.ad-drawer-close:hover{color:var(--ad-accent)}
+.ad-drawer-body{padding:24px 28px;overflow-y:auto;flex:1}
+.ad-drawer-foot{padding:16px 28px;border-top:1px solid var(--ad-line);display:flex;gap:10px;justify-content:flex-end;background:#0a0a14}
+
+.ad-field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.ad-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ad-dim)}
+.ad-input,.ad-select,.ad-textarea{background:var(--ad-surface);border:1px solid var(--ad-border);border-radius:6px;padding:11px 14px;color:#fff;font-family:inherit;font-size:14px;width:100%;box-sizing:border-box;transition:border-color .15s}
+.ad-input:focus,.ad-select:focus,.ad-textarea:focus{outline:none;border-color:var(--ad-accent)}
+.ad-textarea{resize:vertical;min-height:90px;line-height:1.5}
+.ad-row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ad-help{font-size:11px;color:var(--ad-dim);line-height:1.4}
+
+.ad-msg{padding:11px 14px;border-radius:6px;font-size:13px;margin-top:10px;line-height:1.5}
+.ad-msg.ok{background:rgba(15,126,94,.18);color:var(--ad-ok);border:1px solid rgba(161,234,0,.3)}
+.ad-msg.err{background:rgba(220,38,38,.15);color:var(--ad-err);border:1px solid rgba(255,118,118,.3)}
+
+.ad-section-title{font-family:'Rethink Sans',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ad-muted);margin:20px 0 10px}
+
+/* Audit JSON */
+.ad-jsonview{background:var(--ad-line);border-radius:6px;padding:10px 14px;font-family:'Inconsolata',monospace,monospace;font-size:12px;color:#bbb;white-space:pre-wrap;max-height:200px;overflow:auto}
+
+/* Footer */
+.ad-foot{border-top:1px solid var(--ad-line);background:#0a0a14;padding:32px 0}
+.ad-foot-inner{display:flex;justify-content:space-between;align-items:center;color:#666;font-size:12px;flex-wrap:wrap;gap:14px;max-width:1280px;margin:0 auto;padding:0 40px}
+.ad-foot-links{display:flex;gap:18px}
+.ad-foot-links a{color:#999;text-decoration:none}
+.ad-foot-links a:hover{color:var(--ad-accent)}
+
+@media (max-width:800px){
+  .ad-container{padding:0 20px}
+  .ad-hero h1{font-size:28px}
+  .ad-q-card{grid-template-columns:1fr}
+  .ad-q-actions{flex-direction:row;flex-wrap:wrap}
+  .ad-row-2{grid-template-columns:1fr}
+  .ad-table{display:block;overflow-x:auto}
+  .ad-foot-inner{padding:0 20px}
+  .ad-drawer{width:100%}
+}
+</style>
+</head>
+<body class="wg-body" data-imo-guard="admin">
+
+<header class="wg-nav">
+  <div class="wg-nav-inner">
+    <div class="wg-nav-left">
+      <a href="index.html" class="wg-nav-logo" aria-label="IMO Insights — site público">
+        <span class="imo-logo sm"></span>
+      </a>
+      <div class="wg-nav-divider"></div>
+      <span class="wg-nav-brand" id="adBrand">Administração</span>
+    </div>
+    <nav class="wg-nav-links">
+      <a href="area-cliente-admin.html" class="active">Painel</a>
+      <a href="area-cliente-perfil.html">Perfil</a>
+    </nav>
+    <div class="wg-nav-right">
+      <span id="acUserName" class="wg-nav-username" style="color:#bbb;font-size:13px;margin-right:14px"></span>
+      <div class="wg-nav-avatar"><span id="avatarInitial">·</span></div>
+      <button class="wg-nav-logout" id="logoutBtn" title="Sair" aria-label="Sair">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="ad-wrap">
+  <section class="ad-hero">
+    <div class="ad-container">
+      <div class="ad-eye" id="adRoleBadge">ADMIN</div>
+      <h1 id="adHelloTitle">Painel administrativo</h1>
+      <p id="adHelloSub">Aprove submissões, gerencie clientes, projetos e usuários da IMO Insights.</p>
+
+      <nav class="ad-tabs" role="tablist" aria-label="Seções da administração">
+        <button class="ad-tab active" data-tab="queue"    role="tab" aria-selected="true">Fila <span class="ad-tab-count" id="cntQueue" hidden>0</span></button>
+        <button class="ad-tab"        data-tab="clients"  role="tab" aria-selected="false">Clientes</button>
+        <button class="ad-tab"        data-tab="users"    role="tab" aria-selected="false">Usuários</button>
+        <button class="ad-tab"        data-tab="projects" role="tab" aria-selected="false">Projetos</button>
+        <button class="ad-tab"        data-tab="audit"    role="tab" aria-selected="false">Auditoria</button>
+      </nav>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Tab: Fila de aprovação + métricas
+       ============================================================ -->
+  <section class="ad-panel" id="panel-queue" role="tabpanel">
+    <div class="ad-container">
+      <div class="ad-stats">
+        <div class="ad-stat warn">
+          <div class="ad-stat-num" id="mPending">·</div>
+          <div class="ad-stat-label">Aguardando aprovação</div>
+          <div class="ad-stat-sub" id="mPendingSub"></div>
+        </div>
+        <div class="ad-stat">
+          <div class="ad-stat-num" id="mUploadsWeek">·</div>
+          <div class="ad-stat-label">Uploads na semana</div>
+          <div class="ad-stat-sub">últimos 7 dias</div>
+        </div>
+        <div class="ad-stat">
+          <div class="ad-stat-num" id="mActiveProjects">·</div>
+          <div class="ad-stat-label">Projetos ativos</div>
+          <div class="ad-stat-sub" id="mActiveProjectsSub"></div>
+        </div>
+        <div class="ad-stat">
+          <div class="ad-stat-num" id="mActiveClients">·</div>
+          <div class="ad-stat-label">Empresas-cliente ativas</div>
+        </div>
+      </div>
+
+      <div class="ad-tools">
+        <h2 style="margin:0;font-family:'Rethink Sans',sans-serif;font-size:22px;font-weight:700">Fila de aprovação</h2>
+        <button class="ad-btn ghost" id="qReload">Recarregar</button>
+      </div>
+
+      <div class="ad-q-list" id="qList"><div class="ad-skeleton" style="width:60%"></div></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Tab: Clientes
+       ============================================================ -->
+  <section class="ad-panel" id="panel-clients" role="tabpanel" hidden>
+    <div class="ad-container">
+      <div class="ad-tools">
+        <input type="search" class="ad-search" id="cSearch" placeholder="Buscar por nome ou CNPJ…">
+        <button class="ad-btn" id="cNew">+ Nova empresa-cliente</button>
+      </div>
+      <table class="ad-table" id="cTable">
+        <thead><tr>
+          <th>Nome</th><th>CNPJ</th><th>Status</th><th>Usuários</th><th>Criada em</th><th class="actions">Ações</th>
+        </tr></thead>
+        <tbody id="cTbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Tab: Usuários
+       ============================================================ -->
+  <section class="ad-panel" id="panel-users" role="tabpanel" hidden>
+    <div class="ad-container">
+      <div class="ad-tools" style="gap:8px">
+        <input type="search" class="ad-search" id="uSearch" placeholder="Buscar por nome ou e-mail…">
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="ad-filter active" data-rolef="all">Todos</button>
+          <button class="ad-filter" data-rolef="client">Clientes</button>
+          <button class="ad-filter" data-rolef="editor">Editores</button>
+          <button class="ad-filter" data-rolef="admin">Admins</button>
+          <button class="ad-filter" data-rolef="super_admin">Super-admin</button>
+        </div>
+        <button class="ad-btn" id="uNew">+ Convidar usuário</button>
+      </div>
+      <table class="ad-table" id="uTable">
+        <thead><tr>
+          <th>Nome</th><th>E-mail</th><th>Papel</th><th>Empresa</th><th>Status</th><th>Último login</th><th class="actions">Ações</th>
+        </tr></thead>
+        <tbody id="uTbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Tab: Projetos
+       ============================================================ -->
+  <section class="ad-panel" id="panel-projects" role="tabpanel" hidden>
+    <div class="ad-container">
+      <div class="ad-tools">
+        <input type="search" class="ad-search" id="pSearch" placeholder="Buscar por nome…">
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="ad-filter active" data-pstatusf="all">Todos</button>
+          <button class="ad-filter" data-pstatusf="active">Ativos</button>
+          <button class="ad-filter" data-pstatusf="draft">Rascunho</button>
+          <button class="ad-filter" data-pstatusf="archived">Arquivados</button>
+        </div>
+        <button class="ad-btn" id="pNew">+ Novo projeto</button>
+      </div>
+      <table class="ad-table" id="pTable">
+        <thead><tr>
+          <th>Nome</th><th>Cliente</th><th>Status</th><th>Período</th><th>Criado em</th><th class="actions">Ações</th>
+        </tr></thead>
+        <tbody id="pTbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       Tab: Auditoria
+       ============================================================ -->
+  <section class="ad-panel" id="panel-audit" role="tabpanel" hidden>
+    <div class="ad-container">
+      <div class="ad-tools">
+        <input type="search" class="ad-search" id="aSearch" placeholder="Filtrar por ação…">
+        <select class="ad-select" id="aActor" style="max-width:240px">
+          <option value="">Todos os atores</option>
+        </select>
+        <select class="ad-select" id="aRange" style="max-width:160px">
+          <option value="7">Últimos 7 dias</option>
+          <option value="30" selected>Últimos 30 dias</option>
+          <option value="90">Últimos 90 dias</option>
+          <option value="all">Tudo (até 12 meses)</option>
+        </select>
+        <button class="ad-btn ghost" id="aReload">Atualizar</button>
+      </div>
+      <table class="ad-table" id="aTable">
+        <thead><tr>
+          <th>Quando</th><th>Ator</th><th>Ação</th><th>Entidade</th><th class="right">Detalhes</th>
+        </tr></thead>
+        <tbody id="aTbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================================================
+     DRAWER genérico
+     ============================================================ -->
+<div class="ad-drawer-bg" id="dBg" aria-hidden="true"></div>
+<aside class="ad-drawer" id="dDrawer" aria-hidden="true" role="dialog">
+  <div class="ad-drawer-head">
+    <h3 id="dTitle">—</h3>
+    <button class="ad-drawer-close" id="dClose" aria-label="Fechar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="ad-drawer-body" id="dBody"></div>
+  <div class="ad-drawer-foot" id="dFoot"></div>
+</aside>
+
+<footer class="ad-foot">
+  <div class="ad-foot-inner">
+    <span>© 2025 IMO Insights · Administração</span>
+    <div class="ad-foot-links">
+      <a href="privacidade.html">Política de Privacidade</a>
+      <a href="area-cliente-perfil.html">Perfil</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/env-config.js"></script>
+<script src="/assets/js/supabase-client.js"></script>
+<script src="/assets/js/role-helpers.js"></script>
+<script src="/assets/js/session-guard.js"></script>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var H, profile;
+
+  // Caches
+  var clientsCache = null;
+  var usersCache   = null;
+  var projectsCache = null;
+
+  // Estado de filtro
+  var uRoleFilter = 'all';
+  var pStatusFilter = 'all';
+
+  // ============================================================
+  // Bootstrap
+  // ============================================================
+  document.addEventListener('imo:ready', async function (e) {
+    profile = e.detail.profile;
+    H = IMO.helpers;
+
+    if (!H.isAdmin(profile)) {
+      window.location.replace(H.homeForRole(profile.role));
+      return;
+    }
+
+    var name = profile.full_name || profile.email;
+    $('acUserName').textContent  = name;
+    $('avatarInitial').textContent = (name || '·').charAt(0).toUpperCase();
+    $('logoutBtn').addEventListener('click', function () { H.signOut(); });
+
+    if (H.isSuperAdmin(profile)) {
+      $('adRoleBadge').textContent = 'SUPER-ADMINISTRADOR';
+      $('adBrand').textContent = 'Super-administração';
+    }
+    $('adHelloTitle').textContent = 'Olá, ' + ((profile.full_name || '').split(/\s+/)[0] || 'admin') + '.';
+
+    setupTabs();
+    setupDrawer();
+
+    // Carrega tab inicial
+    await switchTab('queue');
+  });
+
+  // ============================================================
+  // Tab system
+  // ============================================================
+  var tabLoaders = {};
+  var tabsLoaded = {};
+
+  function setupTabs() {
+    document.querySelectorAll('.ad-tab').forEach(function (b) {
+      b.addEventListener('click', function () { switchTab(b.dataset.tab); });
+    });
+    tabLoaders = {
+      queue:    loadQueue,
+      clients:  loadClients,
+      users:    loadUsers,
+      projects: loadProjects,
+      audit:    loadAudit
+    };
+  }
+
+  async function switchTab(name) {
+    document.querySelectorAll('.ad-tab').forEach(function (b) {
+      var on = b.dataset.tab === name;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    document.querySelectorAll('.ad-panel').forEach(function (p) { p.hidden = true; });
+    $('panel-' + name).hidden = false;
+
+    if (!tabsLoaded[name] && tabLoaders[name]) {
+      tabsLoaded[name] = true;
+      try { await tabLoaders[name](); }
+      catch (e) {
+        console.error('[IMO admin] erro carregando ' + name + ':', e);
+        H.toast('Erro ao carregar ' + name + '.', 'error');
+        tabsLoaded[name] = false;
+      }
+    }
+  }
+
+  // ============================================================
+  // Drawer genérico
+  // ============================================================
+  function setupDrawer() {
+    $('dClose').addEventListener('click', closeDrawer);
+    $('dBg').addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') closeDrawer(); });
+  }
+  function openDrawer(title, bodyHtml, footHtml) {
+    $('dTitle').textContent = title;
+    $('dBody').innerHTML    = bodyHtml || '';
+    $('dFoot').innerHTML    = footHtml || '<button class="ad-btn ghost" id="dFootClose">Fechar</button>';
+    $('dDrawer').classList.add('open');  $('dDrawer').setAttribute('aria-hidden','false');
+    $('dBg').classList.add('open');      $('dBg').setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
+    var c = document.getElementById('dFootClose');
+    if (c) c.addEventListener('click', closeDrawer);
+  }
+  function closeDrawer() {
+    $('dDrawer').classList.remove('open'); $('dDrawer').setAttribute('aria-hidden','true');
+    $('dBg').classList.remove('open');     $('dBg').setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
+  }
+
+  // ============================================================
+  // FILA DE APROVAÇÃO + MÉTRICAS
+  // ============================================================
+  async function loadQueue() {
+    await Promise.all([loadMetrics(), loadPendingQueue()]);
+    $('qReload').addEventListener('click', async function () {
+      tabsLoaded.queue = true;
+      await loadMetrics();
+      await loadPendingQueue();
+    });
+  }
+
+  async function loadMetrics() {
+    var weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    var [pendingResp, weekResp, projResp, clientResp] = await Promise.all([
+      IMO.client.from('file_versions').select('id', { count: 'exact', head: true }).eq('status','pending_approval'),
+      IMO.client.from('file_versions').select('id', { count: 'exact', head: true }).gt('created_at', weekAgo),
+      IMO.client.from('projects').select('id, client_id', { count: 'exact' }).eq('status','active'),
+      IMO.client.from('clients').select('id', { count: 'exact', head: true }).eq('status','active')
+    ]);
+
+    $('mPending').textContent = pendingResp.count || 0;
+    $('mPendingSub').textContent = (pendingResp.count || 0) === 0 ? 'Nada pendente' : 'Veja a fila abaixo';
+    $('mUploadsWeek').textContent   = weekResp.count || 0;
+    $('mActiveProjects').textContent = projResp.count || 0;
+    $('mActiveClients').textContent  = clientResp.count || 0;
+
+    if (projResp.data && clientResp.count) {
+      var byClient = {};
+      projResp.data.forEach(function (p) { byClient[p.client_id] = (byClient[p.client_id] || 0) + 1; });
+      var avg = clientResp.count ? ((projResp.count || 0) / clientResp.count).toFixed(1).replace('.',',') : '0';
+      $('mActiveProjectsSub').textContent = 'Média de ' + avg + ' por cliente';
+    }
+
+    // Atualiza badge da tab
+    var cnt = $('cntQueue');
+    if (pendingResp.count > 0) { cnt.hidden = false; cnt.textContent = pendingResp.count > 9 ? '9+' : pendingResp.count; }
+    else cnt.hidden = true;
+  }
+
+  async function loadPendingQueue() {
+    var resp = await IMO.client
+      .from('file_versions')
+      .select('id, version_number, mime_type, size_bytes, created_at, ' +
+              'uploaded_by_user:users!file_versions_uploaded_by_fkey(id, full_name, email), ' +
+              'content_slots!inner(id, type, display_name, project_id, projects!inner(id, name, client_id, clients!inner(id, name)))')
+      .eq('status','pending_approval')
+      .order('created_at', { ascending: true });
+
+    if (resp.error) throw resp.error;
+    renderQueue(resp.data || []);
+  }
+
+  function renderQueue(rows) {
+    var box = $('qList');
+    if (rows.length === 0) {
+      box.innerHTML = '<div class="ad-empty"><h3>Fila vazia</h3><p>Nenhuma submissão aguardando aprovação.</p></div>';
+      return;
+    }
+    box.innerHTML = '';
+    rows.forEach(function (r) {
+      var slot    = r.content_slots || {};
+      var project = slot.projects || {};
+      var client  = project.clients || {};
+      var uploader = r.uploaded_by_user || {};
+      var isNewVersion = r.version_number > 1;
+
+      var card = document.createElement('div');
+      card.className = 'ad-q-card';
+      card.innerHTML =
+        '<div>' +
+          '<span class="ad-q-pill' + (isNewVersion ? ' newver' : '') + '">' +
+            (isNewVersion ? 'Nova versão · v' + r.version_number : 'Conteúdo novo') +
+          '</span>' +
+          '<h4>' + H.escapeHtml(slot.display_name || '—') + '</h4>' +
+          '<div class="ad-q-sub">' + H.escapeHtml(client.name || '—') + ' · ' + H.escapeHtml(project.name || '—') + ' · ' + H.escapeHtml(H.typeLabel(slot.type)) + '</div>' +
+          '<div class="ad-q-meta">' +
+            '<span>Enviado por <strong>' + H.escapeHtml(uploader.full_name || uploader.email || '—') + '</strong></span>' +
+            '<span>' + H.formatDateTime(r.created_at) + '</span>' +
+            (r.size_bytes ? '<span>' + H.formatBytes(r.size_bytes) + '</span>' : '') +
+          '</div>' +
+        '</div>' +
+        '<div class="ad-q-actions">' +
+          '<button class="ad-btn ghost q-preview"  data-vid="' + H.escapeHtml(r.id) + '">Pré-visualizar</button>' +
+          '<button class="ad-btn success q-approve" data-vid="' + H.escapeHtml(r.id) + '">Aprovar</button>' +
+          '<button class="ad-btn danger  q-reject"  data-vid="' + H.escapeHtml(r.id) + '">Rejeitar</button>' +
+        '</div>';
+      box.appendChild(card);
+    });
+
+    box.querySelectorAll('.q-preview').forEach(function (b) {
+      b.addEventListener('click', function () { previewVersion(b.dataset.vid, b); });
+    });
+    box.querySelectorAll('.q-approve').forEach(function (b) {
+      b.addEventListener('click', function () { approveVersion(b.dataset.vid); });
+    });
+    box.querySelectorAll('.q-reject').forEach(function (b) {
+      b.addEventListener('click', function () { openRejectDrawer(b.dataset.vid); });
+    });
+  }
+
+  async function previewVersion(versionId, btn) {
+    var orig = btn.innerHTML;
+    btn.disabled = true; btn.innerHTML = 'Gerando…';
+    try {
+      var resp = await H.callApi('sign-download', { method: 'POST', body: { version_id: versionId, preview: true } });
+      window.open(resp.url, '_blank', 'noopener,noreferrer');
+    } catch (err) { H.toast(err.message || 'Erro ao gerar pré-visualização', 'error'); }
+    finally { btn.disabled = false; btn.innerHTML = orig; }
+  }
+
+  async function approveVersion(versionId) {
+    if (!confirm('Confirmar aprovação? Esta ação substitui imediatamente a versão atual visível ao cliente, se houver.')) return;
+    try {
+      await H.callApi('approve-version', { method: 'POST', body: { version_id: versionId } });
+      H.toast('Versão aprovada e publicada.', 'success');
+      tabsLoaded.queue = true; await loadMetrics(); await loadPendingQueue();
+    } catch (err) { H.toast(err.message || 'Erro ao aprovar', 'error'); }
+  }
+
+  function openRejectDrawer(versionId) {
+    var bodyHtml =
+      '<div class="ad-field">' +
+        '<label class="ad-label" for="rejNotes">Motivo da rejeição</label>' +
+        '<textarea id="rejNotes" class="ad-textarea" placeholder="Explique ao editor o que precisa ser corrigido. Esta mensagem será enviada por e-mail." minlength="10"></textarea>' +
+        '<span class="ad-help">Mínimo 10 caracteres. Seja específico para que o editor consiga corrigir.</span>' +
+      '</div>' +
+      '<div class="ad-msg" id="rejMsg" style="display:none"></div>';
+    var footHtml =
+      '<button class="ad-btn ghost" id="dFootClose">Cancelar</button>' +
+      '<button class="ad-btn danger" id="rejConfirm">Confirmar rejeição</button>';
+    openDrawer('Rejeitar submissão', bodyHtml, footHtml);
+    document.getElementById('rejConfirm').addEventListener('click', async function () {
+      var notes = ($('rejNotes').value || '').trim();
+      if (notes.length < 10) {
+        var m = $('rejMsg'); m.className = 'ad-msg err'; m.textContent = 'Informe um motivo com pelo menos 10 caracteres.'; m.style.display='block';
+        return;
+      }
+      var btn = document.getElementById('rejConfirm');
+      btn.disabled = true; btn.innerHTML = 'Rejeitando…';
+      try {
+        await H.callApi('reject-version', { method:'POST', body:{ version_id: versionId, notes: notes } });
+        H.toast('Submissão rejeitada. Editor foi avisado.', 'success');
+        closeDrawer();
+        tabsLoaded.queue = true; await loadMetrics(); await loadPendingQueue();
+      } catch (err) {
+        var m = $('rejMsg'); m.className = 'ad-msg err'; m.textContent = err.message || 'Erro ao rejeitar.'; m.style.display='block';
+        btn.disabled = false; btn.innerHTML = 'Confirmar rejeição';
+      }
+    });
+  }
+
+  // ============================================================
+  // CLIENTES
+  // ============================================================
+  async function loadClients() {
+    $('cNew').addEventListener('click', function () { openClientDrawer(); });
+    $('cSearch').addEventListener('input', function () { renderClients(filterClients()); });
+    await refreshClients();
+  }
+
+  async function refreshClients() {
+    var resp = await IMO.client.from('clients')
+      .select('id, name, cnpj, status, created_at, users:users(id)')
+      .order('name');
+    if (resp.error) throw resp.error;
+    clientsCache = resp.data || [];
+    renderClients(filterClients());
+  }
+
+  function filterClients() {
+    var q = ($('cSearch').value || '').trim().toLowerCase();
+    if (!q) return clientsCache || [];
+    return (clientsCache || []).filter(function (c) {
+      return (c.name || '').toLowerCase().indexOf(q) !== -1 ||
+             (c.cnpj || '').toLowerCase().indexOf(q) !== -1;
+    });
+  }
+
+  function renderClients(rows) {
+    var tbody = $('cTbody');
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="6"><div class="ad-empty"><h3>Sem clientes cadastrados</h3></div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = '';
+    rows.forEach(function (c) {
+      var tr = document.createElement('tr');
+      tr.className = 'clickable';
+      tr.innerHTML =
+        '<td><strong>' + H.escapeHtml(c.name) + '</strong></td>' +
+        '<td>' + H.escapeHtml(c.cnpj || '—') + '</td>' +
+        '<td><span class="ad-status ' + c.status + '">' + H.escapeHtml(H.statusLabel(c.status)) + '</span></td>' +
+        '<td>' + ((c.users || []).length) + '</td>' +
+        '<td>' + H.formatDate(c.created_at) + '</td>' +
+        '<td class="actions"><button class="ad-btn ghost sm">Editar</button></td>';
+      tr.addEventListener('click', function () { openClientDrawer(c); });
+      tbody.appendChild(tr);
+    });
+  }
+
+  function openClientDrawer(client) {
+    var isNew = !client;
+    var c = client || { name:'', cnpj:'', status:'active' };
+    var bodyHtml =
+      '<div class="ad-field"><label class="ad-label" for="clName">Nome da empresa</label>' +
+        '<input id="clName" class="ad-input" maxlength="160" required value="' + H.escapeHtml(c.name) + '"></div>' +
+      '<div class="ad-row-2">' +
+        '<div class="ad-field"><label class="ad-label" for="clCnpj">CNPJ</label>' +
+          '<input id="clCnpj" class="ad-input" maxlength="20" value="' + H.escapeHtml(c.cnpj || '') + '"></div>' +
+        '<div class="ad-field"><label class="ad-label" for="clStatus">Status</label>' +
+          '<select id="clStatus" class="ad-select">' +
+            '<option value="active"'   + (c.status === 'active'   ? ' selected' : '') + '>Ativo</option>' +
+            '<option value="inactive"' + (c.status === 'inactive' ? ' selected' : '') + '>Inativo</option>' +
+          '</select></div>' +
+      '</div>' +
+      '<div class="ad-msg" id="clMsg" style="display:none"></div>';
+
+    var users = client && (clientsCache || []).find(function(x){return x.id===client.id;});
+    if (!isNew) {
+      bodyHtml += '<div class="ad-section-title">Usuários vinculados</div>';
+      // popula sob demanda
+      bodyHtml += '<div id="clUsers"><div class="ad-skeleton" style="width:60%"></div></div>';
+    }
+
+    var footHtml = '<button class="ad-btn ghost" id="dFootClose">Cancelar</button>' +
+                   '<button class="ad-btn" id="clSave">' + (isNew ? 'Criar empresa' : 'Salvar alterações') + '</button>';
+
+    openDrawer(isNew ? 'Nova empresa-cliente' : 'Editar empresa', bodyHtml, footHtml);
+
+    if (!isNew) loadClientUsers(client.id);
+
+    document.getElementById('clSave').addEventListener('click', async function () {
+      var name = $('clName').value.trim();
+      var cnpj = $('clCnpj').value.trim() || null;
+      var status = $('clStatus').value;
+      if (!name) {
+        var m=$('clMsg'); m.className='ad-msg err'; m.textContent='Informe o nome.'; m.style.display='block'; return;
+      }
+      var btn = document.getElementById('clSave');
+      btn.disabled = true; btn.innerHTML = 'Salvando…';
+      try {
+        if (isNew) {
+          var ins = await IMO.client.from('clients').insert({ name:name, cnpj:cnpj, status:status }).select().single();
+          if (ins.error) throw ins.error;
+          await H.callApi('audit-log', { method:'POST', body:{ action:'client_created', entity_type:'client', entity_id:ins.data.id, metadata:{name:name} }});
+        } else {
+          var upd = await IMO.client.from('clients').update({ name:name, cnpj:cnpj, status:status }).eq('id', client.id);
+          if (upd.error) throw upd.error;
+          await H.callApi('audit-log', { method:'POST', body:{ action:'client_updated', entity_type:'client', entity_id:client.id, metadata:{name:name} }});
+        }
+        H.toast(isNew ? 'Empresa criada.' : 'Alterações salvas.', 'success');
+        closeDrawer();
+        await refreshClients();
+      } catch (err) {
+        console.error('[IMO admin clients] erro:', err);
+        var m=$('clMsg'); m.className='ad-msg err'; m.textContent = (err.message || 'Erro ao salvar.'); m.style.display='block';
+        btn.disabled=false; btn.innerHTML = isNew ? 'Criar empresa' : 'Salvar alterações';
+      }
+    });
+  }
+
+  async function loadClientUsers(clientId) {
+    try {
+      var resp = await IMO.client.from('users')
+        .select('id, full_name, email, role, status')
+        .eq('client_id', clientId)
+        .order('full_name');
+      var box = document.getElementById('clUsers');
+      if (resp.error) { box.innerHTML = '<p style="color:#ff7676">Erro ao carregar.</p>'; return; }
+      var rows = resp.data || [];
+      if (!rows.length) { box.innerHTML = '<p style="color:#777;font-size:13px">Nenhum usuário vinculado.</p>'; return; }
+      box.innerHTML = '<table class="ad-table"><tbody>' +
+        rows.map(function (u) {
+          return '<tr><td>' + H.escapeHtml(u.full_name || u.email) + '</td>' +
+                 '<td>' + H.escapeHtml(u.email) + '</td>' +
+                 '<td><span class="ad-status ' + u.status + '">' + H.escapeHtml(H.statusLabel(u.status)) + '</span></td></tr>';
+        }).join('') + '</tbody></table>';
+    } catch (e) { console.error(e); }
+  }
+
+  // ============================================================
+  // USUÁRIOS
+  // ============================================================
+  async function loadUsers() {
+    $('uNew').addEventListener('click', function () { openInviteDrawer(); });
+    $('uSearch').addEventListener('input', function () { renderUsers(filterUsers()); });
+    document.querySelectorAll('[data-rolef]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        document.querySelectorAll('[data-rolef]').forEach(function (x) { x.classList.remove('active'); });
+        b.classList.add('active'); uRoleFilter = b.dataset.rolef;
+        renderUsers(filterUsers());
+      });
+    });
+    await refreshUsers();
+  }
+
+  async function refreshUsers() {
+    var resp = await IMO.client.from('users')
+      .select('id, email, full_name, role, status, last_login_at, created_at, notify_by_email, ' +
+              'client:clients(id,name)')
+      .order('created_at', { ascending: false });
+    if (resp.error) throw resp.error;
+    usersCache = resp.data || [];
+    renderUsers(filterUsers());
+  }
+
+  function filterUsers() {
+    var q = ($('uSearch').value || '').trim().toLowerCase();
+    return (usersCache || []).filter(function (u) {
+      if (uRoleFilter !== 'all' && u.role !== uRoleFilter) return false;
+      if (!q) return true;
+      return (u.email || '').toLowerCase().indexOf(q) !== -1 ||
+             (u.full_name || '').toLowerCase().indexOf(q) !== -1;
+    });
+  }
+
+  function renderUsers(rows) {
+    var tbody = $('uTbody');
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="7"><div class="ad-empty"><h3>Sem usuários</h3></div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = '';
+    rows.forEach(function (u) {
+      var tr = document.createElement('tr');
+      tr.className = 'clickable';
+      tr.innerHTML =
+        '<td><strong>' + H.escapeHtml(u.full_name || '—') + '</strong></td>' +
+        '<td>' + H.escapeHtml(u.email) + '</td>' +
+        '<td><span class="ad-status ' + (u.role === 'super_admin' ? 'invited' : 'active') + '">' + H.escapeHtml(H.roleLabel(u.role)) + '</span></td>' +
+        '<td>' + H.escapeHtml((u.client && u.client.name) || (u.role === 'client' ? '—' : 'IMO')) + '</td>' +
+        '<td><span class="ad-status ' + u.status + '">' + H.escapeHtml(H.statusLabel(u.status)) + '</span></td>' +
+        '<td>' + (u.last_login_at ? H.formatDateTime(u.last_login_at) : '—') + '</td>' +
+        '<td class="actions"><button class="ad-btn ghost sm">Gerenciar</button></td>';
+      tr.addEventListener('click', function () { openUserDrawer(u); });
+      tbody.appendChild(tr);
+    });
+  }
+
+  function openInviteDrawer() {
+    var bodyHtml =
+      '<div class="ad-field"><label class="ad-label" for="invName">Nome completo</label>' +
+        '<input id="invName" class="ad-input" maxlength="120" required></div>' +
+      '<div class="ad-field"><label class="ad-label" for="invEmail">E-mail</label>' +
+        '<input id="invEmail" class="ad-input" type="email" required></div>' +
+      '<div class="ad-row-2">' +
+        '<div class="ad-field"><label class="ad-label" for="invRole">Papel</label>' +
+          '<select id="invRole" class="ad-select">' +
+            '<option value="client">Cliente</option>' +
+            '<option value="editor">Editor</option>' +
+            (H.isSuperAdmin(profile) ? '<option value="admin">Administrador</option><option value="super_admin">Super-administrador</option>' : '') +
+          '</select></div>' +
+        '<div class="ad-field" id="invClientField"><label class="ad-label" for="invClient">Empresa-cliente</label>' +
+          '<select id="invClient" class="ad-select"></select></div>' +
+      '</div>' +
+      '<p class="ad-help">Um e-mail será enviado com link para o usuário definir a senha. O link expira em 24 horas.</p>' +
+      '<div class="ad-msg" id="invMsg" style="display:none"></div>';
+    var footHtml = '<button class="ad-btn ghost" id="dFootClose">Cancelar</button>' +
+                   '<button class="ad-btn" id="invSend">Enviar convite</button>';
+    openDrawer('Convidar usuário', bodyHtml, footHtml);
+
+    // Popula clientes
+    var sel = $('invClient');
+    sel.innerHTML = '<option value="">Selecione…</option>';
+    (clientsCache || []).filter(function (c) { return c.status === 'active'; }).forEach(function (c) {
+      var o = document.createElement('option'); o.value = c.id; o.textContent = c.name; sel.appendChild(o);
+    });
+
+    function toggleClientField() {
+      var role = $('invRole').value;
+      var f = document.getElementById('invClientField');
+      f.style.display = role === 'client' ? '' : 'none';
+    }
+    $('invRole').addEventListener('change', toggleClientField);
+    toggleClientField();
+
+    document.getElementById('invSend').addEventListener('click', async function () {
+      var name = $('invName').value.trim();
+      var email = $('invEmail').value.trim();
+      var role  = $('invRole').value;
+      var clientId = $('invClient').value || null;
+      if (!name)   return invErr('Informe o nome.');
+      if (!email || !/.+@.+\..+/.test(email)) return invErr('E-mail inválido.');
+      if (role === 'client' && !clientId) return invErr('Selecione a empresa-cliente.');
+
+      var btn = document.getElementById('invSend');
+      btn.disabled = true; btn.innerHTML = 'Enviando…';
+      try {
+        await H.callApi('invite-user', {
+          method: 'POST',
+          body: { full_name: name, email: email, role: role, client_id: clientId }
+        });
+        H.toast('Convite enviado para ' + email + '.', 'success');
+        closeDrawer();
+        if (clientsCache) await refreshClients();
+        await refreshUsers();
+      } catch (err) {
+        invErr(err.message || 'Não foi possível convidar.');
+        btn.disabled = false; btn.innerHTML = 'Enviar convite';
+      }
+    });
+
+    function invErr(msg) {
+      var m = $('invMsg'); m.className='ad-msg err'; m.textContent=msg; m.style.display='block';
+    }
+  }
+
+  function openUserDrawer(u) {
+    var canChangeAdmin = H.isSuperAdmin(profile);
+    var canEditTarget  = !(u.role === 'super_admin' && !canChangeAdmin) && !(u.role === 'admin' && !canChangeAdmin);
+    var bodyHtml =
+      '<div class="ad-field"><label class="ad-label">Nome</label>' +
+        '<input class="ad-input" id="usName" maxlength="120" value="' + H.escapeHtml(u.full_name || '') + '"' + (canEditTarget?'':' disabled') + '></div>' +
+      '<div class="ad-field"><label class="ad-label">E-mail</label>' +
+        '<input class="ad-input" value="' + H.escapeHtml(u.email) + '" disabled></div>' +
+      '<div class="ad-row-2">' +
+        '<div class="ad-field"><label class="ad-label">Papel</label>' +
+          '<select class="ad-select" id="usRole"' + (canEditTarget?'':' disabled') + '>' +
+            '<option value="client"' + (u.role === 'client' ? ' selected' : '') + '>Cliente</option>' +
+            '<option value="editor"' + (u.role === 'editor' ? ' selected' : '') + '>Editor</option>' +
+            (canChangeAdmin
+              ? '<option value="admin"' + (u.role === 'admin' ? ' selected' : '') + '>Administrador</option>' +
+                '<option value="super_admin"' + (u.role === 'super_admin' ? ' selected' : '') + '>Super-administrador</option>'
+              : '') +
+          '</select></div>' +
+        '<div class="ad-field"><label class="ad-label">Status</label>' +
+          '<select class="ad-select" id="usStatus"' + (canEditTarget?'':' disabled') + '>' +
+            '<option value="active"'   + (u.status === 'active'   ? ' selected' : '') + '>Ativo</option>' +
+            '<option value="invited"'  + (u.status === 'invited'  ? ' selected' : '') + '>Convidado</option>' +
+            '<option value="disabled"' + (u.status === 'disabled' ? ' selected' : '') + '>Desativado</option>' +
+          '</select></div>' +
+      '</div>' +
+      '<div class="ad-field" id="usClientField"' + (u.role === 'client' ? '' : ' style="display:none"') + '>' +
+        '<label class="ad-label">Empresa-cliente</label>' +
+        '<select class="ad-select" id="usClient"' + (canEditTarget?'':' disabled') + '></select></div>' +
+      (u.last_login_at ? '<p class="ad-help">Último login: ' + H.formatDateTime(u.last_login_at) + '</p>' : '') +
+      '<div class="ad-msg" id="usMsg" style="display:none"></div>';
+
+    var footHtml = '<button class="ad-btn ghost" id="dFootClose">Cancelar</button>';
+    if (u.status === 'invited') {
+      footHtml += '<button class="ad-btn ghost" id="usResend">Reenviar convite</button>';
+    }
+    if (canEditTarget) footHtml += '<button class="ad-btn" id="usSave">Salvar alterações</button>';
+    openDrawer('Gerenciar usuário', bodyHtml, footHtml);
+
+    // popula empresa
+    var selC = document.getElementById('usClient');
+    selC.innerHTML = '<option value="">—</option>';
+    (clientsCache || []).filter(function (c) { return c.status === 'active'; }).forEach(function (c) {
+      var o = document.createElement('option'); o.value = c.id; o.textContent = c.name;
+      if (u.client && u.client.id === c.id) o.selected = true;
+      selC.appendChild(o);
+    });
+    document.getElementById('usRole').addEventListener('change', function () {
+      document.getElementById('usClientField').style.display = (this.value === 'client') ? '' : 'none';
+    });
+
+    if (document.getElementById('usResend')) {
+      document.getElementById('usResend').addEventListener('click', async function () {
+        try {
+          await H.callApi('invite-user', { method:'POST', body:{ resend_for: u.id }});
+          H.toast('Convite reenviado.', 'success');
+        } catch (err) { H.toast(err.message || 'Erro ao reenviar.', 'error'); }
+      });
+    }
+
+    if (document.getElementById('usSave')) {
+      document.getElementById('usSave').addEventListener('click', async function () {
+        var name   = $('usName').value.trim();
+        var role   = $('usRole').value;
+        var status = $('usStatus').value;
+        var clientId = role === 'client' ? ($('usClient').value || null) : null;
+        if (role === 'client' && !clientId) return usErr('Selecione a empresa-cliente.');
+        var btn = this;
+        btn.disabled = true; btn.innerHTML = 'Salvando…';
+        try {
+          await H.callApi('admin-update-user', { method:'POST', body:{
+            user_id: u.id, full_name: name, role: role, status: status, client_id: clientId
+          }});
+          H.toast('Usuário atualizado.', 'success');
+          closeDrawer();
+          await refreshUsers();
+        } catch (err) {
+          usErr(err.message || 'Erro ao salvar.');
+          btn.disabled = false; btn.innerHTML = 'Salvar alterações';
+        }
+      });
+    }
+    function usErr(m) { var x=$('usMsg'); x.className='ad-msg err'; x.textContent=m; x.style.display='block'; }
+  }
+
+  // ============================================================
+  // PROJETOS
+  // ============================================================
+  async function loadProjects() {
+    if (!clientsCache) await refreshClients();
+    $('pNew').addEventListener('click', function () { openProjectDrawer(); });
+    $('pSearch').addEventListener('input', function () { renderProjects(filterProjects()); });
+    document.querySelectorAll('[data-pstatusf]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        document.querySelectorAll('[data-pstatusf]').forEach(function (x) { x.classList.remove('active'); });
+        b.classList.add('active'); pStatusFilter = b.dataset.pstatusf;
+        renderProjects(filterProjects());
+      });
+    });
+    await refreshProjects();
+  }
+
+  async function refreshProjects() {
+    var resp = await IMO.client.from('projects')
+      .select('id, name, description, status, scope, responsible_names, starts_at, ends_at, created_at, client:clients(id,name)')
+      .order('created_at', { ascending: false });
+    if (resp.error) throw resp.error;
+    projectsCache = resp.data || [];
+    renderProjects(filterProjects());
+  }
+
+  function filterProjects() {
+    var q = ($('pSearch').value || '').trim().toLowerCase();
+    return (projectsCache || []).filter(function (p) {
+      if (pStatusFilter !== 'all' && p.status !== pStatusFilter) return false;
+      if (!q) return true;
+      return (p.name || '').toLowerCase().indexOf(q) !== -1 ||
+             ((p.client && p.client.name) || '').toLowerCase().indexOf(q) !== -1;
+    });
+  }
+
+  function renderProjects(rows) {
+    var tbody = $('pTbody');
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="6"><div class="ad-empty"><h3>Sem projetos</h3></div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = '';
+    rows.forEach(function (p) {
+      var period = (p.starts_at ? H.formatDate(p.starts_at) : '') +
+                   ((p.starts_at && p.ends_at) ? ' — ' : '') +
+                   (p.ends_at ? H.formatDate(p.ends_at) : (p.starts_at ? '— em curso' : ''));
+      var tr = document.createElement('tr');
+      tr.className = 'clickable';
+      tr.innerHTML =
+        '<td><strong>' + H.escapeHtml(p.name) + '</strong></td>' +
+        '<td>' + H.escapeHtml((p.client && p.client.name) || '—') + '</td>' +
+        '<td><span class="ad-status ' + p.status + '">' + H.escapeHtml(H.statusLabel(p.status)) + '</span></td>' +
+        '<td>' + H.escapeHtml(period || '—') + '</td>' +
+        '<td>' + H.formatDate(p.created_at) + '</td>' +
+        '<td class="actions"><button class="ad-btn ghost sm">Editar</button></td>';
+      tr.addEventListener('click', function () { openProjectDrawer(p); });
+      tbody.appendChild(tr);
+    });
+  }
+
+  function openProjectDrawer(project) {
+    var isNew = !project;
+    var p = project || { name:'', description:'', scope:'', responsible_names:[], status:'active', starts_at:'', ends_at:'', client:null };
+    var bodyHtml =
+      '<div class="ad-field"><label class="ad-label" for="prClient">Empresa-cliente</label>' +
+        '<select id="prClient" class="ad-select" required></select></div>' +
+      '<div class="ad-field"><label class="ad-label" for="prName">Nome do projeto</label>' +
+        '<input id="prName" class="ad-input" maxlength="160" value="' + H.escapeHtml(p.name) + '" required></div>' +
+      '<div class="ad-field"><label class="ad-label" for="prDesc">Descrição</label>' +
+        '<textarea id="prDesc" class="ad-textarea">' + H.escapeHtml(p.description || '') + '</textarea></div>' +
+      '<div class="ad-field"><label class="ad-label" for="prScope">Escopo (visível ao cliente)</label>' +
+        '<textarea id="prScope" class="ad-textarea">' + H.escapeHtml(p.scope || '') + '</textarea></div>' +
+      '<div class="ad-field"><label class="ad-label" for="prResp">Responsáveis IMO (separados por vírgula)</label>' +
+        '<input id="prResp" class="ad-input" value="' + H.escapeHtml((p.responsible_names || []).join(', ')) + '"></div>' +
+      '<div class="ad-row-2">' +
+        '<div class="ad-field"><label class="ad-label" for="prStart">Início</label>' +
+          '<input id="prStart" class="ad-input" type="date" value="' + (p.starts_at || '') + '"></div>' +
+        '<div class="ad-field"><label class="ad-label" for="prEnd">Fim</label>' +
+          '<input id="prEnd" class="ad-input" type="date" value="' + (p.ends_at || '') + '"></div>' +
+      '</div>' +
+      '<div class="ad-field"><label class="ad-label" for="prStatus">Status</label>' +
+        '<select id="prStatus" class="ad-select">' +
+          '<option value="active"'   + (p.status==='active'?' selected':'')   + '>Ativo</option>' +
+          '<option value="draft"'    + (p.status==='draft'?' selected':'')    + '>Rascunho</option>' +
+          '<option value="archived"' + (p.status==='archived'?' selected':'') + '>Arquivado</option>' +
+        '</select></div>' +
+      '<div class="ad-msg" id="prMsg" style="display:none"></div>';
+
+    var footHtml = '<button class="ad-btn ghost" id="dFootClose">Cancelar</button>' +
+                   '<button class="ad-btn" id="prSave">' + (isNew ? 'Criar projeto' : 'Salvar') + '</button>';
+
+    openDrawer(isNew ? 'Novo projeto' : 'Editar projeto', bodyHtml, footHtml);
+
+    var sel = $('prClient');
+    sel.innerHTML = '<option value="">Selecione…</option>';
+    (clientsCache || []).filter(function (c) { return c.status === 'active'; }).forEach(function (c) {
+      var o = document.createElement('option'); o.value = c.id; o.textContent = c.name;
+      if (p.client && p.client.id === c.id) o.selected = true;
+      sel.appendChild(o);
+    });
+
+    document.getElementById('prSave').addEventListener('click', async function () {
+      var clientId = $('prClient').value;
+      var name     = $('prName').value.trim();
+      if (!clientId) return prErr('Selecione a empresa.');
+      if (!name)     return prErr('Informe o nome.');
+      var data = {
+        client_id: clientId,
+        name: name,
+        description: ($('prDesc').value || '').trim() || null,
+        scope:       ($('prScope').value || '').trim() || null,
+        responsible_names: ($('prResp').value || '').split(',').map(function(s){return s.trim();}).filter(Boolean),
+        starts_at: $('prStart').value || null,
+        ends_at:   $('prEnd').value   || null,
+        status:    $('prStatus').value
+      };
+      var btn = this;
+      btn.disabled = true; btn.innerHTML = 'Salvando…';
+      try {
+        if (isNew) {
+          data.created_by = profile.id;
+          var ins = await IMO.client.from('projects').insert(data).select().single();
+          if (ins.error) throw ins.error;
+          await H.callApi('audit-log', { method:'POST', body:{ action:'project_created', entity_type:'project', entity_id:ins.data.id, metadata:{name:name} }});
+        } else {
+          var upd = await IMO.client.from('projects').update(data).eq('id', project.id);
+          if (upd.error) throw upd.error;
+          await H.callApi('audit-log', { method:'POST', body:{ action:'project_updated', entity_type:'project', entity_id:project.id, metadata:{name:name} }});
+        }
+        H.toast(isNew ? 'Projeto criado.' : 'Projeto atualizado.', 'success');
+        closeDrawer();
+        await refreshProjects();
+      } catch (err) {
+        prErr(err.message || 'Erro ao salvar.');
+        btn.disabled = false; btn.innerHTML = isNew ? 'Criar projeto' : 'Salvar';
+      }
+    });
+
+    function prErr(m) { var x=$('prMsg'); x.className='ad-msg err'; x.textContent=m; x.style.display='block'; }
+  }
+
+  // ============================================================
+  // AUDITORIA
+  // ============================================================
+  async function loadAudit() {
+    if (!usersCache) await refreshUsers();
+    var sel = $('aActor');
+    (usersCache || []).forEach(function (u) {
+      var o = document.createElement('option'); o.value = u.id; o.textContent = (u.full_name || u.email);
+      sel.appendChild(o);
+    });
+    $('aReload').addEventListener('click', renderAudit);
+    $('aSearch').addEventListener('input', renderAudit);
+    $('aActor').addEventListener('change', renderAudit);
+    $('aRange').addEventListener('change', renderAudit);
+    await renderAudit();
+  }
+
+  async function renderAudit() {
+    var actor = $('aActor').value;
+    var range = $('aRange').value;
+    var search = ($('aSearch').value || '').trim().toLowerCase();
+
+    var q = IMO.client.from('audit_logs')
+      .select('id, action, entity_type, entity_id, metadata, ip_address, created_at, ' +
+              'actor:users!audit_logs_actor_id_fkey(id, full_name, email)')
+      .order('created_at', { ascending: false })
+      .limit(200);
+
+    if (actor) q = q.eq('actor_id', actor);
+    if (range !== 'all') {
+      var since = new Date(Date.now() - parseInt(range,10) * 24 * 60 * 60 * 1000).toISOString();
+      q = q.gt('created_at', since);
+    }
+
+    var resp = await q;
+    var tbody = $('aTbody');
+    if (resp.error) {
+      tbody.innerHTML = '<tr><td colspan="5"><div class="ad-empty"><h3>Erro ao carregar</h3><p>' + H.escapeHtml(resp.error.message) + '</p></div></td></tr>';
+      return;
+    }
+    var rows = (resp.data || []).filter(function (r) {
+      if (!search) return true;
+      return (r.action || '').toLowerCase().indexOf(search) !== -1;
+    });
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="5"><div class="ad-empty"><h3>Sem registros</h3></div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = '';
+    rows.forEach(function (r) {
+      var actorName = r.actor ? (r.actor.full_name || r.actor.email) : '—';
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + H.formatDateTime(r.created_at) + '</td>' +
+        '<td>' + H.escapeHtml(actorName) + '</td>' +
+        '<td><code style="font-size:12px;color:#FF8000">' + H.escapeHtml(r.action) + '</code></td>' +
+        '<td>' + H.escapeHtml(r.entity_type || '—') + (r.entity_id ? '<small style="color:#777"> · ' + r.entity_id.slice(0,8) + '</small>' : '') + '</td>' +
+        '<td class="right"><button class="ad-btn ghost sm">Ver</button></td>';
+      tr.querySelector('button').addEventListener('click', function () {
+        openDrawer('Detalhe do log',
+          '<div class="ad-jsonview">' + H.escapeHtml(JSON.stringify({
+            action: r.action, entity_type: r.entity_type, entity_id: r.entity_id,
+            metadata: r.metadata, actor: actorName, ip: r.ip_address, created_at: r.created_at
+          }, null, 2)) + '</div>',
+          '<button class="ad-btn ghost" id="dFootClose">Fechar</button>');
+      });
+      tbody.appendChild(tr);
+    });
+  }
+})();
+</script>
+</body>
+</html>

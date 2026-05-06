@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Índice do site. IMO Insights</title>
+<meta name="description" content="Mapa completo do site IMO Insights. acesse todas as páginas em um só lugar.">
+<link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .indice-wrap{padding:80px 40px 120px;max-width:1400px;margin:0 auto}
+  .indice-head{display:grid;grid-template-columns:1.2fr 1fr;gap:60px;align-items:end;margin-bottom:80px;padding-bottom:40px;border-bottom:1px solid rgba(0,0,0,.12)}
+  .indice-head h1{font-size:clamp(48px,7vw,104px);line-height:.95;letter-spacing:-.03em;font-weight:800;margin:0}
+  .indice-head p{font-size:18px;line-height:1.5;color:#333;max-width:480px;margin:0}
+  .indice-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:48px 64px}
+  .indice-col h2{font-size:14px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#FF5A1F;margin:0 0 24px;padding-bottom:14px;border-bottom:2px solid #111}
+  .indice-col ul{list-style:none;margin:0;padding:0}
+  .indice-col li{border-bottom:1px solid rgba(0,0,0,.08)}
+  .indice-col a{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:18px 0;text-decoration:none;color:#111;font-size:18px;font-weight:600;transition:padding .2s ease,color .2s ease}
+  .indice-col a:hover{padding-left:10px;color:#FF5A1F}
+  .indice-col a .desc{font-size:13px;font-weight:400;color:#666;flex:1;text-align:right;max-width:50%}
+  .indice-col a .arr{font-size:20px;color:#999;transition:transform .2s ease,color .2s ease}
+  .indice-col a:hover .arr{transform:translateX(6px);color:#FF5A1F}
+  @media (max-width:1080px){
+    .indice-wrap{padding:60px 30px 100px}
+    .indice-head{grid-template-columns:1fr;gap:30px;margin-bottom:60px}
+    .indice-grid{gap:40px 48px}
+  }
+  @media (max-width:640px){
+    .indice-wrap{padding:40px 20px 80px}
+    .indice-head{margin-bottom:40px;padding-bottom:24px;gap:20px}
+    .indice-head p{font-size:16px}
+    .indice-grid{grid-template-columns:1fr;gap:36px}
+    .indice-col h2{font-size:12px;margin-bottom:16px}
+    .indice-col a{font-size:16px;padding:14px 0;flex-wrap:wrap}
+    .indice-col a .desc{display:none}
+  }
+</style>
+</head>
+<body>
+<aside class="side-rail" aria-hidden="true">
+  <span>IMO · INSIGHTS</span>
+  <span>ÍNDICE · MAPA DO SITE</span>
+</aside>
+<header class="nav">
+  <div class="nav-inner">
+    <a href="index.html" aria-label="IMO" style="display:flex;align-items:center;gap:14px">
+      <span class="imo-logo"></span>
+    </a>
+    <nav class="links">
+      <a href="index.html">Home</a>
+      <a href="sobre.html">Sobre</a>
+      <a href="produtos.html">Produtos</a>
+      <a href="evb.html">Eu vi o Brasil</a>
+      <a href="abordagem.html">Abordagem</a>
+      <a href="time.html">Time</a>
+      <a href="contato.html">Contato</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:12px">
+      <a href="contato.html" class="nav-cta">Fale com a IMO →</a>
+      <a href="login.html" class="nav-cta login-cta">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Área do Cliente
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="indice-wrap">
+  <div class="indice-head">
+    <div>
+      <div class="section-label">Mapa do site</div>
+      <h1>Índice<br>completo.</h1>
+    </div>
+    <p>Todas as páginas do site IMO Insights organizadas por seção, para navegação rápida e direta.</p>
+  </div>
+
+  <div class="indice-grid">
+
+    <div class="indice-col">
+      <h2>Institucional</h2>
+      <ul>
+        <li><a href="index.html"><span>Home</span><span class="desc">Página inicial</span><span class="arr">→</span></a></li>
+        <li><a href="sobre.html"><span>Sobre</span><span class="desc">Manifesto e posicionamento</span><span class="arr">→</span></a></li>
+        <li><a href="abordagem.html"><span>Abordagem</span><span class="desc">Metodologia IMO</span><span class="arr">→</span></a></li>
+        <li><a href="time.html"><span>Time</span><span class="desc">Quem faz a IMO</span><span class="arr">→</span></a></li>
+        <li><a href="contato.html"><span>Contato</span><span class="desc">Fale com a gente</span><span class="arr">→</span></a></li>
+      </ul>
+    </div>
+
+    <div class="indice-col">
+      <h2>Produtos</h2>
+      <ul>
+        <li><a href="produtos.html"><span>Produtos</span><span class="desc">Visão geral</span><span class="arr">→</span></a></li>
+        <li><a href="produto-projetos.html"><span>Projetos</span><span class="desc">Pesquisa sob medida</span><span class="arr">→</span></a></li>
+        <li><a href="produto-tendencias.html"><span>Tendências</span><span class="desc">Foresight e cultura</span><span class="arr">→</span></a></li>
+        <li><a href="produto-times-bi.html"><span>Times & BI</span><span class="desc">Inteligência contínua</span><span class="arr">→</span></a></li>
+        <li><a href="produto-treinamento.html"><span>Treinamento</span><span class="desc">Capacitação de times</span><span class="arr">→</span></a></li>
+      </ul>
+    </div>
+
+    <div class="indice-col">
+      <h2>Funis de conhecimento</h2>
+      <ul>
+        <li><a href="funil-comunicacao.html"><span>Comunicação</span><span class="desc">Campanhas e marca</span><span class="arr">→</span></a></li>
+        <li><a href="funil-conhecimento.html"><span>Conhecimento</span><span class="desc">Base estratégica</span><span class="arr">→</span></a></li>
+        <li><a href="funil-inovacao.html"><span>Inovação</span><span class="desc">Novos produtos e serviços</span><span class="arr">→</span></a></li>
+        <li><a href="funil-shopper.html"><span>Shopper</span><span class="desc">Jornada de compra</span><span class="arr">→</span></a></li>
+        <li><a href="funil-tracking.html"><span>Tracking</span><span class="desc">Medição contínua</span><span class="arr">→</span></a></li>
+      </ul>
+    </div>
+
+    <div class="indice-col">
+      <h2>Eu vi o Brasil</h2>
+      <ul>
+        <li><a href="evb.html"><span>Visão geral</span><span class="desc">Estudo proprietário IMO</span><span class="arr">→</span></a></li>
+        <li><a href="evb-brasil-movimento.html"><span>Brasil em Movimento</span><span class="desc">Capítulo 01</span><span class="arr">→</span></a></li>
+        <li><a href="evb-cidades-medias.html"><span>Cidades Médias</span><span class="desc">Capítulo 02</span><span class="arr">→</span></a></li>
+        <li><a href="evb-futebol.html"><span>Futebol</span><span class="desc">Capítulo 03</span><span class="arr">→</span></a></li>
+      </ul>
+    </div>
+
+    <div class="indice-col">
+      <h2>Área do cliente</h2>
+      <ul>
+        <li><a href="login.html"><span>Login</span><span class="desc">Acesso restrito</span><span class="arr">→</span></a></li>
+        <li><a href="area-cliente.html"><span>Dashboard</span><span class="desc">Plataforma do cliente</span><span class="arr">→</span></a></li>
+      </ul>
+    </div>
+
+  </div>
+</main>
+
+</body>
+</html>

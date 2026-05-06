@@ -1,0 +1,851 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Editor · IMO Insights</title>
+<meta name="robots" content="noindex,nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.ed-wrap{min-height:100vh;background:#0f0f1a;color:#fff;font-family:'Inter',sans-serif}
+.ed-container{max-width:1280px;margin:0 auto;padding:0 40px}
+
+/* Hero */
+.ed-hero{padding:60px 0 32px;border-bottom:1px solid #1a1a2e}
+.ed-eyebrow{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#FF8000;margin-bottom:14px}
+.ed-hero h1{font-family:'Rethink Sans',sans-serif;font-size:42px;line-height:1.05;font-weight:800;margin:0 0 14px;letter-spacing:-.02em}
+.ed-hero p{color:#bbb;font-size:15px;line-height:1.5;margin:0;max-width:640px}
+
+/* Stats compactas */
+.ed-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin:28px 0 0}
+.ed-stat{background:#16162a;border:1px solid #2a2a3e;border-radius:8px;padding:18px}
+.ed-stat-num{font-family:'Rethink Sans',sans-serif;font-size:32px;font-weight:800;color:#fff;line-height:1}
+.ed-stat-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#999;margin-top:6px}
+
+/* Toolbar */
+.ed-tools{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;padding:32px 0 18px}
+.ed-filters{display:flex;gap:8px;flex-wrap:wrap}
+.ed-filter{background:transparent;border:1px solid #2a2a3e;color:#bbb;padding:8px 14px;font-family:inherit;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;border-radius:20px;cursor:pointer;transition:all .15s}
+.ed-filter:hover{border-color:#FF8000;color:#FF8000}
+.ed-filter.active{background:#FF8000;border-color:#FF8000;color:#fff}
+
+.ed-newbtn{display:inline-flex;align-items:center;gap:8px;padding:13px 20px;background:#FF8000;color:#fff;border:none;font-family:inherit;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border-radius:6px;cursor:pointer;transition:background .15s}
+.ed-newbtn:hover{background:#e87100}
+
+/* Tabela */
+.ed-table{width:100%;border-collapse:collapse;background:#16162a;border:1px solid #2a2a3e;border-radius:10px;overflow:hidden}
+.ed-table th,.ed-table td{padding:14px 18px;text-align:left;border-bottom:1px solid #1a1a2e;font-size:13px;vertical-align:middle}
+.ed-table th{background:#1a1a2e;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#999}
+.ed-table tr:last-child td{border-bottom:none}
+.ed-table tr.clickable{cursor:pointer;transition:background .12s}
+.ed-table tr.clickable:hover{background:#1a1a2e}
+.ed-table td.right{text-align:right}
+.ed-empty{padding:60px;text-align:center;color:#777}
+.ed-empty h3{color:#fff;font-size:18px;margin:0 0 8px;font-family:'Rethink Sans',sans-serif}
+
+.ed-status{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border-radius:4px}
+.ed-status.pending_approval{background:rgba(255,128,0,.15);color:#FF8000;border:1px solid rgba(255,128,0,.3)}
+.ed-status.approved{background:rgba(161,234,0,.12);color:#A1EA00;border:1px solid rgba(161,234,0,.3)}
+.ed-status.rejected{background:rgba(255,118,118,.12);color:#ff7676;border:1px solid rgba(255,118,118,.3)}
+.ed-status.archived{background:rgba(153,153,153,.12);color:#999;border:1px solid #444}
+
+.ed-skeleton{background:linear-gradient(90deg,#16162a 0%,#1f1f33 50%,#16162a 100%);background-size:200% 100%;animation:edShimmer 1.6s ease-in-out infinite;border-radius:6px;height:14px}
+@keyframes edShimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+/* Drawer (lateral) */
+.ed-drawer-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .2s;z-index:200}
+.ed-drawer-bg.open{opacity:1;pointer-events:auto}
+.ed-drawer{position:fixed;top:0;right:0;bottom:0;width:min(560px,100%);background:#0f0f1a;border-left:1px solid #2a2a3e;transform:translateX(100%);transition:transform .26s ease-out;z-index:201;display:flex;flex-direction:column;overflow:hidden}
+.ed-drawer.open{transform:translateX(0)}
+.ed-drawer-head{padding:24px 28px;border-bottom:1px solid #1a1a2e;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.ed-drawer-head h3{font-family:'Rethink Sans',sans-serif;font-size:20px;font-weight:700;margin:0;letter-spacing:-.005em}
+.ed-drawer-close{background:transparent;border:none;color:#bbb;cursor:pointer;padding:6px;display:flex;align-items:center}
+.ed-drawer-close:hover{color:#FF8000}
+.ed-drawer-body{padding:28px;overflow-y:auto;flex:1}
+.ed-drawer-foot{padding:18px 28px;border-top:1px solid #1a1a2e;display:flex;gap:10px;justify-content:flex-end;flex-shrink:0;background:#0a0a14}
+
+.ed-field{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+.ed-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#999}
+.ed-input,.ed-select,.ed-textarea{background:#16162a;border:1px solid #2a2a3e;border-radius:6px;padding:11px 14px;color:#fff;font-family:inherit;font-size:14px;width:100%;box-sizing:border-box;transition:border-color .15s}
+.ed-input:focus,.ed-select:focus,.ed-textarea:focus{outline:none;border-color:#FF8000}
+.ed-textarea{resize:vertical;min-height:80px;line-height:1.5}
+.ed-help{font-size:11px;color:#777;line-height:1.4}
+
+.ed-radio-group{display:flex;gap:10px;flex-wrap:wrap}
+.ed-radio{flex:1;min-width:140px;background:#16162a;border:1px solid #2a2a3e;border-radius:6px;padding:14px 16px;cursor:pointer;display:flex;align-items:flex-start;gap:10px;transition:all .15s}
+.ed-radio:hover{border-color:#444}
+.ed-radio input{margin-top:2px;accent-color:#FF8000}
+.ed-radio.selected{border-color:#FF8000;background:rgba(255,128,0,.06)}
+.ed-radio strong{display:block;font-size:13px;color:#fff;margin-bottom:2px}
+.ed-radio small{display:block;font-size:11px;color:#999;line-height:1.3}
+
+.ed-file-drop{background:#16162a;border:2px dashed #2a2a3e;border-radius:8px;padding:32px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s}
+.ed-file-drop:hover,.ed-file-drop.dragover{border-color:#FF8000;background:rgba(255,128,0,.04)}
+.ed-file-drop input{display:none}
+.ed-file-drop-icon{margin-bottom:10px;color:#FF8000}
+.ed-file-drop-text{font-size:13px;color:#bbb;line-height:1.5}
+.ed-file-drop-text strong{color:#fff}
+.ed-file-pick{display:flex;align-items:center;gap:12px;padding:14px;background:rgba(161,234,0,.08);border:1px solid rgba(161,234,0,.3);border-radius:6px;font-size:13px;color:#fff}
+.ed-file-pick strong{flex:1;word-break:break-all}
+.ed-file-clear{background:transparent;border:none;color:#999;cursor:pointer;padding:4px}
+.ed-file-clear:hover{color:#ff7676}
+
+.ed-progress{margin-top:14px;height:6px;background:#1a1a2e;border-radius:4px;overflow:hidden;display:none}
+.ed-progress-bar{height:100%;background:#FF8000;width:0;transition:width .2s}
+
+.ed-btn{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;background:#FF8000;color:#fff;border:none;font-family:inherit;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border-radius:6px;cursor:pointer;transition:background .15s}
+.ed-btn:hover{background:#e87100}
+.ed-btn:disabled{background:#666;cursor:not-allowed}
+.ed-btn.ghost{background:transparent;border:1px solid #2a2a3e;color:#bbb}
+.ed-btn.ghost:hover{border-color:#FF8000;color:#FF8000;background:transparent}
+
+.ed-msg{padding:12px 14px;border-radius:6px;font-size:13px;margin-top:14px;line-height:1.5}
+.ed-msg.ok{background:rgba(15,126,94,.18);color:#A1EA00;border:1px solid rgba(161,234,0,.3)}
+.ed-msg.err{background:rgba(220,38,38,.15);color:#ff7676;border:1px solid rgba(255,118,118,.3)}
+
+/* Detalhe */
+.ed-dd{display:flex;flex-direction:column;gap:18px}
+.ed-dd-row{padding-bottom:14px;border-bottom:1px solid #1a1a2e}
+.ed-dd-row:last-child{border-bottom:none}
+.ed-dd-label{display:block;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#777;margin-bottom:6px}
+.ed-dd-val{display:block;font-size:14px;color:#fff;line-height:1.5}
+.ed-rejection-box{background:rgba(220,38,38,.08);border:1px solid rgba(255,118,118,.3);border-radius:6px;padding:16px}
+.ed-rejection-box .ed-dd-label{color:#ff7676}
+
+/* Footer */
+.ed-foot{border-top:1px solid #1a1a2e;background:#0a0a14;padding:32px 0}
+.ed-foot-inner{display:flex;justify-content:space-between;align-items:center;color:#666;font-size:12px;flex-wrap:wrap;gap:14px;max-width:1280px;margin:0 auto;padding:0 40px}
+.ed-foot-links{display:flex;gap:18px}
+.ed-foot-links a{color:#999;text-decoration:none}
+.ed-foot-links a:hover{color:#FF8000}
+
+@media (max-width:600px){
+  .ed-container{padding:0 20px}
+  .ed-hero{padding:40px 0 24px}
+  .ed-hero h1{font-size:30px}
+  .ed-table{display:block;overflow-x:auto}
+  .ed-foot-inner{padding:0 20px}
+  .ed-drawer{width:100%}
+}
+</style>
+</head>
+<body class="wg-body" data-imo-guard="editor">
+
+<header class="wg-nav">
+  <div class="wg-nav-inner">
+    <div class="wg-nav-left">
+      <a href="index.html" class="wg-nav-logo" aria-label="IMO Insights — site público">
+        <span class="imo-logo sm"></span>
+      </a>
+      <div class="wg-nav-divider"></div>
+      <span class="wg-nav-brand">Editor</span>
+    </div>
+    <nav class="wg-nav-links">
+      <a href="area-cliente-editor.html" class="active">Submissões</a>
+      <a href="area-cliente-perfil.html">Perfil</a>
+    </nav>
+    <div class="wg-nav-right">
+      <span id="acUserName" class="wg-nav-username" style="color:#bbb;font-size:13px;margin-right:14px"></span>
+      <div class="wg-nav-avatar"><span id="avatarInitial">·</span></div>
+      <button class="wg-nav-logout" id="logoutBtn" title="Sair" aria-label="Sair">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="ed-wrap">
+  <section class="ed-hero">
+    <div class="ed-container">
+      <div class="ed-eyebrow">EDITOR · MINHAS SUBMISSÕES</div>
+      <h1 id="edTitle">Carregando…</h1>
+      <p>Acompanhe o status das submissões que você fez. Tudo passa por aprovação do administrador antes de virar visível ao cliente.</p>
+
+      <div class="ed-stats" id="edStats" aria-live="polite">
+        <div class="ed-stat"><div class="ed-stat-num" id="edStatPending">·</div><div class="ed-stat-label">Aguardando aprovação</div></div>
+        <div class="ed-stat"><div class="ed-stat-num" id="edStatApproved">·</div><div class="ed-stat-label">Aprovadas (atuais)</div></div>
+        <div class="ed-stat"><div class="ed-stat-num" id="edStatRejected">·</div><div class="ed-stat-label">Rejeitadas</div></div>
+        <div class="ed-stat"><div class="ed-stat-num" id="edStatArchived">·</div><div class="ed-stat-label">Substituídas</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="ed-container">
+
+    <div class="ed-tools">
+      <div class="ed-filters" role="group" aria-label="Filtrar por status">
+        <button class="ed-filter active" data-filter="all">Todas</button>
+        <button class="ed-filter" data-filter="pending_approval">Pendentes</button>
+        <button class="ed-filter" data-filter="approved">Aprovadas</button>
+        <button class="ed-filter" data-filter="rejected">Rejeitadas</button>
+        <button class="ed-filter" data-filter="archived">Substituídas</button>
+      </div>
+      <button class="ed-newbtn" id="btnNew">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nova submissão
+      </button>
+    </div>
+
+    <div id="edTableWrap" style="padding-bottom:80px">
+      <table class="ed-table" id="edTable" aria-busy="true">
+        <thead>
+          <tr>
+            <th>Conteúdo</th>
+            <th>Cliente / Projeto</th>
+            <th>Versão</th>
+            <th>Enviado em</th>
+            <th>Status</th>
+            <th class="right">Ação</th>
+          </tr>
+        </thead>
+        <tbody id="edTbody">
+          <tr><td colspan="6"><div class="ed-skeleton" style="width:50%"></div></td></tr>
+          <tr><td colspan="6"><div class="ed-skeleton" style="width:80%"></div></td></tr>
+          <tr><td colspan="6"><div class="ed-skeleton" style="width:60%"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<!-- ============================================================
+     DRAWER: Detalhe da submissão
+     ============================================================ -->
+<div class="ed-drawer-bg" id="detailBg" aria-hidden="true"></div>
+<aside class="ed-drawer" id="detailDrawer" aria-hidden="true" aria-labelledby="detailTitle" role="dialog">
+  <div class="ed-drawer-head">
+    <h3 id="detailTitle">Detalhe da submissão</h3>
+    <button class="ed-drawer-close" data-close="detail" aria-label="Fechar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="ed-drawer-body" id="detailBody"></div>
+  <div class="ed-drawer-foot" id="detailFoot">
+    <button class="ed-btn ghost" data-close="detail">Fechar</button>
+  </div>
+</aside>
+
+<!-- ============================================================
+     DRAWER: Nova submissão / Nova versão
+     ============================================================ -->
+<div class="ed-drawer-bg" id="uploadBg" aria-hidden="true"></div>
+<aside class="ed-drawer" id="uploadDrawer" aria-hidden="true" aria-labelledby="uploadTitle" role="dialog">
+  <div class="ed-drawer-head">
+    <h3 id="uploadTitle">Nova submissão</h3>
+    <button class="ed-drawer-close" data-close="upload" aria-label="Fechar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <form class="ed-drawer-body" id="uploadForm" novalidate>
+
+    <!-- Modo: novo conteúdo ou nova versão -->
+    <div class="ed-field">
+      <span class="ed-label">Tipo de submissão</span>
+      <div class="ed-radio-group" role="radiogroup">
+        <label class="ed-radio selected" data-mode="new">
+          <input type="radio" name="mode" value="new" checked>
+          <span><strong>Novo conteúdo</strong><small>Cria um novo "slot" no projeto.</small></span>
+        </label>
+        <label class="ed-radio" data-mode="version">
+          <input type="radio" name="mode" value="version">
+          <span><strong>Nova versão</strong><small>Substitui um conteúdo existente neste projeto.</small></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="ed-field">
+      <label class="ed-label" for="upClient">Empresa-cliente</label>
+      <select id="upClient" class="ed-select" required></select>
+    </div>
+
+    <div class="ed-field">
+      <label class="ed-label" for="upProject">Projeto</label>
+      <select id="upProject" class="ed-select" required disabled></select>
+    </div>
+
+    <!-- Modo "novo conteúdo": tipo + nome + descrição -->
+    <div id="newContentFields">
+      <div class="ed-field">
+        <span class="ed-label">Tipo de conteúdo</span>
+        <div class="ed-radio-group" role="radiogroup">
+          <label class="ed-radio selected" data-type="document">
+            <input type="radio" name="ctype" value="document" checked>
+            <span><strong>Documento</strong><small>PDF, planilha, apresentação, etc.</small></span>
+          </label>
+          <label class="ed-radio" data-type="dashboard">
+            <input type="radio" name="ctype" value="dashboard">
+            <span><strong>Dashboard</strong><small>HTML estático.</small></span>
+          </label>
+        </div>
+      </div>
+      <div class="ed-field">
+        <label class="ed-label" for="upDisplayName">Nome de exibição</label>
+        <input type="text" id="upDisplayName" class="ed-input" placeholder="Ex: Relatório Mensal — Maio 2025" maxlength="160">
+      </div>
+      <div class="ed-field">
+        <label class="ed-label" for="upDescription">Descrição (opcional)</label>
+        <textarea id="upDescription" class="ed-textarea" placeholder="Breve descrição que ajude o cliente a entender o conteúdo." maxlength="500"></textarea>
+      </div>
+    </div>
+
+    <!-- Modo "nova versão": dropdown de slots -->
+    <div id="versionFields" hidden>
+      <div class="ed-field">
+        <label class="ed-label" for="upSlot">Conteúdo a substituir</label>
+        <select id="upSlot" class="ed-select" disabled></select>
+        <span class="ed-help">A nova versão entra como pendente. A versão atual continua visível ao cliente até a aprovação.</span>
+      </div>
+    </div>
+
+    <!-- Arquivo -->
+    <div class="ed-field">
+      <label class="ed-label">Arquivo</label>
+      <label class="ed-file-drop" id="upFileDrop">
+        <input type="file" id="upFile" required>
+        <div class="ed-file-drop-icon" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
+        <div class="ed-file-drop-text">
+          <strong>Clique para selecionar</strong> ou arraste o arquivo até aqui<br>
+          <small style="color:#777">Tamanho máximo 50 MB</small>
+        </div>
+      </label>
+      <div id="upFilePick" class="ed-file-pick" hidden>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A1EA00" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        <strong id="upFileName"></strong>
+        <span id="upFileSize" style="color:#999"></span>
+        <button type="button" class="ed-file-clear" id="upFileClear" aria-label="Remover arquivo">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="ed-progress" id="upProgress" aria-live="polite">
+        <div class="ed-progress-bar" id="upProgressBar"></div>
+      </div>
+    </div>
+
+    <div class="ed-msg" id="upMsg" role="alert" style="display:none"></div>
+  </form>
+  <div class="ed-drawer-foot">
+    <button class="ed-btn ghost" data-close="upload">Cancelar</button>
+    <button class="ed-btn" id="upSubmit" form="uploadForm" type="submit">
+      Enviar submissão
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+  </div>
+</aside>
+
+<footer class="ed-foot">
+  <div class="ed-foot-inner">
+    <span>© 2025 IMO Insights · Editor</span>
+    <div class="ed-foot-links">
+      <a href="privacidade.html">Política de Privacidade</a>
+      <a href="area-cliente-perfil.html">Perfil</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/env-config.js"></script>
+<script src="/assets/js/supabase-client.js"></script>
+<script src="/assets/js/role-helpers.js"></script>
+<script src="/assets/js/session-guard.js"></script>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var H, profile;
+
+  // Cache de listas para o form
+  var allClients   = [];
+  var allProjects  = [];   // todos (filtrados por cliente no momento da escolha)
+  var slotsByProj  = {};   // cache: project_id → slots
+
+  var allSubmissions = [];
+
+  document.addEventListener('imo:ready', async function (e) {
+    profile = e.detail.profile;
+    H = IMO.helpers;
+
+    if (!H.isEditorOrAbove(profile)) {
+      window.location.replace(H.homeForRole(profile.role));
+      return;
+    }
+
+    // Header
+    var name = profile.full_name || profile.email;
+    $('acUserName').textContent  = name;
+    $('avatarInitial').textContent = (name || '·').charAt(0).toUpperCase();
+    $('logoutBtn').addEventListener('click', function () { H.signOut(); });
+
+    $('edTitle').innerHTML = 'Olá, <em style="color:#FF8000;font-style:normal">' + H.escapeHtml((profile.full_name || '').split(/\s+/)[0] || 'editor') + '</em>.';
+
+    setupFilters();
+    setupDrawers();
+
+    try {
+      await Promise.all([
+        loadSubmissions(),
+        loadFormCaches()
+      ]);
+    } catch (err) {
+      console.error('[IMO editor] erro inicial:', err);
+      H.toast('Erro ao carregar dados iniciais.', 'error');
+    }
+  });
+
+  // ============================================================
+  // Submissões do editor
+  // ============================================================
+  async function loadSubmissions() {
+    var resp = await IMO.client
+      .from('file_versions')
+      .select('id, version_number, status, mime_type, size_bytes, reviewed_at, review_notes, created_at, ' +
+              'content_slots!inner(id, type, display_name, project_id, projects!inner(id, name, client_id, clients!inner(id, name)))')
+      .eq('uploaded_by', profile.id)
+      .order('created_at', { ascending: false });
+
+    if (resp.error) throw resp.error;
+    allSubmissions = resp.data || [];
+    updateStats();
+    applyFilter();
+  }
+
+  function updateStats() {
+    var c = { pending_approval:0, approved:0, rejected:0, archived:0 };
+    allSubmissions.forEach(function (r) { if (c[r.status] != null) c[r.status]++; });
+    $('edStatPending').textContent  = c.pending_approval;
+    $('edStatApproved').textContent = c.approved;
+    $('edStatRejected').textContent = c.rejected;
+    $('edStatArchived').textContent = c.archived;
+  }
+
+  // ============================================================
+  // Filtros
+  // ============================================================
+  var currentFilter = 'all';
+  function setupFilters() {
+    document.querySelectorAll('.ed-filter').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.ed-filter').forEach(function (x) { x.classList.remove('active'); });
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        applyFilter();
+      });
+    });
+  }
+
+  function applyFilter() {
+    var rows = currentFilter === 'all'
+      ? allSubmissions
+      : allSubmissions.filter(function (r) { return r.status === currentFilter; });
+
+    var tbody = $('edTbody');
+    tbody.innerHTML = '';
+    $('edTable').setAttribute('aria-busy', 'false');
+
+    if (rows.length === 0) {
+      tbody.innerHTML =
+        '<tr><td colspan="6"><div class="ed-empty">' +
+          '<h3>Nenhuma submissão' + (currentFilter !== 'all' ? ' com este status' : '') + '</h3>' +
+          '<p>Use o botão "Nova submissão" para começar.</p>' +
+        '</div></td></tr>';
+      return;
+    }
+
+    rows.forEach(function (r) {
+      var slot    = r.content_slots || {};
+      var project = slot.projects || {};
+      var client  = project.clients || {};
+      var tr = document.createElement('tr');
+      tr.className = 'clickable';
+      tr.dataset.id = r.id;
+      tr.innerHTML =
+        '<td><strong>' + H.escapeHtml(slot.display_name || '—') + '</strong>' +
+            '<div style="color:#777;font-size:11px;margin-top:3px">' + H.escapeHtml(H.typeLabel(slot.type)) + '</div></td>' +
+        '<td>' + H.escapeHtml(client.name || '—') +
+            '<div style="color:#777;font-size:11px;margin-top:3px">' + H.escapeHtml(project.name || '—') + '</div></td>' +
+        '<td>v' + r.version_number + '</td>' +
+        '<td>' + H.formatDateTime(r.created_at) + '</td>' +
+        '<td><span class="ed-status ' + r.status + '">' + H.escapeHtml(H.statusLabel(r.status)) + '</span></td>' +
+        '<td class="right" style="font-size:12px;color:#FF8000;font-weight:700">Ver detalhe →</td>';
+      tr.addEventListener('click', function () { openDetail(r); });
+      tbody.appendChild(tr);
+    });
+  }
+
+  // ============================================================
+  // Caches para o form (clientes, projetos)
+  // ============================================================
+  async function loadFormCaches() {
+    var [cl, pr] = await Promise.all([
+      IMO.client.from('clients').select('id, name').eq('status','active').order('name'),
+      IMO.client.from('projects').select('id, name, client_id, status').neq('status','archived').order('name')
+    ]);
+    if (cl.error) throw cl.error;
+    if (pr.error) throw pr.error;
+    allClients = cl.data || [];
+    allProjects = pr.data || [];
+  }
+
+  // ============================================================
+  // Drawer: detalhe
+  // ============================================================
+  function openDetail(r) {
+    var slot    = r.content_slots || {};
+    var project = slot.projects || {};
+    var client  = project.clients || {};
+
+    var html =
+      '<div class="ed-dd">' +
+        rowHtml('Conteúdo', H.escapeHtml(slot.display_name || '—')) +
+        rowHtml('Tipo',     H.escapeHtml(H.typeLabel(slot.type))) +
+        rowHtml('Cliente',  H.escapeHtml(client.name || '—')) +
+        rowHtml('Projeto',  H.escapeHtml(project.name || '—')) +
+        rowHtml('Versão',   'v' + r.version_number) +
+        rowHtml('Status',   '<span class="ed-status ' + r.status + '">' + H.escapeHtml(H.statusLabel(r.status)) + '</span>') +
+        rowHtml('Enviado em', H.formatDateTime(r.created_at)) +
+        (r.reviewed_at ? rowHtml('Revisado em', H.formatDateTime(r.reviewed_at)) : '') +
+        (r.size_bytes  ? rowHtml('Tamanho', H.formatBytes(r.size_bytes)) : '') +
+        (r.status === 'rejected' && r.review_notes
+          ? '<div class="ed-dd-row ed-rejection-box">' +
+              '<span class="ed-dd-label">Motivo da rejeição</span>' +
+              '<span class="ed-dd-val">' + H.escapeHtml(r.review_notes) + '</span>' +
+            '</div>'
+          : '') +
+      '</div>';
+    $('detailBody').innerHTML = html;
+
+    // Footer: se rejected, oferecer "Reenviar versão corrigida"
+    var foot = $('detailFoot');
+    foot.innerHTML = '<button class="ed-btn ghost" data-close="detail">Fechar</button>';
+    if (r.status === 'rejected') {
+      var btn = document.createElement('button');
+      btn.className = 'ed-btn';
+      btn.innerHTML = 'Reenviar versão corrigida';
+      btn.addEventListener('click', function () {
+        closeDrawer('detail');
+        openUpload({ presetSlotId: slot.id, presetProjectId: project.id, presetClientId: client.id });
+      });
+      foot.appendChild(btn);
+    }
+    foot.querySelectorAll('[data-close]').forEach(function (x) {
+      x.addEventListener('click', function () { closeDrawer('detail'); });
+    });
+
+    openDrawer('detail');
+  }
+
+  function rowHtml(label, value) {
+    return '<div class="ed-dd-row"><span class="ed-dd-label">' + label + '</span><span class="ed-dd-val">' + value + '</span></div>';
+  }
+
+  // ============================================================
+  // Drawer: novo upload
+  // ============================================================
+  function setupDrawers() {
+    $('btnNew').addEventListener('click', function () { openUpload(); });
+
+    document.querySelectorAll('[data-close]').forEach(function (x) {
+      x.addEventListener('click', function () { closeDrawer(x.dataset.close); });
+    });
+    $('detailBg').addEventListener('click', function () { closeDrawer('detail'); });
+    $('uploadBg').addEventListener('click', function () { closeDrawer('upload'); });
+
+    document.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Escape') { closeDrawer('detail'); closeDrawer('upload'); }
+    });
+
+    setupUploadForm();
+  }
+
+  function openDrawer(which) {
+    var d  = which === 'detail' ? $('detailDrawer') : $('uploadDrawer');
+    var bg = which === 'detail' ? $('detailBg')     : $('uploadBg');
+    d.classList.add('open');  d.setAttribute('aria-hidden','false');
+    bg.classList.add('open'); bg.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDrawer(which) {
+    var d  = which === 'detail' ? $('detailDrawer') : $('uploadDrawer');
+    var bg = which === 'detail' ? $('detailBg')     : $('uploadBg');
+    d.classList.remove('open');  d.setAttribute('aria-hidden','true');
+    bg.classList.remove('open'); bg.setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
+  }
+
+  // ============================================================
+  // Form: upload
+  // ============================================================
+  function setupUploadForm() {
+    // Modo: novo / versão
+    document.querySelectorAll('.ed-radio[data-mode]').forEach(function (lab) {
+      lab.addEventListener('click', function () {
+        document.querySelectorAll('.ed-radio[data-mode]').forEach(function (x) { x.classList.remove('selected'); });
+        lab.classList.add('selected');
+        var mode = lab.dataset.mode;
+        $('newContentFields').hidden = (mode !== 'new');
+        $('versionFields').hidden    = (mode !== 'version');
+        $('uploadTitle').textContent = mode === 'version' ? 'Nova versão' : 'Nova submissão';
+      });
+    });
+
+    // Tipo (document/dashboard) — só relevante no modo "novo"
+    document.querySelectorAll('.ed-radio[data-type]').forEach(function (lab) {
+      lab.addEventListener('click', function () {
+        document.querySelectorAll('.ed-radio[data-type]').forEach(function (x) { x.classList.remove('selected'); });
+        lab.classList.add('selected');
+      });
+    });
+
+    // Cliente → carrega projetos
+    $('upClient').addEventListener('change', function () {
+      var cid = $('upClient').value;
+      var sel = $('upProject');
+      sel.innerHTML = '<option value="">Selecione um projeto…</option>';
+      sel.disabled = !cid;
+      if (cid) {
+        allProjects.filter(function (p) { return p.client_id === cid; }).forEach(function (p) {
+          var o = document.createElement('option');
+          o.value = p.id; o.textContent = p.name + (p.status === 'draft' ? ' (rascunho)' : '');
+          sel.appendChild(o);
+        });
+      }
+      $('upSlot').innerHTML = '<option value="">Selecione um conteúdo…</option>';
+      $('upSlot').disabled = true;
+    });
+
+    // Projeto → carrega slots (modo versão)
+    $('upProject').addEventListener('change', async function () {
+      var pid = $('upProject').value;
+      var sel = $('upSlot');
+      sel.innerHTML = '<option value="">Carregando…</option>';
+      sel.disabled = true;
+      if (!pid) { sel.innerHTML = '<option value="">Selecione um conteúdo…</option>'; return; }
+
+      try {
+        var slots = slotsByProj[pid];
+        if (!slots) {
+          var resp = await IMO.client
+            .from('content_slots')
+            .select('id, type, display_name, archived')
+            .eq('project_id', pid)
+            .eq('archived', false)
+            .order('display_name');
+          if (resp.error) throw resp.error;
+          slots = resp.data || [];
+          slotsByProj[pid] = slots;
+        }
+        sel.innerHTML = '<option value="">Selecione um conteúdo…</option>';
+        if (slots.length === 0) {
+          sel.innerHTML = '<option value="">Sem conteúdos cadastrados neste projeto</option>';
+          sel.disabled = true;
+          return;
+        }
+        slots.forEach(function (s) {
+          var o = document.createElement('option');
+          o.value = s.id;
+          o.dataset.type = s.type;
+          o.textContent = s.display_name + ' · ' + H.typeLabel(s.type);
+          sel.appendChild(o);
+        });
+        sel.disabled = false;
+      } catch (e) {
+        console.error('[IMO editor] erro carregando slots:', e);
+        sel.innerHTML = '<option value="">Erro ao carregar</option>';
+      }
+    });
+
+    // File: drag&drop + click
+    var drop = $('upFileDrop');
+    var fileInput = $('upFile');
+    ['dragover','dragenter'].forEach(function (ev) {
+      drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add('dragover'); });
+    });
+    ['dragleave','dragend','drop'].forEach(function (ev) {
+      drop.addEventListener(ev, function () { drop.classList.remove('dragover'); });
+    });
+    drop.addEventListener('drop', function (e) {
+      e.preventDefault();
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+        fileInput.files = e.dataTransfer.files;
+        showPickedFile(e.dataTransfer.files[0]);
+      }
+    });
+    fileInput.addEventListener('change', function () {
+      var f = fileInput.files && fileInput.files[0];
+      if (f) showPickedFile(f);
+    });
+    $('upFileClear').addEventListener('click', function () {
+      fileInput.value = '';
+      $('upFilePick').hidden = true;
+      drop.style.display = '';
+    });
+
+    // Submit
+    $('uploadForm').addEventListener('submit', submitUpload);
+  }
+
+  function showPickedFile(f) {
+    $('upFileName').textContent = f.name;
+    $('upFileSize').textContent = '(' + H.formatBytes(f.size) + ')';
+    $('upFilePick').hidden = false;
+    $('upFileDrop').style.display = 'none';
+  }
+
+  function openUpload(opts) {
+    opts = opts || {};
+    // Reset
+    $('uploadForm').reset();
+    document.querySelectorAll('.ed-radio[data-mode]').forEach(function (x) { x.classList.remove('selected'); });
+    document.querySelector('.ed-radio[data-mode="' + (opts.presetSlotId ? 'version' : 'new') + '"]').classList.add('selected');
+    document.querySelector('input[name="mode"][value="' + (opts.presetSlotId ? 'version' : 'new') + '"]').checked = true;
+    $('newContentFields').hidden = !!opts.presetSlotId;
+    $('versionFields').hidden    = !opts.presetSlotId;
+    $('uploadTitle').textContent = opts.presetSlotId ? 'Nova versão' : 'Nova submissão';
+
+    document.querySelectorAll('.ed-radio[data-type]').forEach(function (x) { x.classList.remove('selected'); });
+    document.querySelector('.ed-radio[data-type="document"]').classList.add('selected');
+
+    $('upMsg').style.display = 'none';
+    $('upFilePick').hidden = true;
+    $('upFileDrop').style.display = '';
+    $('upProgress').style.display = 'none';
+    $('upProgressBar').style.width = '0';
+
+    // Popula clientes
+    var sel = $('upClient');
+    sel.innerHTML = '<option value="">Selecione uma empresa…</option>';
+    allClients.forEach(function (c) {
+      var o = document.createElement('option');
+      o.value = c.id; o.textContent = c.name;
+      sel.appendChild(o);
+    });
+    if (opts.presetClientId) sel.value = opts.presetClientId;
+
+    var selP = $('upProject');
+    selP.innerHTML = '<option value="">Selecione um projeto…</option>';
+    selP.disabled = true;
+    if (opts.presetClientId) {
+      allProjects.filter(function (p) { return p.client_id === opts.presetClientId; }).forEach(function (p) {
+        var o = document.createElement('option');
+        o.value = p.id; o.textContent = p.name;
+        selP.appendChild(o);
+      });
+      selP.disabled = false;
+      if (opts.presetProjectId) selP.value = opts.presetProjectId;
+    }
+
+    var selS = $('upSlot');
+    selS.innerHTML = '<option value="">Selecione um conteúdo…</option>';
+    selS.disabled = true;
+    if (opts.presetProjectId) {
+      // dispara carregamento de slots
+      $('upProject').dispatchEvent(new Event('change'));
+      // tenta selecionar o slot após pequeno delay
+      setTimeout(function () { if (opts.presetSlotId) selS.value = opts.presetSlotId; }, 350);
+    }
+
+    openDrawer('upload');
+  }
+
+  async function submitUpload(ev) {
+    ev.preventDefault();
+    var msg = $('upMsg');
+    msg.style.display = 'none';
+
+    var btn = $('upSubmit');
+    var origBtn = btn.innerHTML;
+
+    var mode      = document.querySelector('input[name="mode"]:checked').value;
+    var clientId  = $('upClient').value;
+    var projectId = $('upProject').value;
+    var file      = $('upFile').files[0];
+
+    if (!clientId)  return showFormErr('Selecione a empresa-cliente.');
+    if (!projectId) return showFormErr('Selecione o projeto.');
+    if (!file)      return showFormErr('Selecione um arquivo.');
+    if (file.size > 50 * 1024 * 1024) return showFormErr('Arquivo maior que 50 MB. Reduza ou divida.');
+
+    var form = new FormData();
+    form.append('file', file);
+    form.append('project_id', projectId);
+    form.append('mode', mode);
+
+    if (mode === 'new') {
+      var ctype       = (document.querySelector('input[name="ctype"]:checked') || {}).value || 'document';
+      var displayName = ($('upDisplayName').value || '').trim();
+      var description = ($('upDescription').value || '').trim();
+      if (!displayName) return showFormErr('Informe o nome de exibição.');
+      if (ctype === 'dashboard' && !/\.html?$/i.test(file.name)) {
+        if (!confirm('O tipo é Dashboard, mas o arquivo não é .html. Continuar mesmo assim?')) return;
+      }
+      form.append('type', ctype);
+      form.append('display_name', displayName);
+      form.append('description', description);
+    } else {
+      var slotId = $('upSlot').value;
+      if (!slotId) return showFormErr('Selecione o conteúdo a substituir.');
+      form.append('slot_id', slotId);
+    }
+
+    btn.disabled = true; btn.innerHTML = 'Enviando…';
+    $('upProgress').style.display = 'block';
+    $('upProgressBar').style.width = '6%';
+
+    try {
+      // Pega JWT
+      var sess = await IMO.client.auth.getSession();
+      var token = sess && sess.data && sess.data.session && sess.data.session.access_token;
+
+      // Usa XHR para ter progresso real (fetch não tem progress events para upload)
+      var resp = await xhrUpload('/api/create-version', form, token, function (pct) {
+        $('upProgressBar').style.width = pct + '%';
+      });
+
+      $('upProgressBar').style.width = '100%';
+      H.toast('Submissão enviada. Aguarde aprovação do administrador.', 'success');
+      closeDrawer('upload');
+      await loadSubmissions();
+    } catch (err) {
+      console.error('[IMO editor] upload erro:', err);
+      var m = (err && err.message) || 'Não foi possível enviar.';
+      if (err && err.status === 413) m = 'Arquivo grande demais.';
+      if (err && err.status === 403) m = 'Você não tem permissão para esta ação.';
+      showFormErr(m);
+    } finally {
+      btn.disabled = false; btn.innerHTML = origBtn;
+      setTimeout(function () { $('upProgress').style.display = 'none'; $('upProgressBar').style.width = '0'; }, 600);
+    }
+  }
+
+  function showFormErr(text) {
+    var m = $('upMsg');
+    m.className = 'ed-msg err'; m.textContent = text; m.style.display = 'block';
+  }
+
+  function xhrUpload(url, form, token, onProgress) {
+    return new Promise(function (resolve, reject) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', url);
+      if (token) xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+      xhr.upload.onprogress = function (e) {
+        if (e.lengthComputable && onProgress) onProgress(Math.round((e.loaded / e.total) * 95));
+      };
+      xhr.onload = function () {
+        var payload = null;
+        try { payload = JSON.parse(xhr.responseText); } catch (e) { payload = xhr.responseText; }
+        if (xhr.status >= 200 && xhr.status < 300) return resolve(payload);
+        var err = new Error((payload && payload.error) || ('HTTP ' + xhr.status));
+        err.status = xhr.status; err.payload = payload;
+        reject(err);
+      };
+      xhr.onerror = function () { reject(new Error('Erro de rede.')); };
+      xhr.send(form);
+    });
+  }
+})();
+</script>
+</body>
+</html>

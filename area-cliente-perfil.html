@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Perfil · IMO Insights</title>
+<meta name="robots" content="noindex,nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.ac-wrap{min-height:100vh;background:#0f0f1a;color:#fff;font-family:'Inter',sans-serif}
+.ac-container{max-width:880px;margin:0 auto;padding:0 40px}
+
+.ac-phead{padding:60px 0 32px;border-bottom:1px solid #1a1a2e}
+.ac-phead-eyebrow{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#FF8000;margin-bottom:14px}
+.ac-phead h1{font-family:'Rethink Sans',sans-serif;font-size:42px;line-height:1.05;font-weight:800;margin:0 0 14px;letter-spacing:-.02em}
+.ac-phead-desc{color:#bbb;font-size:15px;line-height:1.5;margin:0}
+
+.ac-section{padding:40px 0;border-bottom:1px solid #1a1a2e}
+.ac-section:last-of-type{border-bottom:none;padding-bottom:80px}
+.ac-section h2{font-family:'Rethink Sans',sans-serif;font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:-.005em}
+.ac-section-desc{font-size:14px;color:#999;margin:0 0 24px;line-height:1.5}
+
+.ac-form{background:#16162a;border:1px solid #2a2a3e;border-radius:10px;padding:28px}
+.ac-field{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.ac-field:last-child{margin-bottom:0}
+.ac-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#999}
+.ac-input,.ac-form input[type=text],.ac-form input[type=email],.ac-form input[type=password]{background:#0f0f1a;border:1px solid #2a2a3e;border-radius:6px;padding:13px 16px;color:#fff;font-family:inherit;font-size:14px;width:100%;box-sizing:border-box;transition:border-color .15s}
+.ac-input:focus,.ac-form input:focus{outline:none;border-color:#FF8000}
+.ac-input[disabled]{background:#0a0a14;color:#888;cursor:not-allowed}
+.ac-help{font-size:12px;color:#777;line-height:1.4}
+
+.ac-checkbox{display:flex;align-items:flex-start;gap:12px;font-size:14px;color:#ccc;line-height:1.45;cursor:pointer}
+.ac-checkbox input{margin-top:3px;accent-color:#FF8000}
+
+.ac-actions{display:flex;gap:12px;margin-top:22px}
+.ac-btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;background:#FF8000;color:#fff;border:none;font-family:inherit;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;border-radius:6px;cursor:pointer;transition:background .15s;text-decoration:none}
+.ac-btn:hover{background:#e87100}
+.ac-btn:disabled{background:#666;cursor:not-allowed}
+.ac-btn.ghost{background:transparent;border:1px solid #2a2a3e;color:#bbb}
+.ac-btn.ghost:hover{border-color:#FF8000;color:#FF8000;background:transparent}
+.ac-btn.danger{background:transparent;border:1px solid #ff4d4d;color:#ff7676}
+.ac-btn.danger:hover{background:rgba(255,77,77,.1);color:#ff9d9d}
+
+.ac-msg{padding:12px 16px;border-radius:6px;font-size:13px;margin-top:14px;display:none}
+.ac-msg.ok{background:rgba(15,126,94,.18);color:#A1EA00;border:1px solid rgba(161,234,0,.3);display:flex}
+.ac-msg.err{background:rgba(220,38,38,.15);color:#ff7676;border:1px solid rgba(255,118,118,.3);display:flex}
+
+.ac-ddrow{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #1a1a2e}
+.ac-ddrow:last-child{border-bottom:none}
+.ac-ddrow strong{display:block;font-size:14px;color:#fff;margin-bottom:2px}
+.ac-ddrow small{display:block;font-size:12px;color:#777;line-height:1.4}
+
+/* Footer */
+.ac-foot{border-top:1px solid #1a1a2e;background:#0a0a14;padding:32px 0}
+.ac-foot-inner{display:flex;justify-content:space-between;align-items:center;color:#666;font-size:12px;flex-wrap:wrap;gap:14px;max-width:1280px;margin:0 auto;padding:0 40px}
+.ac-foot-links{display:flex;gap:18px}
+.ac-foot-links a{color:#999;text-decoration:none}
+.ac-foot-links a:hover{color:#FF8000}
+
+@media (max-width:600px){
+  .ac-container{padding:0 20px}
+  .ac-phead{padding:40px 0 24px}
+  .ac-phead h1{font-size:32px}
+  .ac-foot-inner{padding:0 20px}
+}
+</style>
+</head>
+<body class="wg-body" data-imo-guard="cliente">
+
+<header class="wg-nav">
+  <div class="wg-nav-inner">
+    <div class="wg-nav-left">
+      <a href="index.html" class="wg-nav-logo" aria-label="IMO Insights — site público">
+        <span class="imo-logo sm"></span>
+      </a>
+      <div class="wg-nav-divider"></div>
+      <span class="wg-nav-brand">Área do Cliente</span>
+    </div>
+    <nav class="wg-nav-links">
+      <a href="area-cliente.html">Início</a>
+      <a href="area-cliente-perfil.html" class="active">Perfil</a>
+    </nav>
+    <div class="wg-nav-right">
+      <span id="acUserName" class="wg-nav-username" style="color:#bbb;font-size:13px;margin-right:14px"></span>
+      <div class="wg-nav-avatar"><span id="avatarInitial">·</span></div>
+      <button class="wg-nav-logout" id="logoutBtn" title="Sair" aria-label="Sair">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="ac-wrap">
+  <div class="ac-container">
+    <section class="ac-phead">
+      <div class="ac-phead-eyebrow">PERFIL</div>
+      <h1>Suas informações</h1>
+      <p class="ac-phead-desc">Atualize seus dados, troque sua senha e gerencie suas preferências de notificação.</p>
+    </section>
+
+    <!-- ============================================================
+         Dados pessoais
+         ============================================================ -->
+    <section class="ac-section">
+      <h2>Dados pessoais</h2>
+      <p class="ac-section-desc">Mantenha seu nome atualizado para que apareça corretamente nas comunicações da IMO Insights.</p>
+
+      <form class="ac-form" id="profileForm" novalidate>
+        <div class="ac-field">
+          <label class="ac-label" for="fullName">Nome completo</label>
+          <input type="text" id="fullName" name="fullName" autocomplete="name" required>
+        </div>
+        <div class="ac-field">
+          <label class="ac-label" for="email">E-mail</label>
+          <input type="email" id="email" name="email" disabled>
+          <span class="ac-help">Para alterar o e-mail, fale com o administrador.</span>
+        </div>
+        <div class="ac-field">
+          <label class="ac-label" for="company">Empresa</label>
+          <input type="text" id="company" name="company" disabled>
+        </div>
+        <div class="ac-field">
+          <label class="ac-checkbox">
+            <input type="checkbox" id="notifyByEmail" name="notifyByEmail">
+            <span>Quero receber e-mails quando novos conteúdos forem publicados nos meus projetos.</span>
+          </label>
+        </div>
+        <div class="ac-actions">
+          <button type="submit" class="ac-btn" id="profileSubmit">Salvar alterações</button>
+        </div>
+        <div class="ac-msg" id="profileMsg" role="status"></div>
+      </form>
+    </section>
+
+    <!-- ============================================================
+         Trocar senha
+         ============================================================ -->
+    <section class="ac-section">
+      <h2>Trocar senha</h2>
+      <p class="ac-section-desc">Use uma senha forte com pelo menos 10 caracteres, contendo letras e números.</p>
+
+      <form class="ac-form" id="passwordForm" novalidate>
+        <div class="ac-field">
+          <label class="ac-label" for="newPassword">Nova senha</label>
+          <input type="password" id="newPassword" name="newPassword" autocomplete="new-password" minlength="10" required>
+        </div>
+        <div class="ac-field">
+          <label class="ac-label" for="newPasswordConfirm">Confirme a nova senha</label>
+          <input type="password" id="newPasswordConfirm" name="newPasswordConfirm" autocomplete="new-password" minlength="10" required>
+        </div>
+        <div class="ac-actions">
+          <button type="submit" class="ac-btn" id="passwordSubmit">Trocar senha</button>
+        </div>
+        <div class="ac-msg" id="passwordMsg" role="status"></div>
+      </form>
+    </section>
+
+    <!-- ============================================================
+         LGPD — direitos do titular
+         ============================================================ -->
+    <section class="ac-section">
+      <h2>Privacidade e seus dados</h2>
+      <p class="ac-section-desc">A IMO Insights respeita a Lei Geral de Proteção de Dados (LGPD). Você pode solicitar a qualquer momento as ações abaixo.</p>
+
+      <div class="ac-form">
+        <div class="ac-ddrow">
+          <div>
+            <strong>Acessar uma cópia dos meus dados</strong>
+            <small>Recebemos seu pedido por e-mail e respondemos em até 15 dias com seus dados em formato legível.</small>
+          </div>
+          <a class="ac-btn ghost" id="exportBtn" href="#" rel="noopener">Solicitar exportação</a>
+        </div>
+        <div class="ac-ddrow">
+          <div>
+            <strong>Solicitar exclusão da conta</strong>
+            <small>Após validar a solicitação, sua conta é desativada e seus dados são apagados conforme nossa política. Operações exigidas por lei (ex.: registros financeiros) são preservadas.</small>
+          </div>
+          <a class="ac-btn danger" id="deleteBtn" href="#" rel="noopener">Solicitar exclusão</a>
+        </div>
+        <div class="ac-ddrow">
+          <div>
+            <strong>Política de Privacidade completa</strong>
+            <small>Detalha quais dados coletamos, finalidades, base legal, prazo de retenção e como entrar em contato com nosso DPO.</small>
+          </div>
+          <a class="ac-btn ghost" href="privacidade.html" target="_blank" rel="noopener">Abrir documento</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sair -->
+    <section class="ac-section">
+      <h2>Sessão</h2>
+      <p class="ac-section-desc">Encerrar a sessão neste navegador.</p>
+      <div class="ac-actions">
+        <button type="button" class="ac-btn ghost" id="logoutBtn2">Sair da conta</button>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="ac-foot">
+  <div class="ac-foot-inner">
+    <span>© 2025 IMO Insights · Todos os direitos reservados</span>
+    <div class="ac-foot-links">
+      <a href="privacidade.html">Política de Privacidade</a>
+      <a href="area-cliente.html">Início</a>
+      <a href="index.html">Site público</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/env-config.js"></script>
+<script src="/assets/js/supabase-client.js"></script>
+<script src="/assets/js/role-helpers.js"></script>
+<script src="/assets/js/session-guard.js"></script>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var H;
+  var profile;
+
+  document.addEventListener('imo:ready', async function (e) {
+    profile = e.detail.profile;
+    H = IMO.helpers;
+
+    if (!H.isClient(profile) && !H.isEditorOrAbove(profile)) {
+      // Qualquer papel pode editar o próprio perfil; se não for nada, tira daqui
+      window.location.replace('/login.html');
+      return;
+    }
+
+    // Header
+    var name = profile.full_name || profile.email;
+    $('acUserName').textContent  = name;
+    $('avatarInitial').textContent = (name || '·').charAt(0).toUpperCase();
+    $('logoutBtn').addEventListener('click',  function () { H.signOut(); });
+    $('logoutBtn2').addEventListener('click', function () { H.signOut(); });
+
+    // Empresa (apenas para clientes)
+    var companyName = '—';
+    if (profile.client_id) {
+      try {
+        var cResp = await IMO.client.from('clients').select('name').eq('id', profile.client_id).single();
+        if (cResp.data) companyName = cResp.data.name;
+      } catch (e) { console.warn('[IMO perfil] erro ao buscar empresa:', e); }
+    } else {
+      companyName = profile.role === 'super_admin' ? 'IMO Insights (super-admin)'
+                  : profile.role === 'admin'       ? 'IMO Insights (admin)'
+                  : profile.role === 'editor'      ? 'IMO Insights (editor)'
+                  : '—';
+    }
+
+    // Pré-preenche
+    $('fullName').value      = profile.full_name || '';
+    $('email').value         = profile.email     || '';
+    $('company').value       = companyName;
+    $('notifyByEmail').checked = !!profile.notify_by_email;
+
+    // LGPD: links abrem mailto pré-preenchido (rota simples — Function dedicada fica para v2)
+    var dpoEmail = 'dpo@imoinsights.com.br';
+    $('exportBtn').href =
+      'mailto:' + dpoEmail +
+      '?subject=' + encodeURIComponent('[LGPD] Solicitação de exportação de dados — ' + profile.email) +
+      '&body=' + encodeURIComponent(
+        'Olá, equipe IMO.\n\n' +
+        'Solicito uma cópia dos meus dados pessoais armazenados pela IMO Insights, conforme a LGPD.\n\n' +
+        'Nome: ' + (profile.full_name || '—') + '\n' +
+        'E-mail cadastrado: ' + profile.email + '\n' +
+        'Empresa: ' + companyName + '\n\n' +
+        'Aguardo retorno em até 15 dias.\n\nObrigado.'
+      );
+    $('deleteBtn').href =
+      'mailto:' + dpoEmail +
+      '?subject=' + encodeURIComponent('[LGPD] Solicitação de exclusão de conta — ' + profile.email) +
+      '&body=' + encodeURIComponent(
+        'Olá, equipe IMO.\n\n' +
+        'Solicito a exclusão da minha conta e dos meus dados pessoais, conforme a LGPD.\n\n' +
+        'Nome: ' + (profile.full_name || '—') + '\n' +
+        'E-mail cadastrado: ' + profile.email + '\n' +
+        'Empresa: ' + companyName + '\n\n' +
+        'Compreendo que dados exigidos por lei serão preservados conforme a política de privacidade.\n\n' +
+        'Aguardo retorno.'
+      );
+
+    // Confirmação no clique de exclusão (não chama a Function automaticamente — mailto)
+    $('deleteBtn').addEventListener('click', function (ev) {
+      var ok = confirm('Esta ação inicia uma solicitação de exclusão. Tem certeza?');
+      if (!ok) ev.preventDefault();
+    });
+
+    // Forms
+    setupProfileForm();
+    setupPasswordForm();
+  });
+
+  // ------------------------------------------------------------
+  // Form: dados pessoais
+  // ------------------------------------------------------------
+  function setupProfileForm() {
+    var form    = $('profileForm');
+    var submit  = $('profileSubmit');
+    var msg     = $('profileMsg');
+    var orig    = submit.innerHTML;
+
+    function showMsg(type, text) {
+      msg.className = 'ac-msg ' + type;
+      msg.textContent = text;
+    }
+
+    form.addEventListener('submit', async function (ev) {
+      ev.preventDefault();
+      msg.style.display = 'none';
+      var fullName  = $('fullName').value.trim();
+      var notify    = $('notifyByEmail').checked;
+      if (!fullName) { showMsg('err', 'O nome não pode ficar vazio.'); return; }
+
+      submit.disabled = true; submit.innerHTML = 'Salvando…';
+      try {
+        var resp = await IMO.client
+          .from('users')
+          .update({ full_name: fullName, notify_by_email: notify })
+          .eq('id', profile.id);
+        if (resp.error) throw resp.error;
+        H.clearProfileCache();
+        profile.full_name        = fullName;
+        profile.notify_by_email  = notify;
+        showMsg('ok', 'Alterações salvas.');
+      } catch (err) {
+        console.error('[IMO perfil] update erro:', err);
+        showMsg('err', 'Não foi possível salvar. Tente de novo.');
+      } finally {
+        submit.disabled = false; submit.innerHTML = orig;
+      }
+    });
+  }
+
+  // ------------------------------------------------------------
+  // Form: trocar senha
+  // ------------------------------------------------------------
+  function setupPasswordForm() {
+    var form   = $('passwordForm');
+    var submit = $('passwordSubmit');
+    var msg    = $('passwordMsg');
+    var orig   = submit.innerHTML;
+
+    function showMsg(type, text) {
+      msg.className = 'ac-msg ' + type;
+      msg.textContent = text;
+    }
+
+    form.addEventListener('submit', async function (ev) {
+      ev.preventDefault();
+      msg.style.display = 'none';
+      var pw  = $('newPassword').value;
+      var pw2 = $('newPasswordConfirm').value;
+      if (pw.length < 10) return showMsg('err', 'A senha deve ter pelo menos 10 caracteres.');
+      if (!/[a-zA-Z]/.test(pw) || !/\d/.test(pw))
+        return showMsg('err', 'A senha deve conter letras e números.');
+      if (pw !== pw2) return showMsg('err', 'As senhas não conferem.');
+
+      submit.disabled = true; submit.innerHTML = 'Trocando…';
+      try {
+        var resp = await IMO.client.auth.updateUser({ password: pw });
+        if (resp.error) throw resp.error;
+        $('newPassword').value = '';
+        $('newPasswordConfirm').value = '';
+        showMsg('ok', 'Senha alterada. Na próxima vez, use a nova senha.');
+      } catch (err) {
+        console.error('[IMO perfil] senha erro:', err);
+        var m = err && err.message ? err.message : '';
+        if (/same password/i.test(m)) m = 'A nova senha não pode ser igual à anterior.';
+        else if (/weak/i.test(m))     m = 'A senha está fraca demais. Tente uma combinação mais forte.';
+        else                          m = 'Não foi possível trocar a senha. Tente novamente.';
+        showMsg('err', m);
+      } finally {
+        submit.disabled = false; submit.innerHTML = orig;
+      }
+    });
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+# IMO Insights — Netlify redirects
+# Site público mantém comportamento padrão (Netlify resolve .html sozinho).
+
+# API (Netlify Functions) — proxy curto e legível
+/api/*  /.netlify/functions/:splat  200
+
+# Bloqueia listagem direta de arquivos sensíveis (defesa em profundidade)
+/supabase/*       /404.html  404
+/netlify/*        /404.html  404
+/scripts/*        /404.html  404

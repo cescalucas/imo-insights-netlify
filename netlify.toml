@@ -1,0 +1,93 @@
+# ============================================================
+# IMO Insights — configuração Netlify
+# Site público: estático, sem build step.
+# Área logada: usa Netlify Functions + Supabase (Auth + DB + Storage).
+# ============================================================
+
+[build]
+  publish = "."
+  # Sem build step — site é HTML/CSS/JS puro.
+  # Se um dia adicionarmos transpilação, atualizar aqui.
+  command = "echo 'IMO Insights — static deploy, no build step required'"
+
+# ------------------------------------------------------------
+# Netlify Functions
+# ------------------------------------------------------------
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+  # Pasta _shared/ contém utilitários comuns às Functions
+  included_files = ["netlify/functions/_shared/**"]
+
+# Forçar Node 20 (LTS atual)
+[functions.environment]
+  NODE_VERSION = "20"
+
+# ------------------------------------------------------------
+# Headers de segurança
+# Aplicados às páginas da área logada e ao fluxo de auth.
+# Site público mantém comportamento padrão (sem alteração).
+# ------------------------------------------------------------
+
+# Área logada: CSP + HSTS + bloqueio de embed + nosniff
+[[headers]]
+  for = "/area-cliente*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co https://*.supabase.in; frame-src 'self' https://*.supabase.co; frame-ancestors 'none'; form-action 'self';"
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=(), payment=()"
+    Cache-Control = "no-store, no-cache, must-revalidate, private"
+
+# Páginas de autenticação: também sensíveis
+[[headers]]
+  for = "/login.html"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data:; connect-src 'self' https://*.supabase.co; frame-ancestors 'none';"
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Cache-Control = "no-store, no-cache, must-revalidate, private"
+
+[[headers]]
+  for = "/recuperar-senha.html"
+  [headers.values]
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Cache-Control = "no-store, no-cache, must-revalidate, private"
+
+[[headers]]
+  for = "/definir-senha.html"
+  [headers.values]
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Cache-Control = "no-store, no-cache, must-revalidate, private"
+
+[[headers]]
+  for = "/privacidade.html"
+  [headers.values]
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+    X-Frame-Options = "DENY"
+
+# ------------------------------------------------------------
+# Variáveis de ambiente esperadas (configurar no painel Netlify):
+#   SUPABASE_URL                  — URL do projeto Supabase
+#   SUPABASE_ANON_KEY             — chave anon (front)
+#   SUPABASE_SERVICE_ROLE_KEY     — chave service_role (Functions; NUNCA no front)
+#   RESEND_API_KEY                — chave Resend para e-mail transacional
+#   RESEND_FROM                   — endereço remetente (ex: "IMO Insights <noreply@imoinsights.com.br>")
+#   SITE_URL                      — URL pública do site (ex: https://imoinsights.com.br)
+#
+# Variáveis que ficam disponíveis no front: nunca usar SERVICE_ROLE.
+# Para expor variáveis ao front estático, prefixe com PUBLIC_ via build step OU
+# embuta via configuração no próprio HTML usando <meta>. Aqui escolhemos a
+# segunda via: SUPABASE_URL e SUPABASE_ANON_KEY são gravadas no DOM via meta tag
+# pelo arquivo /assets/js/env-config.js (gerado em deploy hook ou injetado).
+# ------------------------------------------------------------

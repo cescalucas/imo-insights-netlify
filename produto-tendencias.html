@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Estudos de Sinais e Tendências. IMO Insights</title>
+<meta name="description" content="Mapeamento contínuo de sinais comportamentais, culturais e de consumo para antecipar movimentos antes que virem mainstream.">
+<link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+/* ===== TENDÊNCIAS PAGE. scoped styles ===== */
+
+/* HERO */
+.tend-hero{
+  background:var(--black);color:#fff;
+  padding:160px var(--pad) 120px;
+  position:relative;overflow:hidden;
+  border-bottom:none;
+}
+.tend-hero::before{
+  content:'SINAIS';
+  position:absolute;top:50%;right:-40px;
+  transform:translateY(-50%);
+  font-size:clamp(180px,22vw,340px);font-weight:800;
+  letter-spacing:-.06em;line-height:1;
+  color:rgba(255,128,0,.06);
+  pointer-events:none;white-space:nowrap;
+}
+.tend-hero .breadcrumb{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin-bottom:40px;color:rgba(255,255,255,.5)}
+.tend-hero .breadcrumb a{color:var(--orange)}
+.tend-hero h1{
+  font-size:clamp(52px,8vw,120px);font-weight:800;
+  line-height:.88;letter-spacing:-.045em;
+  max-width:900px;margin-bottom:40px;
+}
+.tend-hero h1 .accent{color:var(--orange)}
+.tend-hero .lead{
+  font-size:20px;line-height:1.6;color:rgba(255,255,255,.7);
+  max-width:640px;
+}
+.tend-hero .hero-tag{
+  display:inline-block;margin-top:40px;
+  padding:10px 22px;
+  font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  border:2px solid var(--orange);color:var(--orange);
+}
+
+/* STATEMENT BAND */
+.tend-statement{
+  background:var(--orange);
+  padding:60px var(--pad);
+  text-align:center;
+  border-bottom:none;
+}
+.tend-statement h2{
+  font-family:var(--font);
+  font-size:clamp(24px,3.2vw,42px);font-weight:800;
+  line-height:1.1;letter-spacing:-.02em;
+  color:var(--black);
+  max-width:900px;margin:0 auto;
+}
+
+/* METHODOLOGY SECTION */
+.tend-meth{
+  padding:120px var(--pad);
+  border-bottom:1px solid rgba(0,0,0,.1);
+}
+.tend-meth.alt{background:var(--gray-l)}
+.tend-meth .container{max-width:var(--max);margin:0 auto}
+.tend-meth .meth-head{
+  display:grid;grid-template-columns:1fr 1fr;gap:60px;
+  margin-bottom:60px;align-items:end;
+}
+.tend-meth .meth-num{
+  font-size:clamp(100px,12vw,180px);font-weight:800;
+  line-height:.75;letter-spacing:-.06em;
+  color:rgba(0,0,0,.04);
+  position:absolute;top:-20px;left:-10px;
+  pointer-events:none;
+}
+.tend-meth .meth-title-wrap{position:relative}
+.tend-meth .section-label{margin-bottom:16px}
+.tend-meth h2{
+  font-size:clamp(40px,5.5vw,72px);font-weight:800;
+  line-height:.9;letter-spacing:-.04em;
+}
+.tend-meth h2 .accent{color:var(--orange)}
+.tend-meth .meth-intro{
+  font-size:18px;line-height:1.6;color:#333;
+  align-self:end;
+}
+
+/* METHOD CARDS. upgraded */
+.tend-cards{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+  border:2px solid var(--black);
+}
+.tend-card{
+  padding:44px 32px;
+  border-right:1px solid rgba(0,0,0,.12);
+  border-bottom:1px solid rgba(0,0,0,.12);
+  display:flex;flex-direction:column;gap:14px;
+  position:relative;
+  transition:background .35s,transform .35s;
+}
+.tend-card:hover{background:var(--orange)}
+.tend-card:hover .tend-card-tag{color:var(--black)}
+.tend-card:hover p{color:var(--black)}
+.tend-card-tag{
+  font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--orange);transition:color .35s;
+}
+.tend-card h4{
+  font-size:22px;font-weight:800;line-height:1.05;letter-spacing:-.02em;
+}
+.tend-card p{font-size:14px;line-height:1.6;color:#555;transition:color .35s}
+.tend-card::after{
+  content:'→';position:absolute;bottom:20px;right:24px;
+  font-size:20px;font-weight:800;color:var(--orange);
+  opacity:0;transform:translateX(-8px);
+  transition:all .35s;
+}
+.tend-card:hover::after{opacity:1;transform:translateX(0);color:var(--black)}
+
+/* FRAMEWORK GRID. upgraded */
+.tend-fw-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+  border:2px solid var(--black);
+}
+.tend-fw{
+  padding:40px 28px;
+  border-right:1px solid rgba(0,0,0,.12);
+  transition:background .3s;
+  position:relative;
+  overflow:hidden;
+}
+.tend-fw:last-child{border-right:0}
+.tend-fw:hover{background:rgba(255,128,0,.06)}
+.tend-fw .fw-icon{
+  font-size:32px;font-weight:800;color:var(--orange);
+  margin-bottom:16px;display:block;
+}
+.tend-fw h4{font-size:20px;font-weight:800;line-height:1.05;letter-spacing:-.02em;margin-bottom:10px}
+.tend-fw p{font-size:14px;line-height:1.6;color:#555}
+
+/* DELIVERABLES */
+.tend-deliv{
+  padding:120px var(--pad);
+  background:var(--black);color:#fff;
+  border-bottom:none;
+}
+.tend-deliv .container{max-width:var(--max);margin:0 auto}
+.tend-deliv-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+  border-top:1px solid rgba(255,255,255,.15);
+  margin-top:60px;
+}
+.tend-deliv-card{
+  padding:40px 28px;
+  border-right:1px solid rgba(255,255,255,.1);
+  border-bottom:1px solid rgba(255,255,255,.1);
+  transition:background .35s;
+}
+.tend-deliv-card:last-child{border-right:0}
+.tend-deliv-card:hover{background:var(--orange);color:var(--black)}
+.tend-deliv-card .dtag{
+  font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--orange);margin-bottom:18px;transition:color .35s;
+}
+.tend-deliv-card:hover .dtag{color:var(--black)}
+.tend-deliv-card h4{font-size:20px;font-weight:800;line-height:1.05;letter-spacing:-.02em;margin-bottom:10px}
+.tend-deliv-card p{font-size:14px;line-height:1.6;color:rgba(255,255,255,.6);transition:color .35s}
+.tend-deliv-card:hover p{color:var(--black)}
+
+/* STEPS */
+.tend-steps{
+  padding:120px var(--pad);
+  background:#111;color:#fff;
+  border-bottom:none;
+}
+.tend-steps .container{max-width:var(--max);margin:0 auto}
+.tend-steps-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+  border-top:1px solid rgba(255,255,255,.15);
+  margin-top:60px;
+}
+.tend-step{
+  padding:40px 28px;
+  border-right:1px solid rgba(255,255,255,.1);
+  position:relative;
+  transition:background .35s;
+}
+.tend-step:last-child{border-right:0}
+.tend-step:hover{background:rgba(255,128,0,.1)}
+.tend-step .snum{
+  font-size:64px;font-weight:800;line-height:1;letter-spacing:-.04em;
+  color:var(--orange);margin-bottom:20px;
+}
+.tend-step h3{font-size:22px;font-weight:800;line-height:1.05;letter-spacing:-.02em;margin-bottom:14px}
+.tend-step p{font-size:14px;line-height:1.6;color:rgba(255,255,255,.55)}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .tend-meth .meth-head{grid-template-columns:1fr;gap:30px}
+  .tend-cards{grid-template-columns:repeat(2,1fr)}
+  .tend-fw-grid,.tend-deliv-grid,.tend-steps-grid{grid-template-columns:repeat(2,1fr)}
+  .tend-evb .inner-grid{grid-template-columns:1fr;gap:40px}
+}
+@media(max-width:640px){
+  .tend-hero{padding:120px var(--pad) 80px}
+  .tend-cards,.tend-fw-grid,.tend-deliv-grid,.tend-steps-grid{grid-template-columns:1fr}
+  .tend-card,.tend-fw,.tend-deliv-card,.tend-step{border-right:0}
+}
+</style>
+</head>
+<body>
+<aside class="side-rail" aria-hidden="true">
+  <span>IMO · INSIGHTS</span>
+  <span>NÃO ADIVINHE · SAIBA</span>
+</aside>
+<header class="nav">
+  <div class="nav-inner">
+    <a href="index.html" aria-label="IMO" style="display:flex;align-items:center;gap:14px">
+      <span class="imo-logo"></span>
+    </a>
+    <nav class="links">
+      <a href="index.html">Home</a>
+      <a href="sobre.html">Sobre</a>
+      <a href="produtos.html" class="active">Produtos</a>
+      <a href="evb.html">Eu vi o Brasil</a>
+      <a href="abordagem.html">Abordagem</a>
+      <a href="time.html">Time</a>
+      <a href="contato.html">Contato</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:12px"><a href="contato.html" class="nav-cta">Fale com a IMO →</a><a href="login.html" class="nav-cta login-cta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Área do Cliente</a></div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="tend-hero">
+  <div style="max-width:var(--max);margin:0 auto;position:relative;z-index:2">
+    <div class="breadcrumb"><a href="index.html">IMO</a> / <a href="produtos.html">Produtos</a> / Tendências</div>
+    <h1>Ver antes.<br><span class="accent">Chegar<br>antes.</span></h1>
+    <p class="lead">Mapeamos sinais comportamentais, culturais e de consumo antes que virem mainstream. Quem enxerga o movimento enquanto ele ainda é fraco, chega primeiro onde o mercado vai estar. Estas são as metodologias que usamos para encurtar esse caminho.</p>
+    <span class="hero-tag">Estudos de Sinais e Tendências</span>
+  </div>
+</section>
+
+<!-- STATEMENT -->
+<section class="tend-statement">
+  <h2>Quando a linguagem muda, o comportamento já mudou. Quando o comportamento muda, o mercado está a caminho. Nós chegamos antes.</h2>
+</section>
+
+<!-- 1. Escuta de Sinais Fracos -->
+<section class="tend-meth">
+  <div class="container">
+    <div class="meth-head">
+      <div class="meth-title-wrap">
+        <span class="meth-num">01</span>
+        <div class="section-label">Metodologia 01</div>
+        <h2>Escuta de <span class="accent">Sinais Fracos</span>.</h2>
+      </div>
+      <p class="meth-intro">O coração da pesquisa de tendências. Capturamos fenômenos marginais antes que virem mainstream. monitorando o que a maioria ainda não está olhando.</p>
+    </div>
+    <div class="tend-cards">
+      <div class="tend-card">
+        <div class="tend-card-tag">Social Listening Estruturado</div>
+        <h4>Monitoramento de fóruns, redes sociais e comunidades nichadas</h4>
+        <p>Acompanhamento de Reddit, Discord, grupos fechados e redes sociais com análise de volume e sentimento ao longo do tempo.</p>
+      </div>
+      <div class="tend-card">
+        <div class="tend-card-tag">Análise de Borda</div>
+        <h4>Foco intencional em early adopters e mercados periféricos</h4>
+        <p>O que está acontecendo em subculturas, no Japão, na Coreia ou na Escandinávia que tende a chegar ao Brasil. Mapeamos sinais em contextos que antecipam o mainstream local.</p>
+      </div>
+      <div class="tend-card">
+        <div class="tend-card-tag">Media Fringe Tracking</div>
+        <h4>Publicações alternativas, zines, newsletters e podcasts de nicho</h4>
+        <p>Acompanhamento de mídias independentes que capturam movimentos culturais antes da cobertura mainstream.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Etnografia Cultural e Digital -->
+<section class="tend-meth alt">
+  <div class="container">
+    <div class="meth-head">
+      <div class="meth-title-wrap">
+        <span class="meth-num">02</span>
+        <div class="section-label">Metodologia 02</div>
+        <h2>Etnografia <span class="accent">Cultural</span> e Digital.</h2>
+      </div>
+      <p class="meth-intro">Imersão em comunidades online e offline para entender comportamentos emergentes in natura, sem interferência de questionário.</p>
+    </div>
+    <div class="tend-cards">
+      <div class="tend-card">
+        <div class="tend-card-tag">Etnografia Digital</div>
+        <h4>Imersão em comunidades online</h4>
+        <p>Observação de comportamentos emergentes em ambientes digitais nativos, capturando o que as pessoas fazem. não apenas o que dizem.</p>
+      </div>
+      <div class="tend-card">
+        <div class="tend-card-tag">Netnografia (Kozinets)</div>
+        <h4>Adaptação da etnografia clássica para ambientes digitais</h4>
+        <p>Análise de linguagem, rituais e símbolos culturais em comunidades online, com rigor metodológico acadêmico.</p>
+      </div>
+      <div class="tend-card">
+        <div class="tend-card-tag">Safari Cultural</div>
+        <h4>Visitas de campo a espaços físicos</h4>
+        <p>Feiras, bairros, eventos e pontos de venda para observação de comportamentos ainda não verbalizados.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Dados Não-Convencionais -->
+<section class="tend-meth">
+  <div class="container">
+    <div class="meth-head">
+      <div class="meth-title-wrap">
+        <span class="meth-num">03</span>
+        <div class="section-label">Metodologia 03</div>
+        <h2>Dados <span class="accent">Não-Convencionais</span>.</h2>
+      </div>
+      <p class="meth-intro">Fontes de dados que a pesquisa de mercado tradicional não olha. mas que revelam para onde o consumo e a cultura estão caminhando.</p>
+    </div>
+    <div class="tend-cards" style="grid-template-columns:repeat(4,1fr)">
+      <div class="tend-card">
+        <div class="tend-card-tag">Trend Mining em Buscas</div>
+        <h4>Google Trends e análise de curvas de interesse</h4>
+        <p>Detecção de inflexões no volume de buscas, identificando quando um tema salta de nicho para atenção crescente.</p>
+      </div>
+      <div class="tend-card">
+        <div class="tend-card-tag">Patentes e Papers</div>
+        <h4>Sinais de inovação que ainda não chegaram ao mercado</h4>
+        <p>Registros de patentes e publicações acadêmicas como indicadores de tecnologias que vão impactar categorias no futuro.</p>
+      </div>
+      <div class="tend-card">
+        <div class="tend-card-tag">Varejo e Startup Funding</div>
+        <h4>O que investidores e compradores estão apostando</h4>
+        <p>Dados de investimento em startups e movimentos de varejo como proxy do que o mercado acredita que vai escalar.</p>
+      </div>
+      <div class="tend-card">
+        <div class="tend-card-tag">Linguagem Emergente</div>
+        <h4>Análise de hashtags e novos termos culturais</h4>
+        <p>Surgimento de novas palavras e expressões como proxy de novos conceitos. Quando a linguagem muda, o comportamento já mudou.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. Qualitativa de Prospectiva -->
+<section class="tend-meth alt">
+  <div class="container">
+    <div class="meth-head">
+      <div class="meth-title-wrap">
+        <span class="meth-num">04</span>
+        <div class="section-label">Metodologia 04</div>
+        <h2>Qualitativa de <span class="accent">Prospectiva</span>.</h2>
+      </div>
+      <p class="meth-intro">Métodos qualitativos desenhados não para entender o presente, mas para capturar sinais do que está por vir. com perfis intencionalmente heterodoxos.</p>
+    </div>
+    <div class="tend-cards" style="grid-template-columns:repeat(4,1fr)">
+      <div class="tend-card">
+        <div class="tend-card-tag">Especialistas de Borda</div>
+        <h4>Coolhunters e profissionais de fronteira</h4>
+        <p>Pessoas que vivem nas margens culturais de suas áreas e capturam movimentos antes de qualquer relatório.</p>
+      </div>
+      <div class="tend-card">
+        <div class="tend-card-tag">Trend Groups</div>
+        <h4>Dinâmicas com perfis intencionalmente heterodoxos</h4>
+        <p>Não são grupos focais tradicionais. Reunimos perfis disruptivos, early adopters e outliers culturais para provocar colisões de perspectiva.</p>
+      </div>
+      <div class="tend-card">
+        <div class="tend-card-tag">Diários Culturais</div>
+        <h4>Registro espontâneo do cotidiano</h4>
+        <p>Participantes registram o que chama atenção no dia a dia por um período, revelando padrões emergentes que a entrevista formal não captura.</p>
+      </div>
+      <div class="tend-card">
+        <div class="tend-card-tag">Shadowing</div>
+        <h4>Acompanhamento de rotinas reais</h4>
+        <p>Imersão na rotina de indivíduos para capturar comportamentos não declarados. o que as pessoas fazem quando não estão respondendo pesquisa.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Frameworks de Interpretação -->
+<section class="tend-meth">
+  <div class="container">
+    <div class="meth-head">
+      <div class="meth-title-wrap">
+        <span class="meth-num">05</span>
+        <div class="section-label">Metodologia 05</div>
+        <h2>Frameworks de <span class="accent">Interpretação</span>.</h2>
+      </div>
+      <p class="meth-intro">Coletar sinais não basta. Posicionamos, classificamos e priorizamos cada sinal dentro de um mapa estratégico.</p>
+    </div>
+    <div class="tend-fw-grid">
+      <div class="tend-fw">
+        <span class="fw-icon">S</span>
+        <h4>Curva S de Adoção</h4>
+        <p>Posicionar onde um sinal está no ciclo de vida: surgimento, crescimento, mainstream ou declínio.</p>
+      </div>
+      <div class="tend-fw">
+        <span class="fw-icon">P</span>
+        <h4>STEEP / PESTLE</h4>
+        <p>Leitura de sinais por dimensão: Social, Tecnológica, Econômica, Ecológica, Política e Legal.</p>
+      </div>
+      <div class="tend-fw">
+        <span class="fw-icon">R</span>
+        <h4>Trend Radar</h4>
+        <p>Visualização de sinais por horizonte de tempo e grau de certeza. curto, médio, longo prazo.</p>
+      </div>
+      <div class="tend-fw">
+        <span class="fw-icon">T</span>
+        <h4>Mapa de Tensões</h4>
+        <p>Identificar contradições e paradoxos sociais. tendências costumam nascer de tensões não resolvidas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Validação e Triangulação -->
+<section class="tend-meth alt">
+  <div class="container">
+    <div class="meth-head">
+      <div class="meth-title-wrap">
+        <span class="meth-num">06</span>
+        <div class="section-label">Metodologia 06</div>
+        <h2>Validação e <span class="accent">Triangulação</span>.</h2>
+      </div>
+      <p class="meth-intro">Um sinal isolado não é tendência. Aplicamos processos rigorosos para validar antes de recomendar ação.</p>
+    </div>
+    <div class="tend-fw-grid">
+      <div class="tend-fw">
+        <span class="fw-icon">+</span>
+        <h4>Triangulação de Fontes</h4>
+        <p>Cruzar dados quantitativos, qualitativos e culturais para confirmar a consistência do sinal.</p>
+      </div>
+      <div class="tend-fw">
+        <span class="fw-icon">E</span>
+        <h4>Painel de Especialistas</h4>
+        <p>Curadoria de profissionais de áreas diversas para calibrar interpretações e evitar viés de confirmação.</p>
+      </div>
+      <div class="tend-fw">
+        <span class="fw-icon">M</span>
+        <h4>Teste Multi-Mercado</h4>
+        <p>Verificar se o sinal aparece em contextos independentes. geográficos, demográficos e culturais.</p>
+      </div>
+      <div class="tend-fw">
+        <span class="fw-icon">H</span>
+        <h4>Precedente Histórico</h4>
+        <p>Comparar com padrões de tendências anteriores para estimar velocidade e alcance de adoção.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. Entregáveis -->
+<section class="tend-deliv">
+  <div class="container">
+    <div class="section-label dark" style="color:#fff">Metodologia 07 · Entregáveis</div>
+    <h2 class="xl" style="color:#fff;margin-bottom:10px">Produtos <span class="accent">proprietários</span>.</h2>
+    <p style="font-size:18px;line-height:1.6;color:rgba(255,255,255,.55);max-width:640px">Além das coletas e análises, criamos produtos metodológicos proprietários que viram ferramentas contínuas de decisão para o cliente.</p>
+    <div class="tend-deliv-grid">
+      <div class="tend-deliv-card">
+        <div class="dtag">Entregável</div>
+        <h4>Índice de Maturidade do Sinal</h4>
+        <p>Score proprietário que indica o estágio da tendência. de emergente a mainstream. para priorizar investimento.</p>
+      </div>
+      <div class="tend-deliv-card">
+        <div class="dtag">Entregável</div>
+        <h4>Boletim de Sinais Fracos</h4>
+        <p>Publicação periódica de achados brutos, sem interpretação excessiva. para alimentar a cultura de antecipação do cliente.</p>
+      </div>
+      <div class="tend-deliv-card">
+        <div class="dtag">Entregável</div>
+        <h4>Mapa de Implicações</h4>
+        <p>O que o sinal significa para diferentes setores, categorias e funções dentro da organização do cliente.</p>
+      </div>
+      <div class="tend-deliv-card">
+        <div class="dtag">Entregável</div>
+        <h4>Relatório com Horizonte</h4>
+        <p>Projeção de quando o sinal deve atingir o mainstream, com cenários de curto, médio e longo prazo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Divider -->
+<div style="height:4px;background:var(--orange)"></div>
+
+<!-- Por onde começar -->
+<section class="tend-steps">
+  <div class="container">
+    <div class="section-label dark" style="color:#fff">Por onde começar</div>
+    <h2 class="xl" style="color:#fff">O caminho <span class="accent">recomendado</span>.</h2>
+    <div class="tend-steps-grid">
+      <div class="tend-step">
+        <div class="snum">01</div>
+        <h3>Especializar o olhar</h3>
+        <p>Escolher 2 ou 3 setores para concentrar a leitura de sinais. moda, alimentação, comportamento digital, saúde, mobilidade. e desenvolver profundidade nessas categorias.</p>
+      </div>
+      <div class="tend-step">
+        <div class="snum">02</div>
+        <h3>Infraestrutura de escuta</h3>
+        <p>Montar a combinação certa de social listening automatizado e curadoria humana, calibrando ferramentas para captar sinais fracos. não só volume de menções.</p>
+      </div>
+      <div class="tend-step">
+        <div class="snum">03</div>
+        <h3>Cadência de publicação</h3>
+        <p>Criar uma disciplina de publicação periódica que force a interpretação regular dos sinais. boletins, relatórios, workshops internos com o time do cliente.</p>
+      </div>
+      <div class="tend-step">
+        <div class="snum">04</div>
+        <h3>Framework visual proprietário</h3>
+        <p>Desenvolver uma linguagem visual e um modelo de apresentação próprio para os sinais. isso vira diferencial de marca e facilita a adoção interna.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EVB link -->
+<section style="background:#8B4A1E;color:#FBF7ED;padding:80px var(--pad)">
+  <div class="container">
+    <div class="two-col" style="align-items:center">
+      <div>
+        <div class="section-label" style="color:#FBF7ED">Estudo proprietário em ação</div>
+        <h2 class="xl" style="color:#FBF7ED">Eu vi o <span style="color:#C08B3E">Brasil</span>.</h2>
+        <p class="lead" style="color:#f1dcb0;margin-top:18px;font-size:17px">Nosso principal estudo de tendência aplicado. Uma cartografia contínua de sinais comportamentais, culturais e de consumo em todo o território brasileiro.</p>
+      </div>
+      <div style="text-align:right">
+        <a href="evb.html" style="display:inline-flex;align-items:center;gap:12px;padding:18px 28px;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:.04em;background:#FBF7ED;color:#2A1C10;border:2px solid #FBF7ED">Conhecer o Eu vi o Brasil →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="big-cta">
+  <div class="big-cta-inner">
+    <div class="kicker">Vamos conversar?</div>
+    <h2>Não tente<br>adivinhar.<br><span class="u">Escolha saber.</span></h2>
+    <p class="sub">Marque uma conversa com nosso time. Em 30 minutos mostramos como transformar a próxima decisão da sua marca em uma escolha baseada em evidência.</p>
+    <div class="big-cta-actions">
+      <a href="contato.html" class="btn primary on-orange">Agendar conversa <span class="arr">→</span></a>
+      <a href="produtos.html" class="btn ghost on-orange">Ver produtos</a>
+    </div>
+  </div>
+</section>
+<footer>
+  <div class="foot-inner">
+    <div class="foot-brand">
+      <div style="display:flex;align-items:center;gap:14px">
+        <span class="imo-logo"></span>
+      </div>
+      <p class="tag">Inteligência de mercado para decisões que não podem ser no achismo.</p>
+    </div>
+    <div class="foot-col">
+      <h5>Produtos</h5>
+      <ul>
+        <li><a href="produto-projetos.html">Projetos para Insights</a></li>
+        <li><a href="produto-times-bi.html">Times de Insights & BI</a></li>
+        <li><a href="produto-treinamento.html">Treinamento em Insights</a></li>
+        <li><a href="produto-tendencias.html">Estudos de Tendência</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h5>Funis</h5>
+      <ul>
+        <li><a href="funil-inovacao.html">Inovação</a></li>
+        <li><a href="funil-comunicacao.html">Comunicação</a></li>
+        <li><a href="funil-shopper.html">Shopper</a></li>
+        <li><a href="funil-tracking.html">Tracking</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h5>IMO</h5>
+      <ul>
+        <li><a href="evb.html">Eu vi o Brasil</a></li>
+        <li><a href="sobre.html">Manifesto</a></li>
+        <li><a href="abordagem.html">Abordagem</a></li>
+        <li><a href="time.html">Time</a></li>
+        <li><a href="contato.html">Contato</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <div>© IMO Insights · Inteligência de Mercado e Opinião · São Paulo</div>
+    <div class="socials">
+      <a href="#">LinkedIn</a>
+      <a href="#">Instagram</a>
+      <a href="#">contato@imoinsights.com.br</a>
+    </div>
+  </div>
+</footer>
+</body></html>

@@ -1,0 +1,48 @@
+# Dependências do Node (Netlify Functions)
+node_modules/
+package-lock.json
+
+# Logs
+*.log
+npm-debug.log*
+
+# macOS / Windows / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# macOS — arquivos "Icon" customizados (Icon + carriage return)
+# Ficam invisíveis no Finder mas o git enxerga e quebra refs.
+Icon?
+**/Icon?
+
+# Variáveis sensíveis (se um dia criar arquivos .env locais)
+.env
+.env.local
+.env.production
+.env.development
+
+# Build artifacts
+dist/
+build/
+.netlify/
+
+# Arquivos pessoais que estavam soltos na pasta
+# (ZIPs, PPTX e similares — não fazem parte do projeto)
+*.zip
+*.pptx
+*.docx
+*.xlsx
+*.pdf
+
+# Exceto a pasta assets/ (onde ficam imagens reais do site)
+!assets/**/*.pdf
+!assets/**/*.docx
+
+# Arquivo aleatório que estava na pasta
+zi6P4kTg
+
+# Imagens fonte (não usadas pelo site)
+assets/raw/

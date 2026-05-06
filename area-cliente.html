@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Área do Cliente · IMO Insights</title>
+<meta name="description" content="Seus projetos, reports e dashboards na IMO Insights.">
+<meta name="robots" content="noindex,nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+/* ============================================================
+   Estilos específicos da Área do Cliente (dashboard)
+   Reaproveita base do styles.css (wg-*).
+   ============================================================ */
+.ac-wrap{min-height:100vh;background:#0f0f1a;color:#fff;font-family:'Inter',sans-serif}
+.ac-container{max-width:1280px;margin:0 auto;padding:0 40px}
+
+/* Hero saudação */
+.ac-hello{padding:80px 0 40px;border-bottom:1px solid #1a1a2e}
+.ac-hello-eyebrow{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#FF8000;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.ac-hello-dot{width:6px;height:6px;border-radius:50%;background:#FF8000;animation:acPulse 2s ease-in-out infinite}
+@keyframes acPulse{0%,100%{opacity:1}50%{opacity:.4}}
+.ac-hello h1{font-family:'Rethink Sans',sans-serif;font-size:56px;line-height:1.05;font-weight:800;margin:0 0 16px;letter-spacing:-.02em}
+.ac-hello h1 em{font-style:normal;color:#FF8000}
+.ac-hello-meta{color:#bbb;font-size:16px;line-height:1.5;max-width:640px}
+
+/* Banner novidades */
+.ac-news{margin-top:32px;background:linear-gradient(135deg,rgba(255,128,0,.08),rgba(62,129,248,.08));border:1px solid rgba(255,128,0,.25);border-radius:12px;padding:20px 24px;display:flex;align-items:center;gap:18px}
+.ac-news-icon{flex-shrink:0;width:44px;height:44px;border-radius:50%;background:rgba(255,128,0,.15);display:flex;align-items:center;justify-content:center;color:#FF8000}
+.ac-news-text{flex:1;font-size:14px;line-height:1.4;color:#fff}
+.ac-news-text strong{color:#FF8000}
+.ac-news-link{color:#FF8000;text-decoration:underline;font-weight:700;font-size:13px;white-space:nowrap}
+
+/* Seção projetos */
+.ac-projects{padding:60px 0 100px}
+.ac-section-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:36px;gap:20px;flex-wrap:wrap}
+.ac-section-head h2{font-family:'Rethink Sans',sans-serif;font-size:36px;line-height:1.1;font-weight:800;margin:0;letter-spacing:-.01em}
+.ac-section-eyebrow{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#999;margin-bottom:8px}
+
+.ac-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:24px}
+
+/* Card projeto */
+.ac-card{background:#16162a;border:1px solid #2a2a3e;border-radius:14px;padding:28px;transition:border-color .18s,transform .18s;text-decoration:none;color:inherit;display:flex;flex-direction:column;min-height:240px}
+.ac-card:hover{border-color:#FF8000;transform:translateY(-3px)}
+.ac-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}
+.ac-card-status{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;border-radius:4px}
+.ac-card-status.active{background:rgba(161,234,0,.12);color:#A1EA00;border:1px solid rgba(161,234,0,.3)}
+.ac-card-status.archived{background:rgba(153,153,153,.12);color:#999;border:1px solid #444}
+.ac-card-status.draft{background:rgba(62,129,248,.12);color:#3E81F8;border:1px solid rgba(62,129,248,.3)}
+.ac-card h3{font-family:'Rethink Sans',sans-serif;font-size:22px;line-height:1.2;font-weight:700;margin:0 0 10px;letter-spacing:-.01em}
+.ac-card p{font-size:14px;line-height:1.5;color:#bbb;margin:0 0 18px;flex:1}
+.ac-card-meta{display:flex;flex-direction:column;gap:6px;margin-bottom:18px;font-size:12px;color:#999}
+.ac-card-meta span{display:flex;align-items:center;gap:8px}
+.ac-card-foot{display:flex;justify-content:space-between;align-items:center;padding-top:18px;border-top:1px solid #1a1a2e}
+.ac-card-stats{display:flex;gap:14px;font-size:12px}
+.ac-card-stat{color:#bbb}
+.ac-card-stat strong{color:#fff;font-size:18px;font-weight:800;display:block}
+.ac-card-cta{font-size:13px;font-weight:700;color:#FF8000;text-transform:uppercase;letter-spacing:.06em;display:inline-flex;align-items:center;gap:6px}
+.ac-card-newbadge{display:inline-block;background:#FF8000;color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:10px;margin-left:6px;vertical-align:middle;letter-spacing:.04em}
+
+/* Estado vazio */
+.ac-empty{background:#16162a;border:1px dashed #2a2a3e;border-radius:14px;padding:60px 32px;text-align:center;color:#999}
+.ac-empty h3{color:#fff;font-size:20px;margin:0 0 8px;font-family:'Rethink Sans',sans-serif}
+
+/* Skeleton de loading */
+.ac-skeleton{background:linear-gradient(90deg,#16162a 0%,#1f1f33 50%,#16162a 100%);background-size:200% 100%;animation:acShimmer 1.6s ease-in-out infinite;border-radius:6px;height:14px}
+@keyframes acShimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+/* Footer da área logada */
+.ac-foot{border-top:1px solid #1a1a2e;background:#0a0a14;padding:32px 0}
+.ac-foot-inner{display:flex;justify-content:space-between;align-items:center;color:#666;font-size:12px;flex-wrap:wrap;gap:14px}
+.ac-foot-links{display:flex;gap:18px}
+.ac-foot-links a{color:#999;text-decoration:none;transition:color .15s}
+.ac-foot-links a:hover{color:#FF8000}
+
+/* Responsivo */
+@media (max-width:768px){
+  .ac-container{padding:0 20px}
+  .ac-hello{padding:48px 0 28px}
+  .ac-hello h1{font-size:38px}
+  .ac-section-head h2{font-size:28px}
+  .ac-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body class="wg-body" data-imo-guard="cliente">
+
+<!-- ============================================================
+     Top nav (área logada)
+     ============================================================ -->
+<header class="wg-nav">
+  <div class="wg-nav-inner">
+    <div class="wg-nav-left">
+      <a href="index.html" class="wg-nav-logo" aria-label="IMO Insights — site público">
+        <span class="imo-logo sm"></span>
+      </a>
+      <div class="wg-nav-divider"></div>
+      <span class="wg-nav-brand">Área do Cliente</span>
+    </div>
+    <nav class="wg-nav-links" aria-label="Navegação principal">
+      <a href="area-cliente.html" class="active">Início</a>
+      <a href="area-cliente-perfil.html">Perfil</a>
+    </nav>
+    <div class="wg-nav-right">
+      <span id="acNotifyBadge" class="wg-nav-badge" hidden
+            style="background:#FF8000;color:#fff;font-size:11px;font-weight:800;padding:4px 9px;border-radius:10px;margin-right:6px"></span>
+      <span id="acUserName" class="wg-nav-username"
+            style="color:#bbb;font-size:13px;margin-right:14px"></span>
+      <div class="wg-nav-avatar" id="avatarBtn"><span id="avatarInitial">·</span></div>
+      <button class="wg-nav-logout" id="logoutBtn" title="Sair" aria-label="Sair">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="ac-wrap">
+  <!-- Hero saudação -->
+  <section class="ac-hello">
+    <div class="ac-container">
+      <div class="ac-hello-eyebrow">
+        <span class="ac-hello-dot"></span>
+        <span id="acGreeting">BEM-VINDO</span>
+      </div>
+      <h1 id="acHelloTitle">Olá.</h1>
+      <p class="ac-hello-meta" id="acHelloMeta">Seus projetos e entregáveis estão listados abaixo.</p>
+
+      <div class="ac-news" id="acNews" hidden>
+        <div class="ac-news-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div class="ac-news-text" id="acNewsText"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projetos -->
+  <section class="ac-projects" aria-label="Seus projetos">
+    <div class="ac-container">
+      <div class="ac-section-head">
+        <div>
+          <div class="ac-section-eyebrow">SEUS PROJETOS</div>
+          <h2 id="acProjectsTitle">Carregando…</h2>
+        </div>
+      </div>
+
+      <!-- Grid -->
+      <div class="ac-grid" id="acGrid" aria-busy="true">
+        <!-- Skeletons enquanto carrega -->
+        <div class="ac-card" aria-hidden="true">
+          <div class="ac-skeleton" style="width:30%;height:10px;margin-bottom:18px"></div>
+          <div class="ac-skeleton" style="width:80%;height:24px;margin-bottom:14px"></div>
+          <div class="ac-skeleton" style="width:100%;margin-bottom:8px"></div>
+          <div class="ac-skeleton" style="width:90%;margin-bottom:8px"></div>
+          <div class="ac-skeleton" style="width:60%"></div>
+        </div>
+        <div class="ac-card" aria-hidden="true">
+          <div class="ac-skeleton" style="width:30%;height:10px;margin-bottom:18px"></div>
+          <div class="ac-skeleton" style="width:70%;height:24px;margin-bottom:14px"></div>
+          <div class="ac-skeleton" style="width:100%;margin-bottom:8px"></div>
+          <div class="ac-skeleton" style="width:80%;margin-bottom:8px"></div>
+          <div class="ac-skeleton" style="width:50%"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="ac-foot">
+  <div class="ac-container">
+    <div class="ac-foot-inner">
+      <span>© 2025 IMO Insights · Todos os direitos reservados</span>
+      <div class="ac-foot-links">
+        <a href="privacidade.html">Política de Privacidade</a>
+        <a href="area-cliente-perfil.html">Perfil</a>
+        <a href="index.html">Site público</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Bibliotecas + módulos compartilhados -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/env-config.js"></script>
+<script src="/assets/js/supabase-client.js"></script>
+<script src="/assets/js/role-helpers.js"></script>
+<script src="/assets/js/session-guard.js"></script>
+
+<script>
+(function () {
+  'use strict';
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  // ============================================================
+  // Aguarda guard
+  // ============================================================
+  document.addEventListener('imo:ready', async function (e) {
+    var profile = e.detail.profile;
+
+    // Roteamento por papel: editor/admin não vê o dashboard de cliente
+    if (profile.role !== 'client') {
+      window.location.replace(IMO.helpers.homeForRole(profile.role));
+      return;
+    }
+
+    // Header: nome + avatar + saudação
+    var name = profile.full_name || profile.email;
+    $('acUserName').textContent  = name;
+    $('avatarInitial').textContent = (name || '·').charAt(0).toUpperCase();
+    $('acGreeting').textContent  = obtainGreeting() + ', ' + (profile.full_name ? firstName(profile.full_name).toUpperCase() : 'CLIENTE');
+
+    // Logout
+    $('logoutBtn').addEventListener('click', function () { IMO.helpers.signOut(); });
+
+    // Conteúdo
+    try {
+      await renderDashboard(profile);
+    } catch (err) {
+      console.error('[IMO area-cliente] erro carregando dashboard:', err);
+      IMO.helpers.toast('Não foi possível carregar seus projetos. Tente recarregar a página.', 'error');
+      $('acProjectsTitle').textContent = 'Não foi possível carregar';
+      $('acGrid').innerHTML =
+        '<div class="ac-empty"><h3>Erro ao carregar</h3><p>Recarregue a página ou volte mais tarde.</p></div>';
+      $('acGrid').setAttribute('aria-busy', 'false');
+    }
+  });
+
+  // ============================================================
+  // Helpers locais
+  // ============================================================
+  function obtainGreeting() {
+    var h = new Date().getHours();
+    if (h < 12) return 'BOM DIA';
+    if (h < 18) return 'BOA TARDE';
+    return 'BOA NOITE';
+  }
+  function firstName(full) { return (full || '').trim().split(/\s+/)[0] || ''; }
+  function pluralize(n, sing, plur) { return n === 1 ? sing : plur; }
+
+  // ============================================================
+  // Render
+  // ============================================================
+  async function renderDashboard(profile) {
+    // Fetch em paralelo
+    var [projectsResp, contentResp] = await Promise.all([
+      IMO.client
+        .from('projects')
+        .select('id, name, description, status, starts_at, ends_at, scope, responsible_names, created_at')
+        .order('created_at', { ascending: false }),
+      IMO.client
+        .from('client_visible_content')
+        .select('project_id, version_id, published_at')
+    ]);
+
+    if (projectsResp.error) throw projectsResp.error;
+    if (contentResp.error)  throw contentResp.error;
+
+    var projects = projectsResp.data || [];
+    var contents = contentResp.data || [];
+
+    // Agrega conteúdos por projeto: { projectId: { count, latest } }
+    var byProject = {};
+    contents.forEach(function (c) {
+      var b = byProject[c.project_id] = byProject[c.project_id] || { count: 0, latest: null, newSinceLast: 0 };
+      b.count++;
+      if (!b.latest || c.published_at > b.latest) b.latest = c.published_at;
+      if (profile.last_login_at && c.published_at && c.published_at > profile.last_login_at) {
+        b.newSinceLast++;
+      }
+    });
+
+    // Total de conteúdos novos desde último login
+    var totalNew = Object.keys(byProject).reduce(function (s, k) { return s + byProject[k].newSinceLast; }, 0);
+    var activeCount = projects.filter(function (p) { return p.status === 'active'; }).length;
+
+    // Hero
+    $('acHelloTitle').innerHTML = 'Olá, <em>' + IMO.helpers.escapeHtml(firstName(profile.full_name) || 'cliente') + '</em>.';
+    var metaParts = [];
+    if (activeCount === 0) metaParts.push('Você ainda não tem projetos ativos.');
+    else metaParts.push('Você tem <strong>' + activeCount + '</strong> ' + pluralize(activeCount, 'projeto ativo', 'projetos ativos') + '.');
+    $('acHelloMeta').innerHTML = metaParts.join(' ');
+
+    // Banner novidades
+    if (totalNew > 0) {
+      $('acNewsText').innerHTML =
+        '<strong>' + totalNew + ' ' + pluralize(totalNew, 'novo conteúdo', 'novos conteúdos') + '</strong> ' +
+        pluralize(totalNew, 'foi publicado', 'foram publicados') +
+        ' desde seu último acesso. Confira nos cards abaixo.';
+      $('acNews').hidden = false;
+
+      $('acNotifyBadge').textContent = totalNew > 9 ? '9+' : String(totalNew);
+      $('acNotifyBadge').hidden = false;
+      $('acNotifyBadge').setAttribute('title', totalNew + ' novo(s) conteúdo(s)');
+    }
+
+    $('acProjectsTitle').textContent = projects.length === 0
+      ? 'Nenhum projeto ativo'
+      : projects.length + ' ' + pluralize(projects.length, 'projeto', 'projetos');
+
+    var grid = $('acGrid');
+    grid.innerHTML = '';
+    grid.setAttribute('aria-busy', 'false');
+
+    if (projects.length === 0) {
+      grid.innerHTML =
+        '<div class="ac-empty">' +
+          '<h3>Nenhum projeto disponível</h3>' +
+          '<p>Quando a IMO Insights publicar entregáveis para sua empresa, eles aparecerão aqui.</p>' +
+        '</div>';
+      return;
+    }
+
+    projects.forEach(function (p) {
+      grid.appendChild(buildProjectCard(p, byProject[p.id] || { count: 0, latest: null, newSinceLast: 0 }));
+    });
+
+    // Atualiza last_login_at agora (depois de renderizar — para não estragar o cálculo de "novos")
+    try {
+      await IMO.client
+        .from('users')
+        .update({ last_login_at: new Date().toISOString() })
+        .eq('id', profile.id);
+    } catch (e) {
+      // last_login_at é não-crítico, ignora silenciosamente
+      console.debug('[IMO area-cliente] não foi possível atualizar last_login_at:', e);
+    }
+  }
+
+  function buildProjectCard(p, stats) {
+    var H = IMO.helpers;
+    var a = document.createElement('a');
+    a.className = 'ac-card';
+    a.href = 'area-cliente-projeto.html?id=' + encodeURIComponent(p.id);
+
+    var statusKey = p.status || 'active';
+    var statusLabel = H.statusLabel(statusKey);
+    var hasNew = stats.newSinceLast > 0;
+
+    var lastUpdate = stats.latest ? H.formatDate(stats.latest) : '—';
+    var period =
+      (p.starts_at ? H.formatDate(p.starts_at) : '') +
+      ((p.starts_at || p.ends_at) ? ' — ' : '') +
+      (p.ends_at ? H.formatDate(p.ends_at) : (p.starts_at ? 'em curso' : ''));
+
+    a.innerHTML =
+      '<div class="ac-card-head">' +
+        '<span class="ac-card-status ' + H.escapeHtml(statusKey) + '">' + H.escapeHtml(statusLabel) + '</span>' +
+        (hasNew
+          ? '<span class="ac-card-newbadge" title="Novos conteúdos publicados">' +
+              stats.newSinceLast + ' ' + pluralize(stats.newSinceLast, 'novo', 'novos') +
+            '</span>'
+          : '') +
+      '</div>' +
+      '<h3>' + H.escapeHtml(p.name) + '</h3>' +
+      '<p>' + H.escapeHtml(p.description || 'Sem descrição.') + '</p>' +
+      '<div class="ac-card-meta">' +
+        (period ? '<span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' + H.escapeHtml(period) + '</span>' : '') +
+        (stats.latest ? '<span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Atualizado em ' + H.escapeHtml(lastUpdate) + '</span>' : '') +
+      '</div>' +
+      '<div class="ac-card-foot">' +
+        '<div class="ac-card-stats">' +
+          '<div class="ac-card-stat"><strong>' + stats.count + '</strong>' + pluralize(stats.count, 'conteúdo', 'conteúdos') + '</div>' +
+        '</div>' +
+        '<span class="ac-card-cta">Ver projeto →</span>' +
+      '</div>';
+    return a;
+  }
+})();
+</script>
+
+</body>
+</html>

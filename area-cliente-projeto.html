@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Projeto · IMO Insights</title>
+<meta name="robots" content="noindex,nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+.ac-wrap{min-height:100vh;background:#0f0f1a;color:#fff;font-family:'Inter',sans-serif}
+.ac-container{max-width:1280px;margin:0 auto;padding:0 40px}
+
+/* Breadcrumb */
+.ac-crumb{padding:24px 0 0;font-size:13px;color:#777}
+.ac-crumb a{color:#999;text-decoration:none}
+.ac-crumb a:hover{color:#FF8000}
+.ac-crumb-sep{color:#444;margin:0 8px}
+
+/* Project header */
+.ac-phead{padding:32px 0 48px;border-bottom:1px solid #1a1a2e}
+.ac-phead-grid{display:grid;grid-template-columns:1fr 320px;gap:48px;align-items:start}
+.ac-phead-eyebrow{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#FF8000;margin-bottom:14px}
+.ac-phead h1{font-family:'Rethink Sans',sans-serif;font-size:48px;line-height:1.05;font-weight:800;margin:0 0 18px;letter-spacing:-.02em}
+.ac-phead-desc{color:#bbb;font-size:16px;line-height:1.55;margin:0 0 24px}
+.ac-phead-scope{background:#16162a;border:1px solid #2a2a3e;border-radius:8px;padding:16px 18px;font-size:13px;line-height:1.5;color:#ccc}
+.ac-phead-scope-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#999;margin-bottom:8px}
+.ac-phead-meta{background:#16162a;border:1px solid #2a2a3e;border-radius:10px;padding:24px;display:flex;flex-direction:column;gap:18px}
+.ac-pmeta-row{font-size:12px}
+.ac-pmeta-label{display:block;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#777;font-size:10px;margin-bottom:6px}
+.ac-pmeta-val{color:#fff;font-size:14px}
+.ac-pmeta-val ul{list-style:none;padding:0;margin:0}
+.ac-pmeta-val ul li{padding:3px 0}
+
+/* Tabs */
+.ac-tabs{display:flex;gap:0;border-bottom:1px solid #1a1a2e;margin:32px 0 0}
+.ac-tab{background:transparent;border:none;color:#999;padding:14px 22px;font-family:inherit;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
+.ac-tab:hover{color:#fff}
+.ac-tab.active{color:#FF8000;border-bottom-color:#FF8000}
+
+/* Tab content */
+.ac-tabpanel{padding:32px 0 100px}
+
+/* Lista de conteúdos */
+.ac-list{display:flex;flex-direction:column;gap:14px}
+.ac-row{background:#16162a;border:1px solid #2a2a3e;border-radius:10px;padding:20px 22px;display:grid;grid-template-columns:48px 1fr auto;gap:20px;align-items:center;transition:border-color .15s}
+.ac-row:hover{border-color:#2f2f48}
+.ac-row-icon{width:48px;height:48px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ac-row-icon.document{background:rgba(62,129,248,.15);color:#3E81F8}
+.ac-row-icon.dashboard{background:rgba(255,128,0,.15);color:#FF8000}
+.ac-row-body h4{margin:0 0 4px;font-family:'Rethink Sans',sans-serif;font-size:17px;font-weight:700;color:#fff;letter-spacing:-.005em}
+.ac-row-desc{font-size:13px;color:#999;margin:2px 0 8px;line-height:1.4}
+.ac-row-meta{font-size:11px;color:#777;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.ac-row-tag{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:#1a1a2e;color:#bbb}
+.ac-row-newtag{background:#FF8000;color:#fff}
+.ac-row-action{display:inline-flex;align-items:center;gap:8px;background:#FF8000;color:#fff;border:none;padding:11px 18px;font-family:inherit;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;border-radius:6px;cursor:pointer;text-decoration:none;transition:background .15s;white-space:nowrap}
+.ac-row-action:hover{background:#e87100}
+.ac-row-action:disabled{background:#666;cursor:not-allowed}
+.ac-row-action.ghost{background:transparent;border:1px solid #2a2a3e;color:#bbb}
+.ac-row-action.ghost:hover{border-color:#FF8000;color:#FF8000;background:transparent}
+
+/* Tabela histórico */
+.ac-table{width:100%;border-collapse:collapse;background:#16162a;border:1px solid #2a2a3e;border-radius:10px;overflow:hidden}
+.ac-table th,.ac-table td{padding:14px 18px;text-align:left;border-bottom:1px solid #1a1a2e;font-size:13px}
+.ac-table th{background:#1a1a2e;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#999}
+.ac-table tr:last-child td{border-bottom:none}
+.ac-table td.right{text-align:right}
+.ac-table-empty{padding:48px;text-align:center;color:#777}
+
+/* Empty / loading */
+.ac-empty{background:#16162a;border:1px dashed #2a2a3e;border-radius:14px;padding:60px 32px;text-align:center;color:#999}
+.ac-empty h3{color:#fff;font-size:20px;margin:0 0 8px;font-family:'Rethink Sans',sans-serif}
+.ac-skeleton{background:linear-gradient(90deg,#16162a 0%,#1f1f33 50%,#16162a 100%);background-size:200% 100%;animation:acShimmer 1.6s ease-in-out infinite;border-radius:6px;height:14px}
+@keyframes acShimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+/* Footer */
+.ac-foot{border-top:1px solid #1a1a2e;background:#0a0a14;padding:32px 0}
+.ac-foot-inner{display:flex;justify-content:space-between;align-items:center;color:#666;font-size:12px;flex-wrap:wrap;gap:14px}
+.ac-foot-links{display:flex;gap:18px}
+.ac-foot-links a{color:#999;text-decoration:none}
+.ac-foot-links a:hover{color:#FF8000}
+
+/* Responsivo */
+@media (max-width:900px){
+  .ac-phead-grid{grid-template-columns:1fr}
+  .ac-phead h1{font-size:34px}
+  .ac-row{grid-template-columns:40px 1fr;gap:14px}
+  .ac-row-action{grid-column:span 2;justify-content:center}
+}
+@media (max-width:600px){
+  .ac-container{padding:0 20px}
+  .ac-table{display:block;overflow-x:auto}
+}
+</style>
+</head>
+<body class="wg-body" data-imo-guard="cliente">
+
+<header class="wg-nav">
+  <div class="wg-nav-inner">
+    <div class="wg-nav-left">
+      <a href="index.html" class="wg-nav-logo" aria-label="IMO Insights — site público">
+        <span class="imo-logo sm"></span>
+      </a>
+      <div class="wg-nav-divider"></div>
+      <span class="wg-nav-brand">Área do Cliente</span>
+    </div>
+    <nav class="wg-nav-links">
+      <a href="area-cliente.html">Início</a>
+      <a href="area-cliente-perfil.html">Perfil</a>
+    </nav>
+    <div class="wg-nav-right">
+      <span id="acUserName" class="wg-nav-username" style="color:#bbb;font-size:13px;margin-right:14px"></span>
+      <div class="wg-nav-avatar" id="avatarBtn"><span id="avatarInitial">·</span></div>
+      <button class="wg-nav-logout" id="logoutBtn" title="Sair" aria-label="Sair">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="ac-wrap">
+
+  <div class="ac-container">
+    <!-- Breadcrumb -->
+    <nav class="ac-crumb" aria-label="Breadcrumb">
+      <a href="area-cliente.html">Início</a>
+      <span class="ac-crumb-sep">/</span>
+      <span id="acCrumbName">Carregando…</span>
+    </nav>
+  </div>
+
+  <!-- Project header -->
+  <section class="ac-phead">
+    <div class="ac-container">
+      <div class="ac-phead-grid">
+        <div>
+          <div class="ac-phead-eyebrow" id="acEyebrow">PROJETO</div>
+          <h1 id="acTitle">Carregando…</h1>
+          <p class="ac-phead-desc" id="acDesc"></p>
+          <div class="ac-phead-scope" id="acScopeWrap" hidden>
+            <div class="ac-phead-scope-label">Escopo</div>
+            <div id="acScope"></div>
+          </div>
+        </div>
+        <aside class="ac-phead-meta">
+          <div class="ac-pmeta-row">
+            <span class="ac-pmeta-label">Período</span>
+            <span class="ac-pmeta-val" id="acPeriod">—</span>
+          </div>
+          <div class="ac-pmeta-row">
+            <span class="ac-pmeta-label">Status</span>
+            <span class="ac-pmeta-val" id="acStatus">—</span>
+          </div>
+          <div class="ac-pmeta-row" id="acRespRow" hidden>
+            <span class="ac-pmeta-label">Responsáveis IMO</span>
+            <span class="ac-pmeta-val" id="acResponsibles"></span>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Tabs -->
+      <div class="ac-tabs" role="tablist">
+        <button class="ac-tab active" id="tabContents"  role="tab" aria-selected="true"  data-tab="contents">Conteúdos</button>
+        <button class="ac-tab"        id="tabHistory"   role="tab" aria-selected="false" data-tab="history">Histórico</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tab: Conteúdos -->
+  <section class="ac-tabpanel" id="panelContents" role="tabpanel" aria-labelledby="tabContents">
+    <div class="ac-container">
+      <div class="ac-list" id="acContents" aria-busy="true">
+        <div class="ac-row" aria-hidden="true">
+          <div class="ac-skeleton" style="width:48px;height:48px;border-radius:8px"></div>
+          <div>
+            <div class="ac-skeleton" style="width:60%;height:18px;margin-bottom:8px"></div>
+            <div class="ac-skeleton" style="width:90%"></div>
+          </div>
+          <div class="ac-skeleton" style="width:120px;height:38px"></div>
+        </div>
+        <div class="ac-row" aria-hidden="true">
+          <div class="ac-skeleton" style="width:48px;height:48px;border-radius:8px"></div>
+          <div>
+            <div class="ac-skeleton" style="width:50%;height:18px;margin-bottom:8px"></div>
+            <div class="ac-skeleton" style="width:80%"></div>
+          </div>
+          <div class="ac-skeleton" style="width:120px;height:38px"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tab: Histórico -->
+  <section class="ac-tabpanel" id="panelHistory" role="tabpanel" aria-labelledby="tabHistory" hidden>
+    <div class="ac-container">
+      <p style="color:#999;font-size:13px;margin:0 0 18px;line-height:1.5">Versões aprovadas anteriores. Cada conteúdo aparece com sua respectiva versão e data de publicação. Versões antigas continuam disponíveis para download.</p>
+      <div id="acHistoryWrap"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="ac-foot">
+  <div class="ac-container">
+    <div class="ac-foot-inner">
+      <span>© 2025 IMO Insights · Todos os direitos reservados</span>
+      <div class="ac-foot-links">
+        <a href="privacidade.html">Política de Privacidade</a>
+        <a href="area-cliente-perfil.html">Perfil</a>
+        <a href="index.html">Site público</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/js/env-config.js"></script>
+<script src="/assets/js/supabase-client.js"></script>
+<script src="/assets/js/role-helpers.js"></script>
+<script src="/assets/js/session-guard.js"></script>
+
+<script>
+(function () {
+  'use strict';
+
+  var $ = function (id) { return document.getElementById(id); };
+  var H;
+
+  document.addEventListener('imo:ready', async function (e) {
+    var profile = e.detail.profile;
+    H = IMO.helpers;
+
+    if (profile.role !== 'client') {
+      window.location.replace(H.homeForRole(profile.role));
+      return;
+    }
+
+    // Header
+    var name = profile.full_name || profile.email;
+    $('acUserName').textContent  = name;
+    $('avatarInitial').textContent = (name || '·').charAt(0).toUpperCase();
+    $('logoutBtn').addEventListener('click', function () { H.signOut(); });
+
+    // Pega ID do projeto
+    var projectId = new URLSearchParams(window.location.search).get('id');
+    if (!projectId) {
+      $('acTitle').textContent = 'Projeto não encontrado';
+      $('acDesc').textContent  = 'O link parece estar incompleto. Volte ao início.';
+      $('acContents').innerHTML = '';
+      return;
+    }
+
+    // Tabs
+    setupTabs();
+
+    try {
+      await renderProject(projectId, profile);
+    } catch (err) {
+      console.error('[IMO projeto] erro:', err);
+      $('acTitle').textContent = 'Não foi possível carregar';
+      $('acDesc').textContent  = 'Verifique se você tem acesso a este projeto.';
+      $('acContents').innerHTML = '<div class="ac-empty"><h3>Erro</h3><p>' + H.escapeHtml(err.message || 'Tente recarregar a página.') + '</p></div>';
+      $('acContents').setAttribute('aria-busy', 'false');
+    }
+  });
+
+  function setupTabs() {
+    var btns = document.querySelectorAll('.ac-tab');
+    btns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        btns.forEach(function (x) { x.classList.remove('active'); x.setAttribute('aria-selected', 'false'); });
+        b.classList.add('active'); b.setAttribute('aria-selected', 'true');
+        var which = b.dataset.tab;
+        $('panelContents').hidden = (which !== 'contents');
+        $('panelHistory').hidden  = (which !== 'history');
+      });
+    });
+  }
+
+  async function renderProject(projectId, profile) {
+    // 1) Detalhes do projeto (RLS já garante que cliente só vê o próprio)
+    var pResp = await IMO.client
+      .from('projects')
+      .select('id, name, description, scope, responsible_names, status, starts_at, ends_at')
+      .eq('id', projectId)
+      .single();
+
+    if (pResp.error || !pResp.data) {
+      throw new Error('Projeto não encontrado ou sem acesso.');
+    }
+    var project = pResp.data;
+
+    $('acCrumbName').textContent = project.name;
+    document.title = project.name + ' · IMO Insights';
+    $('acTitle').textContent = project.name;
+    $('acDesc').textContent  = project.description || '';
+
+    if (project.scope) {
+      $('acScope').textContent = project.scope;
+      $('acScopeWrap').hidden = false;
+    }
+
+    var period = '';
+    if (project.starts_at) period += H.formatDate(project.starts_at);
+    if (project.ends_at)   period += (period ? ' — ' : '') + H.formatDate(project.ends_at);
+    else if (project.starts_at) period += ' — em curso';
+    $('acPeriod').textContent = period || '—';
+    $('acStatus').textContent = H.statusLabel(project.status);
+
+    if (project.responsible_names && project.responsible_names.length) {
+      var ul = '<ul>' + project.responsible_names.map(function (n) {
+        return '<li>· ' + H.escapeHtml(n) + '</li>';
+      }).join('') + '</ul>';
+      $('acResponsibles').innerHTML = ul;
+      $('acRespRow').hidden = false;
+    }
+
+    // 2) Conteúdos atuais via view client_visible_content (já filtra por current+approved)
+    var cResp = await IMO.client
+      .from('client_visible_content')
+      .select('slot_id, version_id, type, display_name, description, version_number, mime_type, size_bytes, published_at')
+      .eq('project_id', projectId)
+      .order('published_at', { ascending: false });
+
+    if (cResp.error) throw cResp.error;
+    renderContents(cResp.data || [], profile);
+
+    // 3) Histórico — versões archived/approved não-current
+    //    RLS já permite ao cliente ver status in ('approved','archived') do próprio projeto.
+    var hResp = await IMO.client
+      .from('file_versions')
+      .select('id, slot_id, version_number, status, mime_type, size_bytes, reviewed_at, content_slots!inner(id, project_id, type, display_name)')
+      .eq('content_slots.project_id', projectId)
+      .in('status', ['archived'])
+      .order('reviewed_at', { ascending: false });
+
+    if (hResp.error) {
+      console.warn('[IMO projeto] histórico erro:', hResp.error);
+      $('acHistoryWrap').innerHTML = '<div class="ac-empty"><h3>Não foi possível carregar o histórico</h3></div>';
+    } else {
+      renderHistory(hResp.data || []);
+    }
+  }
+
+  function renderContents(rows, profile) {
+    var box = $('acContents');
+    box.innerHTML = '';
+    box.setAttribute('aria-busy', 'false');
+
+    if (rows.length === 0) {
+      box.innerHTML =
+        '<div class="ac-empty"><h3>Sem conteúdos publicados ainda</h3>' +
+        '<p>Quando a IMO publicar entregáveis para este projeto, eles aparecerão aqui.</p></div>';
+      return;
+    }
+
+    rows.forEach(function (r) {
+      var isNew = profile.last_login_at && r.published_at && r.published_at > profile.last_login_at;
+      var typeLabel = H.typeLabel(r.type);
+      var size = H.formatBytes(r.size_bytes);
+
+      var iconSvg = r.type === 'dashboard'
+        ? '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>'
+        : '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>';
+
+      var actionLabel = r.type === 'dashboard' ? 'Abrir dashboard' : 'Baixar';
+      var actionIcon  = r.type === 'dashboard'
+        ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>'
+        : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+
+      var div = document.createElement('div');
+      div.className = 'ac-row';
+      div.innerHTML =
+        '<div class="ac-row-icon ' + r.type + '" aria-hidden="true">' + iconSvg + '</div>' +
+        '<div class="ac-row-body">' +
+          '<h4>' + H.escapeHtml(r.display_name) + '</h4>' +
+          (r.description ? '<div class="ac-row-desc">' + H.escapeHtml(r.description) + '</div>' : '') +
+          '<div class="ac-row-meta">' +
+            '<span class="ac-row-tag">' + H.escapeHtml(typeLabel) + '</span>' +
+            (isNew ? '<span class="ac-row-tag ac-row-newtag">Novo</span>' : '') +
+            '<span>Versão ' + r.version_number + '</span>' +
+            (r.published_at ? '<span>Publicado em ' + H.formatDate(r.published_at) + '</span>' : '') +
+            (size && size !== '—' ? '<span>' + H.escapeHtml(size) + '</span>' : '') +
+          '</div>' +
+        '</div>' +
+        '<button class="ac-row-action" data-vid="' + H.escapeHtml(r.version_id) + '" data-type="' + H.escapeHtml(r.type) + '">' +
+          actionIcon + ' ' + actionLabel +
+        '</button>';
+      box.appendChild(div);
+    });
+
+    // Liga handlers de download
+    box.querySelectorAll('.ac-row-action').forEach(function (btn) {
+      btn.addEventListener('click', function () { handleDownload(btn); });
+    });
+  }
+
+  function renderHistory(rows) {
+    var box = $('acHistoryWrap');
+    if (rows.length === 0) {
+      box.innerHTML = '<div class="ac-empty"><h3>Sem histórico</h3><p>Ainda não há versões anteriores arquivadas.</p></div>';
+      return;
+    }
+    var html =
+      '<table class="ac-table">' +
+      '<thead><tr>' +
+        '<th>Conteúdo</th><th>Tipo</th><th>Versão</th><th>Aprovação</th><th class="right">Ação</th>' +
+      '</tr></thead><tbody>';
+    rows.forEach(function (r) {
+      var slot = r.content_slots || {};
+      html +=
+        '<tr>' +
+          '<td>' + H.escapeHtml(slot.display_name || '—') + '</td>' +
+          '<td>' + H.escapeHtml(H.typeLabel(slot.type)) + '</td>' +
+          '<td>v' + r.version_number + '</td>' +
+          '<td>' + (r.reviewed_at ? H.formatDate(r.reviewed_at) : '—') + '</td>' +
+          '<td class="right"><button class="ac-row-action ghost" data-vid="' + H.escapeHtml(r.id) + '" data-type="' + H.escapeHtml(slot.type || 'document') + '">' +
+            'Baixar' +
+          '</button></td>' +
+        '</tr>';
+    });
+    html += '</tbody></table>';
+    box.innerHTML = html;
+
+    box.querySelectorAll('.ac-row-action').forEach(function (btn) {
+      btn.addEventListener('click', function () { handleDownload(btn); });
+    });
+  }
+
+  // -------- Download via Netlify Function (URL assinada 5 min) --------
+  async function handleDownload(btn) {
+    var versionId = btn.dataset.vid;
+    var type      = btn.dataset.type || 'document';
+    if (!versionId) return;
+
+    var origLabel = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = 'Gerando link…';
+
+    try {
+      var resp = await H.callApi('sign-download', {
+        method: 'POST',
+        body: { version_id: versionId }
+      });
+      if (!resp || !resp.url) throw new Error('Resposta sem URL.');
+
+      if (type === 'dashboard') {
+        // Abre em nova aba
+        window.open(resp.url, '_blank', 'noopener,noreferrer');
+      } else {
+        // Disparo de download forçado: cria <a download> oculto
+        var a = document.createElement('a');
+        a.href = resp.url;
+        a.download = resp.filename || '';
+        a.rel = 'noopener noreferrer';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+      H.toast('Pronto. Seu download foi liberado.', 'success');
+    } catch (err) {
+      console.error('[IMO download] erro:', err);
+      var msg = err && err.status === 403
+        ? 'Sem permissão para este conteúdo.'
+        : (err && err.message) || 'Não foi possível gerar o link.';
+      H.toast(msg, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = origLabel;
+    }
+  }
+})();
+</script>
+
+</body>
+</html>
