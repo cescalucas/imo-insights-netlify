@@ -10,6 +10,13 @@
   # Se um dia adicionarmos transpilação, atualizar aqui.
   command = "echo 'IMO Insights — static deploy, no build step required'"
 
+# Variáveis "públicas por design" que aparecem em assets/js/env-config.js.
+# São necessárias no front para o Supabase funcionar (a segurança vem do RLS,
+# não do segredo das chaves). Tirar do escaneamento de segredos.
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS  = "SUPABASE_URL,SUPABASE_ANON_KEY,SITE_URL,RESEND_FROM"
+  SECRETS_SCAN_OMIT_PATHS = "assets/js/env-config.js"
+
 # ------------------------------------------------------------
 # Netlify Functions
 # ------------------------------------------------------------
