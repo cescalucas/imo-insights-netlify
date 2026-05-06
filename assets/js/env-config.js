@@ -19,8 +19,8 @@
   'use strict';
 
   window.IMO_ENV = {
-    SUPABASE_URL:      '__SUPABASE_URL__',
-    SUPABASE_ANON_KEY: '__SUPABASE_ANON_KEY__',
+    SUPABASE_URL:      'https://kvgjjytvnsxpvgdtekds.supabase.co',
+    SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2Z2pqeXR2bnN4cHZnZHRla2RzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgwODI1MjQsImV4cCI6MjA5MzY1ODUyNH0.ZoUIkNRtgJSE-st3T3gvgx56-hYa-mfsoOf5n18Q4YA',
     SITE_URL:          'https://peaceful-marshmallow-b2a880.netlify.app'
   };
 
