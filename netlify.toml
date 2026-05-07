@@ -6,9 +6,9 @@
 
 [build]
   publish = "."
-  # Sem build step — site é HTML/CSS/JS puro.
-  # Se um dia adicionarmos transpilação, atualizar aqui.
-  command = "echo 'IMO Insights — static deploy, no build step required'"
+  # Site é HTML/CSS/JS puro, mas as Netlify Functions precisam de npm install
+  # para baixar @supabase/supabase-js e busboy do package.json.
+  command = "npm install --prefer-offline --no-audit --no-fund && echo 'IMO Insights — deps installed, static deploy'"
 
 # Variáveis "públicas por design" que aparecem em assets/js/env-config.js.
 # São necessárias no front para o Supabase funcionar (a segurança vem do RLS,
