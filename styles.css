@@ -786,7 +786,7 @@ body.evb .foot-brand .evb-mark{background:var(--evob-orange);color:var(--evob-in
   font-size:12px !important;
   display:inline-flex;align-items:center;
   transition:all .25s;
-  border-radius:6px;
+  border-radius:0 !important;
 }
 .login-cta:hover{background:#fff !important;color:var(--orange) !important;border-color:#fff}
 .login-cta svg{stroke:#fff}
