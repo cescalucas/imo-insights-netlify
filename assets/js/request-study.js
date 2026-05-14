@@ -15,6 +15,31 @@
 
   var MODAL_ID = 'rs-modal';
 
+  // Catálogos de estudos disponíveis para o modo "picker".
+  // Adicione novos grupos aqui se outras páginas-hub precisarem oferecer escolha.
+  var STUDY_PICKERS = {
+    evb: {
+      label: 'Qual estudo você quer baixar?',
+      options: [
+        {
+          id: 'evb-brasil-movimento',
+          title: 'Brasil em Movimento (EVOB · 2023)',
+          file: 'assets/reports/boletim-sinais-fracos-q1-2025.pdf'
+        },
+        {
+          id: 'evb-cidades-medias',
+          title: 'Cidades Médias, Grandes Pistas (EVOB · 2024)',
+          file: 'assets/reports/mapa-implicacoes-fmcg-2025.pdf'
+        },
+        {
+          id: 'evb-futebol',
+          title: 'A Frequência da Torcida (EVOB · 2025)',
+          file: 'assets/reports/cenarios-2025-2027.pdf'
+        }
+      ]
+    }
+  };
+
   function ensureModal() {
     if (document.getElementById(MODAL_ID)) return;
 
@@ -37,6 +62,12 @@
       +     '<input type="hidden" name="form-name" value="request-study">'
       +     '<input type="hidden" name="study-id" id="rs-study-id">'
       +     '<input type="hidden" name="study-title" id="rs-study-title-input">'
+      +     '<div id="rs-picker-wrap" hidden>'
+      +       '<label class="rs-field">'
+      +         '<span class="rs-picker-label" id="rs-picker-label">Qual estudo você quer baixar?</span>'
+      +         '<select id="rs-picker" required></select>'
+      +       '</label>'
+      +     '</div>'
       +     '<p class="rs-honey" style="display:none"><label>Não preencha: <input name="rs-bot-field"></label></p>'
       +     '<label class="rs-field">Nome'
       +       '<input name="nome" type="text" required autocomplete="name">'
@@ -56,24 +87,68 @@
     document.body.appendChild(wrap);
   }
 
+  function applySelection(modal, opt) {
+    if (!opt) return;
+    modal.dataset.studyFile = opt.file || '';
+    modal.querySelector('#rs-study-id').value = opt.id || '';
+    modal.querySelector('#rs-study-title-input').value = opt.title || '';
+    if (opt.title) {
+      modal.querySelector('#rs-modal-title').textContent = 'Receba o estudo "' + opt.title + '".';
+    }
+  }
+
   function openModal(trigger) {
     ensureModal();
     var modal = document.getElementById(MODAL_ID);
-    var studyId = trigger.dataset.studyId || '';
-    var studyTitle = trigger.dataset.studyTitle || '';
-    var studyFile = trigger.dataset.studyFile || '';
+    var pickerWrap = modal.querySelector('#rs-picker-wrap');
+    var pickerSelect = modal.querySelector('#rs-picker');
+    var pickerLabel = modal.querySelector('#rs-picker-label');
 
-    modal.dataset.studyFile = studyFile;
-    modal.querySelector('#rs-study-id').value = studyId;
-    modal.querySelector('#rs-study-title-input').value = studyTitle;
+    var pickerKey = trigger.dataset.studyPicker || '';
+    var picker = pickerKey ? STUDY_PICKERS[pickerKey] : null;
 
-    if (studyTitle) {
-      modal.querySelector('#rs-modal-title').textContent = 'Receba o estudo "' + studyTitle + '".';
+    if (picker) {
+      // Modo seletor: monta as opções e usa o primeiro estudo como default.
+      pickerLabel.textContent = picker.label;
+      pickerSelect.innerHTML = '';
+      picker.options.forEach(function (opt, idx) {
+        var el = document.createElement('option');
+        el.value = String(idx);
+        el.textContent = opt.title;
+        pickerSelect.appendChild(el);
+      });
+      pickerSelect.value = '0';
+      pickerWrap.removeAttribute('hidden');
+      applySelection(modal, picker.options[0]);
+
+      // Atualiza o estudo escolhido a cada mudança do select.
+      pickerSelect.onchange = function () {
+        var idx = parseInt(pickerSelect.value, 10) || 0;
+        applySelection(modal, picker.options[idx]);
+      };
+    } else {
+      // Modo legado: estudo já vem nos data-attrs do trigger.
+      pickerWrap.setAttribute('hidden', '');
+      pickerSelect.onchange = null;
+      applySelection(modal, {
+        id: trigger.dataset.studyId || '',
+        title: trigger.dataset.studyTitle || '',
+        file: trigger.dataset.studyFile || ''
+      });
+      // Reseta o título quando não há title (mantém o default da página).
+      if (!trigger.dataset.studyTitle) {
+        modal.querySelector('#rs-modal-title').textContent = 'Receba o estudo no seu e-mail.';
+      }
     }
 
     // Reset form state
     var form = modal.querySelector('#rs-form');
+    // Preserva o valor do picker depois do reset (form.reset() volta ao default do <option> selecionado).
     form.reset();
+    if (picker) {
+      pickerSelect.value = '0';
+      applySelection(modal, picker.options[0]);
+    }
     var fb = modal.querySelector('.rs-feedback');
     fb.textContent = '';
     fb.className = 'rs-feedback';
@@ -84,7 +159,9 @@
     modal.removeAttribute('hidden');
     document.documentElement.style.overflow = 'hidden';
     setTimeout(function () {
-      var firstInput = modal.querySelector('input[name="nome"]');
+      var firstInput = picker
+        ? modal.querySelector('#rs-picker')
+        : modal.querySelector('input[name="nome"]');
       if (firstInput) firstInput.focus();
     }, 80);
   }
