@@ -198,8 +198,8 @@
 
   // -------- Bootstrap: o detectSessionInUrl do supabase-client troca o
   //          token do link por uma sessão. Após isso, getSession() retorna
-  --        algo válido. Em caso de erro/expiração, mostra "link inválido".
-  -- -------------------------------------------------------------- -->
+  //          algo válido. Em caso de erro/expiração, mostra "link inválido".
+  // --------------------------------------------------------------
   async function bootstrap() {
     if (!window.IMO || !IMO.client) {
       showStage('invalid');
