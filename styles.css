@@ -135,6 +135,20 @@ h4.md{
 .pill.orange{background:var(--orange);border-color:var(--orange);color:var(--black)}
 .pill.blue{background:var(--blue);border-color:var(--blue);color:var(--black)}
 .pill.lime{background:var(--lime);border-color:var(--lime);color:var(--black)}
+.pill.pink{background:var(--pink);border-color:var(--pink);color:var(--black)}
+.pill-row-equal{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.pill-row-equal .pill{flex:1 1 200px;text-align:center;justify-content:center;display:inline-flex;align-items:center;justify-content:center;min-height:42px}
+
+/* CTA highlight pulse on hero */
+@keyframes ctaPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,128,0,.45)}50%{box-shadow:0 0 0 10px rgba(255,128,0,0)}}
+.cta-pulse{animation:ctaPulse 2.2s ease-in-out infinite;background:var(--orange) !important;color:var(--black) !important;border-color:var(--orange) !important}
+.cta-pulse:hover{background:var(--black) !important;color:var(--white) !important;border-color:var(--black) !important;animation:none}
+
+/* Cinco funis. corpo branco normal, preto no hover (parent inherit) */
+.dark-card-body{color:#fff}
+.dark-card:hover .dark-card-body{color:var(--black)}
+.dark-card ul li{color:#fff}
+.dark-card:hover ul li{color:var(--black)}
 
 /* HERO BIG BLOCK */
 .hero{position:relative;overflow:hidden}
