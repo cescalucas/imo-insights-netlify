@@ -150,6 +150,72 @@ h4.md{
 .dark-card ul li{color:#fff}
 .dark-card:hover ul li{color:var(--black)}
 
+/* ============ REQUEST STUDY MODAL ============ */
+.rs-modal{
+  position:fixed;inset:0;z-index:1000;
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;
+}
+.rs-modal[hidden]{display:none}
+.rs-overlay{position:absolute;inset:0;background:rgba(10,10,10,.78);backdrop-filter:blur(6px);cursor:pointer}
+.rs-card{
+  position:relative;background:#fff;color:var(--black);
+  max-width:520px;width:100%;
+  padding:48px 44px 40px;
+  border:2px solid var(--black);
+  animation:rsFadeIn .25s ease;
+  max-height:92vh;overflow-y:auto;
+}
+@keyframes rsFadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.rs-close{
+  position:absolute;top:14px;right:14px;
+  width:36px;height:36px;
+  background:transparent;border:0;
+  font-size:30px;line-height:1;font-weight:300;
+  cursor:pointer;color:var(--black);
+  transition:.2s;
+}
+.rs-close:hover{background:var(--orange);color:var(--white)}
+.rs-tag{
+  font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--orange);margin-bottom:12px;
+}
+.rs-card h3{
+  font-size:28px;font-weight:800;line-height:1.05;letter-spacing:-.02em;
+  margin-bottom:10px;
+}
+.rs-sub{font-size:15px;line-height:1.5;color:#555;margin-bottom:24px}
+.rs-field{
+  display:flex;flex-direction:column;gap:6px;
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  margin-bottom:14px;
+}
+.rs-field input{
+  border:1.5px solid var(--black);
+  padding:14px 16px;font:inherit;font-size:15px;font-weight:400;
+  text-transform:none;letter-spacing:normal;
+  background:#fff;color:var(--black);transition:.15s;
+}
+.rs-field input:focus{outline:none;border-color:var(--orange);background:#fff8f0}
+.rs-submit{
+  width:100%;justify-content:center;margin-top:8px;
+}
+.rs-submit:disabled{opacity:.6;cursor:wait}
+.rs-feedback{
+  margin-top:14px;font-size:13px;line-height:1.5;
+  min-height:1em;
+}
+.rs-feedback-success{color:#1a7f3e;font-weight:600}
+.rs-feedback-warn{color:#a85a00;font-weight:600}
+.rs-fineprint{
+  margin-top:18px;font-size:11px;line-height:1.5;
+  color:#888;
+}
+@media(max-width:520px){
+  .rs-card{padding:40px 22px 28px}
+  .rs-card h3{font-size:22px}
+}
+
 /* HERO BIG BLOCK */
 .hero{position:relative;overflow:hidden}
 .hero-grid{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:1.15fr 1fr;min-height:78vh}
@@ -401,6 +467,24 @@ footer{background:var(--black);color:var(--white);padding:90px var(--pad) 40px}
 .v-list li .text small{display:block;font-size:14px;font-weight:500;color:#555;margin-top:6px}
 
 /* RESPONSIVE */
+
+/* MOBILE NAV TOGGLE (hamburger) */
+.nav-toggle{
+  display:none;
+  width:44px;height:44px;
+  background:transparent;border:0;
+  cursor:pointer;padding:10px 8px;
+  position:relative;z-index:70;
+  margin-left:8px;
+}
+.nav-toggle span{
+  display:block;width:24px;height:2.5px;
+  background:#fff;margin:5px auto;
+  transition:transform .25s ease,opacity .2s ease;
+  border-radius:1px;
+}
+body.evb .nav-toggle span{background:#0B0B0B}
+
 @media (max-width:1080px){
   .hero-grid{grid-template-columns:1fr}
   .hero-right{min-height:420px}
@@ -418,8 +502,53 @@ footer{background:var(--black);color:var(--white);padding:90px var(--pad) 40px}
   .clients-grid > div:nth-child(6n){border-right:1px solid var(--black)}
   .clients-grid > div:nth-child(3n){border-right:0}
   .foot-inner{grid-template-columns:1fr 1fr;gap:40px}
-  nav.links{display:none}
+
+  /* Mobile drawer nav */
+  .nav-toggle{display:block}
+  nav.links{
+    display:flex !important;
+    position:fixed;top:0;right:0;
+    width:300px;max-width:84vw;height:100vh;height:100dvh;
+    background:#0B0B0B;
+    flex-direction:column;
+    padding:96px 32px 40px;
+    gap:0;
+    transform:translateX(100%);
+    transition:transform .3s ease;
+    z-index:65;overflow-y:auto;
+  }
+  nav.links a{
+    color:#fff !important;font-size:18px;font-weight:600;
+    padding:18px 0;border-bottom:1px solid rgba(255,255,255,.1);
+    letter-spacing:-.01em;
+  }
+  nav.links a:after{display:none !important}
+  nav.links a.active{color:var(--orange) !important}
+  body.evb nav.links{background:#0B0B0B}
+  body.evb nav.links a{color:#FAF4E1 !important}
+  body.evb nav.links a.active{color:#FF7A14 !important}
+
+  body.nav-open nav.links{transform:translateX(0)}
+  body.nav-open{overflow:hidden}
+  body.nav-open:before{
+    content:'';position:fixed;inset:0;
+    background:rgba(0,0,0,.55);z-index:60;
+    backdrop-filter:blur(2px);
+  }
+  body.nav-open .nav-toggle span{background:#fff}
+  body.nav-open .nav-toggle span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
+  body.nav-open .nav-toggle span:nth-child(2){opacity:0}
+  body.nav-open .nav-toggle span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
 }
+
+@media (max-width:768px){
+  /* CTAs do header viram só ícones/menor */
+  .nav-cta:not(.login-cta){padding:10px 14px;font-size:11px}
+  .login-cta{padding:8px 12px !important;font-size:11px !important}
+  .login-cta svg{width:14px;height:14px}
+  .nav-inner{gap:14px;padding:12px var(--pad)}
+}
+
 @media (max-width:640px){
   :root{--pad:22px}
   .side-rail{display:none}
@@ -427,10 +556,72 @@ footer{background:var(--black);color:var(--white);padding:90px var(--pad) 40px}
   .clients-grid > div{border-right:0 !important}
   .stat{border-right:0}
   .foot-inner{grid-template-columns:1fr}
-  .section-pad{padding:80px var(--pad)}
-  .deep-block{padding:80px var(--pad)}
-  .dark-section,.blue-section{padding:80px var(--pad)}
-  .big-cta{padding:90px var(--pad) 100px}
+  .section-pad{padding:70px var(--pad)}
+  .deep-block{padding:70px var(--pad)}
+  .dark-section,.blue-section{padding:70px var(--pad)}
+  .big-cta{padding:80px var(--pad) 90px}
+  .big-cta h2{font-size:clamp(40px,12vw,72px)}
+  .big-cta .sub{font-size:17px}
+  h1.display{font-size:clamp(44px,11vw,72px) !important}
+  h2.xl{font-size:clamp(38px,9vw,56px) !important}
+
+  /* Hero CTAs empilhados full-width */
+  .hero-left .btn,.hero-left > div > .btn{width:100%;justify-content:center}
+  .pill-row,.pill-row-equal{gap:8px}
+  .pill,.pill-row-equal .pill{flex:1 1 100%;font-size:12px;padding:9px 14px}
+
+  /* EVB promo strip */
+  .container{padding:0 var(--pad)}
+
+  /* Marquee menor */
+  .marquee{font-size:13px}
+
+  /* Cases */
+  .case-body{padding:22px 20px 26px}
+  .case-body .title{font-size:18px}
+
+  /* Stats compactos */
+  .stat .big{font-size:54px}
+
+  /* Footer mais respiração */
+  footer{padding:60px var(--pad) 30px}
+  .foot-inner{padding-bottom:50px;gap:34px}
+  .foot-brand .tag{font-size:18px}
+  .foot-bottom{flex-direction:column;align-items:flex-start;gap:14px}
+
+  /* Big CTA stacking */
+  .big-cta-actions{flex-direction:column;align-items:stretch}
+  .big-cta-actions .btn{width:100%;justify-content:center}
+
+  /* Quote */
+  .quote{font-size:clamp(24px,7vw,36px)}
+  .quote-block{padding:70px var(--pad)}
+
+  /* Stack row mais compacto */
+  .stack-row{padding:24px 16px}
+  .stack-name{font-size:22px}
+  .stack-num{font-size:32px}
+
+  /* EVB grids que ainda estão em 2 colunas a 640px */
+  .evob-cities,.evob-metrics,.evob-num-grid,.evob-usos-grid,.evob-method-grid{grid-template-columns:1fr !important}
+  .evob-num .n{font-size:56px !important}
+
+  /* EVB hero ajuste */
+  .evob-hero-grid{grid-template-columns:1fr;gap:30px}
+  .evob-interactive{width:min(100%,420px) !important}
+
+  /* How choose grid (produtos.html) */
+  .how-choose-grid{grid-template-columns:1fr !important;gap:1px !important}
+
+  /* Pills voltam a fluir naturalmente, não 100% */
+  .pill-row-equal .pill{flex:1 1 calc(50% - 4px);max-width:100%}
+}
+
+/* Container pequeno */
+@media (max-width:380px){
+  :root{--pad:18px}
+  .pill-row-equal .pill{flex:1 1 100%}
+  .nav-cta:not(.login-cta){display:none}
 }
 
 /* ============ EVB · EU VI O BRASIL — EVOB ID ============ */

@@ -3,10 +3,57 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Funil Tracking. IMO Insights</title>
-<meta name="description" content="Tracking. monitoramento contínuo de marca, categoria, concorrência e campanha via dashboards de BI.">
+<title>Tracking do Zero ao 100. IMO Insights</title>
+<meta name="description" content="Tracking do Zero ao 100. monitoramento contínuo de marca, categoria, concorrência, patrocínio, influenciadores, programas de TV e campanhas via dashboards de BI.">
 <link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<style>
+/* ===== TRACKING PAGE. scoped styles ===== */
+.tk-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+  border:2px solid var(--black);
+  background:var(--black);
+}
+.tk-card{
+  padding:36px 28px;background:#fff;
+  border-right:1px solid rgba(0,0,0,.08);
+  border-bottom:1px solid rgba(0,0,0,.08);
+  display:flex;flex-direction:column;gap:12px;
+  transition:background .3s,color .3s;
+  position:relative;min-height:280px;
+}
+.tk-card:hover{background:var(--orange)}
+.tk-card .tag{
+  font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--orange);transition:color .3s;
+}
+.tk-card:hover .tag{color:var(--black)}
+.tk-card h4{
+  font-size:20px;font-weight:800;line-height:1.05;letter-spacing:-.02em;
+}
+.tk-card p{font-size:14px;line-height:1.55;color:#444;transition:color .3s}
+.tk-card:hover p{color:var(--black)}
+.tk-card ul{
+  list-style:none;font-size:12px;line-height:1.6;color:#666;
+  margin-top:auto;padding-top:14px;border-top:1px dashed rgba(0,0,0,.15);
+}
+.tk-card:hover ul{color:var(--black);border-color:rgba(0,0,0,.4)}
+.tk-card ul li{padding:3px 0}
+.tk-card .num{
+  position:absolute;top:18px;right:22px;
+  font-size:42px;font-weight:800;line-height:1;letter-spacing:-.04em;
+  color:rgba(0,0,0,.06);transition:color .3s;
+}
+.tk-card:hover .num{color:rgba(0,0,0,.18)}
+
+@media(max-width:1024px){
+  .tk-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:640px){
+  .tk-grid{grid-template-columns:1fr}
+  .tk-card{border-right:0}
+}
+</style>
 </head>
 <body>
 <aside class="side-rail" aria-hidden="true">
@@ -33,10 +80,10 @@
 <section class="page-head">
   <div class="container">
     <div>
-      <div class="breadcrumb"><a href="index.html">IMO</a> / <a href="produto-projetos.html">Projetos</a> / Funil Tracking</div>
-      <h1>Funil <span class="accent">Tracking</span></h1>
+      <div class="breadcrumb"><a href="index.html">IMO</a> / <a href="produto-projetos.html">Projetos</a> / Tracking do Zero ao 100</div>
+      <h1>Tracking do <span class="accent">Zero ao 100</span></h1>
     </div>
-    <p class="intro">Pesquisa não pode ser só uma fotografia. O Funil Tracking reúne os estudos contínuos e dashboards que mantêm marca, concorrência e categoria sempre em tela.</p>
+    <p class="intro">Pesquisa não pode ser só uma fotografia. O Tracking do Zero ao 100 acompanha marca, categoria, concorrência, patrocínio, influenciadores, programas de TV e campanhas. do primeiro sinal ao impacto final.</p>
   </div>
 </section>
 
@@ -44,61 +91,99 @@
   <div class="container">
     <div class="two-col">
       <div>
-        <div class="section-label">O que este funil resolve</div>
+        <div class="section-label">O que este tracking resolve</div>
         <h2 class="xl">A marca <span class="accent">em tempo</span> quase real.</h2>
       </div>
       <div>
-        <p class="body" style="font-size:18px;line-height:1.6">Estudos únicos dão contexto, mas não dão ritmo. Quando a decisão é semanal. ajustar mídia, reagir a um movimento de concorrência, priorizar investimento em um SKU. é preciso ter dados atualizados em ciclo curto, com histórico suficiente para separar ruído de tendência.</p>
-        <p class="body" style="font-size:18px;line-height:1.6;margin-top:18px">O Funil Tracking da IMO combina pesquisa contínua com integração de fontes externas e internas em dashboards de BI customizados. Cada cliente recebe uma instância própria, com métricas calibradas ao seu modelo de negócio.</p>
+        <p class="body" style="font-size:18px;line-height:1.6">Estudos únicos dão contexto, mas não dão ritmo. Quando a decisão é semanal. ajustar mídia, reagir a um movimento de concorrência, avaliar um patrocínio, medir o efeito de um influenciador. é preciso ter dados atualizados em ciclo curto, com histórico suficiente para separar ruído de tendência.</p>
+        <p class="body" style="font-size:18px;line-height:1.6;margin-top:18px">O Tracking do Zero ao 100 da IMO combina pesquisa contínua com integração de fontes externas e internas em dashboards de BI customizados. Cada cliente recebe uma instância própria, com métricas calibradas ao seu modelo de negócio. do mapeamento inicial (zero) à medição de impacto consolidado (100).</p>
       </div>
     </div>
   </div>
 </section>
+
 <section class="deep-block gray">
   <div class="container">
-    <div class="section-label">Metodologias</div>
-    <h2 class="xl">Seis formas de <span class="accent">manter o radar</span> ligado.</h2>
-    <div class="method-list" style="background:#fff">
-      <div class="method">
-        <div class="tag">Método 01</div>
-        <h4>Brand Tracking Contínuo</h4>
-        <p>Ondas mensais ou bimestrais com amostra representativa, cobrindo saliência, consideração, atributos-chave e intenção. Painel vivo que acompanha campanhas e movimentos de concorrência.</p>
-        <ul><li>Ondas mensais</li><li>Benchmarks históricos</li><li>Alertas automáticos</li></ul>
+    <div class="section-label">Tipos de tracking</div>
+    <h2 class="xl">Tudo que <span class="accent">rastreamos</span>, em um só lugar.</h2>
+    <p class="lead" style="margin-top:26px;max-width:780px">Nem todo tracking é igual. Cada pergunta de negócio pede uma cadência, uma amostra e uma fonte de dado diferente. Estes são os 8 trackings que a IMO opera. juntos ou separados, mas sempre integrados ao seu dashboard.</p>
+    <div class="tk-grid" style="margin-top:60px">
+      <div class="tk-card">
+        <span class="num">01</span>
+        <div class="tag">Brand Tracking</div>
+        <h4>Tracking de Marca</h4>
+        <p>Saliência, consideração, atributos-chave, equity e intenção de compra. Ondas mensais ou bimestrais com amostra representativa.</p>
+        <ul><li>Funnel de marca</li><li>Atributos vs concorrência</li><li>Benchmarks históricos</li></ul>
       </div>
-      <div class="method">
-        <div class="tag">Método 02</div>
+      <div class="tk-card">
+        <span class="num">02</span>
+        <div class="tag">Sponsorship</div>
+        <h4>Tracking de Patrocínio</h4>
+        <p>Mensuração do retorno de patrocínios de eventos, festivais, esportes e ativações. Notoriedade, associação à marca, sentimento e intenção.</p>
+        <ul><li>Naming rights e ativações</li><li>Lift de marca pós-evento</li><li>Comparativo com benchmarks</li></ul>
+      </div>
+      <div class="tk-card">
+        <span class="num">03</span>
+        <div class="tag">Influenciadores</div>
+        <h4>Tracking de Influenciadores</h4>
+        <p>Acompanhamento de campanhas com influenciadores e creators. Aderência espontânea, qualidade da menção, risco reputacional e ROI percebido.</p>
+        <ul><li>Pré e pós-ativação</li><li>Análise de comentários</li><li>Comparativo entre vozes</li></ul>
+      </div>
+      <div class="tk-card">
+        <span class="num">04</span>
+        <div class="tag">TV & Conteúdo</div>
+        <h4>Tracking de Programas e Conteúdo</h4>
+        <p>Mensuração de presença de marca em programas de TV, séries, novelas, conteúdos de streaming e branded content. Lembrança, fit narrativo e impacto.</p>
+        <ul><li>Product placement</li><li>Branded entertainment</li><li>Patrocínio editorial</li></ul>
+      </div>
+      <div class="tk-card">
+        <span class="num">05</span>
+        <div class="tag">Categoria</div>
         <h4>Category Radar</h4>
-        <p>Monitoramento trimestral da categoria como um todo: penetração, ocasiões, novos entrantes, deslocamentos de preferência e sinais de reconfiguração competitiva.</p>
-        <ul><li>Mapa competitivo dinâmico</li><li>Deteção de novos players</li><li>Movimento de preço</li></ul>
+        <p>Monitoramento trimestral da categoria como um todo. penetração, ocasiões, novos entrantes, deslocamentos de preferência e sinais de reconfiguração competitiva.</p>
+        <ul><li>Mapa competitivo dinâmico</li><li>Detecção de novos players</li><li>Movimento de preço</li></ul>
       </div>
-      <div class="method">
-        <div class="tag">Método 03</div>
+      <div class="tk-card">
+        <span class="num">06</span>
+        <div class="tag">Concorrência</div>
         <h4>Competitor Watch</h4>
-        <p>Leitura estruturada das marcas concorrentes com foco em lançamentos, campanhas, preço, presença de PDV e reputação digital. Relatório mensal executivo.</p>
+        <p>Leitura estruturada das marcas concorrentes. lançamentos, campanhas, preço, presença no PDV e reputação digital. Relatório mensal executivo.</p>
         <ul><li>Lançamentos e relançamentos</li><li>Pressão de mídia</li><li>Reputação online</li></ul>
       </div>
-      <div class="method">
-        <div class="tag">Método 04</div>
-        <h4>Dashboards de BI</h4>
-        <p>Construção e manutenção de dashboards customizados integrando dados de pesquisa, vendas, Nielsen, social listening e CRM. Acesso direto para o cliente a qualquer momento.</p>
-        <ul><li>Pipeline automatizado</li><li>Drill-down por região</li><li>Alertas e anomalias</li></ul>
-      </div>
-      <div class="method">
-        <div class="tag">Método 05</div>
-        <h4>Pulse Surveys</h4>
-        <p>Estudos rápidos e recorrentes, com amostras menores, para leituras táticas de temas quentes (nova campanha, crise reputacional, mudança de preço, sazonalidade).</p>
-        <ul><li>Turnaround em 5–10 dias</li><li>Amostra modular</li><li>Reporte executivo</li></ul>
-      </div>
-      <div class="method">
-        <div class="tag">Método 06</div>
+      <div class="tk-card">
+        <span class="num">07</span>
+        <div class="tag">Campanha</div>
         <h4>Campaign Effect</h4>
         <p>Avaliação de impacto de campanha combinando tracking de marca, dados de mídia e dados de venda. Separa efeito publicitário de efeito promocional.</p>
         <ul><li>Decomposição de efeito</li><li>Curvas de saturação</li><li>Recomendação de alocação</li></ul>
       </div>
+      <div class="tk-card">
+        <span class="num">08</span>
+        <div class="tag">Pulse</div>
+        <h4>Pulse Surveys & Hot Topics</h4>
+        <p>Estudos rápidos e recorrentes, com amostras menores, para leituras táticas. nova campanha, crise reputacional, mudança de preço, sazonalidade ou tema quente.</p>
+        <ul><li>Turnaround em 5–10 dias</li><li>Amostra modular</li><li>Reporte executivo</li></ul>
+      </div>
     </div>
   </div>
 </section>
+
 <section class="section-pad">
+  <div class="container">
+    <div class="two-col">
+      <div>
+        <div class="section-label">Camada de visualização</div>
+        <h2 class="xl">Dashboards <span class="accent">de BI</span> integrados.</h2>
+      </div>
+      <div>
+        <p class="body" style="font-size:18px;line-height:1.6">Cada um desses trackings alimenta um dashboard de BI customizado para o cliente. Conectamos pesquisa primária, vendas, Nielsen, social listening, dados de mídia e CRM em um pipeline automatizado com drill-down por região, marca, SKU ou campanha.</p>
+        <p class="body" style="font-size:18px;line-height:1.6;margin-top:18px">O cliente acessa o painel a qualquer momento e recebe alertas automáticos quando uma métrica sai do padrão. histórico, anomalias e comparativos competitivos sempre na ponta dos dedos.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad" style="background:var(--gray-l);border-top:1px solid var(--black);border-bottom:1px solid var(--black)">
   <div class="container">
     <div class="section-label">Cases reais</div>
     <h2 class="xl">O <span class="accent">radar</span> ligado em projetos reais.</h2>
@@ -107,39 +192,39 @@
         <div class="case-img">
           <div class="p-blue"><svg viewBox="0 0 200 160" preserveAspectRatio="xMidYMid slice"><circle cx="100" cy="70" r="50" fill="rgba(0,0,0,.2)"/></svg></div>
           <div class="p-orange"><svg viewBox="0 0 200 160" preserveAspectRatio="xMidYMid slice"><path d="M 20 120 Q 100 60 180 120 L 180 160 L 20 160 Z" fill="rgba(0,0,0,.22)"/></svg></div>
-          <span class="label">Tracking</span>
+          <span class="label">Patrocínio</span>
         </div>
         <div class="case-body">
-          <div class="client">Telco · Top 3</div>
-          <div class="title">Reformulação do tracking de marca</div>
-          <p class="outcome">Substituição de tracker anterior trimestral por tracking mensal integrado a dashboard. Comitê de marketing passou a usar os números em reuniões quinzenais.</p>
-          <div class="result">Tempo até insight<strong>-70%</strong></div>
+          <div class="client">Cerveja · Top 3</div>
+          <div class="title">Tracking de patrocínio de festival</div>
+          <p class="outcome">Mensuração antes, durante e depois de festival nacional. Mediu lift de marca por região e segmento, indicando onde valeu repetir patrocínio e onde realocar verba.</p>
+          <div class="result">Lift na praça-foco<strong>+18 p.p.</strong></div>
         </div>
       </article>
       <article class="case">
         <div class="case-img">
           <div class="p-blue"><svg viewBox="0 0 200 160" preserveAspectRatio="xMidYMid slice"><circle cx="100" cy="70" r="50" fill="rgba(0,0,0,.2)"/></svg></div>
           <div class="p-lime"><svg viewBox="0 0 200 160" preserveAspectRatio="xMidYMid slice"><path d="M 20 120 Q 100 60 180 120 L 180 160 L 20 160 Z" fill="rgba(0,0,0,.22)"/></svg></div>
-          <span class="label">BI</span>
+          <span class="label">Influenciador</span>
         </div>
         <div class="case-body">
-          <div class="client">Varejo · Grande rede</div>
-          <div class="title">Dashboard integrado de shopper</div>
-          <p class="outcome">Integração de pesquisa quinzenal + dados Nielsen + CRM em painel único. Permitiu decisões de sortimento por região baseadas em sinais convergentes.</p>
-          <div class="result">Decisões regionais automatizadas<strong>140+</strong></div>
+          <div class="client">Beauty · LATAM</div>
+          <div class="title">Tracking de campanha com creators</div>
+          <p class="outcome">Acompanhamento pré-pós de campanha com 12 creators em 3 mercados. Identificou perfis com melhor aderência espontânea e descartou pares com risco reputacional.</p>
+          <div class="result">Eficiência da seleção<strong>+2.4x</strong></div>
         </div>
       </article>
       <article class="case">
         <div class="case-img">
           <div class="p-blue"><svg viewBox="0 0 200 160" preserveAspectRatio="xMidYMid slice"><circle cx="100" cy="70" r="50" fill="rgba(0,0,0,.2)"/></svg></div>
           <div class="p-pink"><svg viewBox="0 0 200 160" preserveAspectRatio="xMidYMid slice"><path d="M 20 120 Q 100 60 180 120 L 180 160 L 20 160 Z" fill="rgba(0,0,0,.22)"/></svg></div>
-          <span class="label">Campanha</span>
+          <span class="label">Marca + Campanha</span>
         </div>
         <div class="case-body">
-          <div class="client">Beleza · LATAM</div>
-          <div class="title">Medição de impacto de campanha regional</div>
-          <p class="outcome">Campaign Effect comparou 4 mercados e decomponde lift publicitário × promocional, orientando realocação do trimestre seguinte.</p>
-          <div class="result">ROI marginal em 1 país<strong>3.1x</strong></div>
+          <div class="client">Telco · Top 3</div>
+          <div class="title">Reformulação do tracking de marca</div>
+          <p class="outcome">Substituição de tracker anterior trimestral por tracking mensal integrado a dashboard. Comitê de marketing passou a usar os números em reuniões quinzenais.</p>
+          <div class="result">Tempo até insight<strong>-70%</strong></div>
         </div>
       </article>
     </div>
@@ -182,6 +267,7 @@
         <li><a href="funil-comunicacao.html">Comunicação</a></li>
         <li><a href="funil-shopper.html">Shopper</a></li>
         <li><a href="funil-tracking.html">Tracking</a></li>
+        <li><a href="funil-conhecimento.html">Conhecimento</a></li>
       </ul>
     </div>
     <div class="foot-col">
@@ -204,4 +290,5 @@
     </div>
   </div>
 </footer>
+<script src="assets/js/mobile-nav.js" defer></script>
 </body></html>
