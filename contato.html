@@ -57,11 +57,11 @@
         </ol>
       </div>
       <div>
-        <form style="display:flex;flex-direction:column;gap:18px;border:2px solid var(--black);padding:40px 36px;background:#fff">
+        <form id="briefingForm" style="display:flex;flex-direction:column;gap:18px;border:2px solid var(--black);padding:40px 36px;background:#fff" novalidate>
           <div class="section-label" style="margin-bottom:4px">Formulário de briefing</div>
-          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em">Nome<input name="nome" required style="border:1.5px solid #000;padding:14px;font:inherit;font-size:15px"></label>
-          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em">E-mail corporativo<input name="email" type="email" required style="border:1.5px solid #000;padding:14px;font:inherit;font-size:15px"></label>
-          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em">Empresa<input name="empresa" style="border:1.5px solid #000;padding:14px;font:inherit;font-size:15px"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em">Nome<input name="nome" required autocomplete="name" style="border:1.5px solid #000;padding:14px;font:inherit;font-size:15px"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em">E-mail corporativo<input name="email" type="email" required autocomplete="email" style="border:1.5px solid #000;padding:14px;font:inherit;font-size:15px"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em">Empresa<input name="empresa" autocomplete="organization" style="border:1.5px solid #000;padding:14px;font:inherit;font-size:15px"></label>
           <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em">Qual produto te interessa?
             <select name="produto" style="border:1.5px solid #000;padding:14px;font:inherit;font-size:15px;background:#fff">
               <option>Projetos para Insights</option>
@@ -73,8 +73,72 @@
             </select>
           </label>
           <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em">Conte brevemente o desafio<textarea name="msg" rows="4" style="border:1.5px solid #000;padding:14px;font:inherit;font-size:15px;resize:vertical"></textarea></label>
+          <!-- honeypot anti-bot -->
+          <p style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden" aria-hidden="true"><label>Não preencha<input name="rs-bot-field" tabindex="-1" autocomplete="off"></label></p>
           <button type="submit" class="btn primary" style="margin-top:8px;justify-content:center">Enviar briefing <span class="arr">→</span></button>
+          <p id="briefingFeedback" style="margin:6px 0 0;font-size:13px;line-height:1.5;min-height:1em" aria-live="polite"></p>
         </form>
+        <script>
+        (function(){
+          var form = document.getElementById('briefingForm');
+          if(!form) return;
+          var fb = document.getElementById('briefingFeedback');
+          var btn = form.querySelector('button[type="submit"]');
+          var originalLabel = btn.innerHTML;
+
+          form.addEventListener('submit', function(e){
+            e.preventDefault();
+            fb.textContent = '';
+            fb.style.color = '';
+
+            var data = new FormData(form);
+            // Validações leves no cliente
+            var email = (data.get('email') || '').toString().trim();
+            var nome  = (data.get('nome')  || '').toString().trim();
+            if(nome.length < 2){ fb.textContent = 'Informe seu nome.'; fb.style.color = '#b00020'; return; }
+            if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ fb.textContent = 'E-mail inválido.'; fb.style.color = '#b00020'; return; }
+
+            btn.disabled = true;
+            btn.innerHTML = 'Enviando...';
+
+            var params = new URLSearchParams();
+            data.forEach(function(v,k){ params.append(k, v); });
+
+            fetch('/api/send-briefing', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: params.toString()
+            })
+            .then(function(r){
+              return r.json().then(function(j){ return { ok: r.ok, status: r.status, body: j }; });
+            })
+            .then(function(res){
+              if(res.ok){
+                fb.textContent = 'Briefing enviado. Em até 48h úteis nosso time entra em contato.';
+                fb.style.color = '#1a7f3e';
+                form.reset();
+                btn.innerHTML = '✓ Enviado';
+                setTimeout(function(){
+                  btn.disabled = false;
+                  btn.innerHTML = originalLabel;
+                }, 3000);
+              } else {
+                fb.textContent = (res.body && res.body.error) || 'Não foi possível enviar agora. Tente novamente em instantes.';
+                fb.style.color = '#b00020';
+                btn.disabled = false;
+                btn.innerHTML = originalLabel;
+              }
+            })
+            .catch(function(err){
+              console.error('[briefing]', err);
+              fb.textContent = 'Erro de rede. Verifique sua conexão e tente novamente.';
+              fb.style.color = '#b00020';
+              btn.disabled = false;
+              btn.innerHTML = originalLabel;
+            });
+          });
+        })();
+        </script>
       </div>
     </div>
   </div>

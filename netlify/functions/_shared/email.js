@@ -161,6 +161,42 @@ function adminPendingDigestTemplate({ count, items, link }) {
   };
 }
 
+function briefingTemplate({ nome, email, empresa, produto, mensagem, ip, userAgent }) {
+  return {
+    subject: `Novo briefing IMO · ${escapeHtml(nome || 'sem nome')}${empresa ? ' · ' + escapeHtml(empresa) : ''}`,
+    html: shell({
+      title: 'Novo briefing recebido',
+      intro: `Um novo contato chegou pelo formulário de briefing do site.`,
+      body: `
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="width:100%;background:#0f0f1a;border:1px solid #2a2a3e;border-radius:8px;margin-top:18px;">
+          <tr><td style="padding:18px 22px;color:#fff;font-size:14px;line-height:1.7;">
+            <div style="margin-bottom:14px"><span style="display:inline-block;width:100px;color:#777;font-size:11px;letter-spacing:.1em;text-transform:uppercase;">Nome</span><strong style="color:#fff">${escapeHtml(nome || '—')}</strong></div>
+            <div style="margin-bottom:14px"><span style="display:inline-block;width:100px;color:#777;font-size:11px;letter-spacing:.1em;text-transform:uppercase;">E-mail</span><a href="mailto:${escapeHtml(email || '')}" style="color:#FF8000;">${escapeHtml(email || '—')}</a></div>
+            <div style="margin-bottom:14px"><span style="display:inline-block;width:100px;color:#777;font-size:11px;letter-spacing:.1em;text-transform:uppercase;">Empresa</span><strong style="color:#fff">${escapeHtml(empresa || '—')}</strong></div>
+            <div style="margin-bottom:14px"><span style="display:inline-block;width:100px;color:#777;font-size:11px;letter-spacing:.1em;text-transform:uppercase;">Produto</span><strong style="color:#FF8000">${escapeHtml(produto || '—')}</strong></div>
+          </td></tr>
+        </table>
+        ${mensagem ? `
+        <div style="margin-top:18px;background:#1a1a2e;border-left:3px solid #FF8000;padding:16px 20px;color:#fff;font-size:14px;line-height:1.6;white-space:pre-wrap;">
+          <div style="color:#777;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;">Desafio</div>
+          ${escapeHtml(mensagem)}
+        </div>` : ''}
+        <p style="color:#bbb;font-size:13px;line-height:1.55;margin-top:24px;">Responda direto para <a href="mailto:${escapeHtml(email || '')}" style="color:#FF8000;">${escapeHtml(email || '')}</a>. O Reply-To deste e-mail já está configurado.</p>
+        ${ip ? `<p style="color:#666;font-size:11px;line-height:1.5;margin-top:18px;">Origem: ${escapeHtml(ip)} · ${escapeHtml((userAgent || '').slice(0,140))}</p>` : ''}
+      `,
+      showUnsubscribe: false
+    }),
+    text:
+      'Novo briefing recebido pelo site IMO Insights\n\n' +
+      'Nome: ' + (nome || '—') + '\n' +
+      'E-mail: ' + (email || '—') + '\n' +
+      'Empresa: ' + (empresa || '—') + '\n' +
+      'Produto: ' + (produto || '—') + '\n' +
+      (mensagem ? '\nDesafio:\n' + mensagem + '\n' : '') +
+      (ip ? '\nOrigem: ' + ip : '')
+  };
+}
+
 function loginOtpTemplate({ code, fullName, ip, userAgent }) {
   // Apresentação visual do código de 6 dígitos
   var spaced = String(code || '').split('').join(' ');
@@ -190,5 +226,6 @@ module.exports = {
   approvedTemplate,
   rejectedTemplate,
   adminPendingDigestTemplate,
-  loginOtpTemplate
+  loginOtpTemplate,
+  briefingTemplate
 };
