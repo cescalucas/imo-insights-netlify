@@ -31,6 +31,16 @@
   NODE_VERSION = "20"
 
 # ------------------------------------------------------------
+# Atalho /api/* → Netlify Functions
+# Ex.: /api/send-briefing → /.netlify/functions/send-briefing
+# ------------------------------------------------------------
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+  force = true
+
+# ------------------------------------------------------------
 # Headers de segurança
 # Aplicados às páginas da área logada e ao fluxo de auth.
 # Site público mantém comportamento padrão (sem alteração).

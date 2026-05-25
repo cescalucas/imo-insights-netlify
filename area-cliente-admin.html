@@ -181,6 +181,7 @@
         <button class="ad-tab"        data-tab="clients"  role="tab" aria-selected="false">Clientes</button>
         <button class="ad-tab"        data-tab="users"    role="tab" aria-selected="false">Usuários</button>
         <button class="ad-tab"        data-tab="projects" role="tab" aria-selected="false">Projetos</button>
+        <button class="ad-tab"        data-tab="leads"    role="tab" aria-selected="false">Leads <span class="ad-tab-count" id="cntLeads" hidden>0</span></button>
         <button class="ad-tab"        data-tab="audit"    role="tab" aria-selected="false">Auditoria</button>
       </nav>
     </div>
@@ -316,6 +317,30 @@
     </div>
   </section>
 
+  <!-- ============================================================
+       Tab: Leads (contatos do site público)
+       ============================================================ -->
+  <section class="ad-panel" id="panel-leads" role="tabpanel" hidden>
+    <div class="ad-container">
+      <div class="ad-tools" style="gap:8px">
+        <input type="search" class="ad-search" id="lSearch" placeholder="Buscar por nome, e-mail ou empresa…">
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="ad-filter active" data-lsourcef="all">Todos</button>
+          <button class="ad-filter" data-lsourcef="download">Downloads</button>
+          <button class="ad-filter" data-lsourcef="contato">Contato</button>
+        </div>
+        <button class="ad-btn ghost" id="lReload">Atualizar</button>
+        <button class="ad-btn" id="lExport">Exportar CSV</button>
+      </div>
+      <table class="ad-table" id="lTable">
+        <thead><tr>
+          <th>Quando</th><th>Nome</th><th>E-mail</th><th>Empresa</th><th>Origem</th><th>Interesse</th><th>Status</th>
+        </tr></thead>
+        <tbody id="lTbody"><tr><td colspan="7"><div class="ad-skeleton" style="width:60%"></div></td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
 </main>
 
 <!-- ============================================================
@@ -409,7 +434,8 @@
       clients:  loadClients,
       users:    loadUsers,
       projects: loadProjects,
-      audit:    loadAudit
+      audit:    loadAudit,
+      leads:    loadLeads
     };
   }
 
@@ -1159,6 +1185,120 @@
       });
       tbody.appendChild(tr);
     });
+  }
+
+  // ---------------- Leads (contatos do site público) ----------------
+  var leadsCache = [];
+  var leadSourceFilter = 'all';
+  var LEAD_SOURCE_LABEL = { download: 'Download', contato: 'Contato' };
+  var LEAD_STATUS = [
+    { v: 'novo',        t: 'Novo' },
+    { v: 'em_contato',  t: 'Em contato' },
+    { v: 'qualificado', t: 'Qualificado' },
+    { v: 'descartado',  t: 'Descartado' }
+  ];
+
+  function refreshLeadsBadge() {
+    var novos = (leadsCache || []).filter(function (x) { return x.status === 'novo'; }).length;
+    var el = $('cntLeads');
+    if (!el) return;
+    if (novos > 0) { el.textContent = novos; el.hidden = false; } else { el.hidden = true; }
+  }
+
+  async function loadLeads() {
+    $('lReload').addEventListener('click', renderLeads);
+    $('lSearch').addEventListener('input', renderLeads);
+    $('lExport').addEventListener('click', exportLeadsCsv);
+    document.querySelectorAll('[data-lsourcef]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        leadSourceFilter = b.dataset.lsourcef;
+        document.querySelectorAll('[data-lsourcef]').forEach(function (x) { x.classList.toggle('active', x === b); });
+        renderLeads();
+      });
+    });
+    await renderLeads();
+  }
+
+  async function renderLeads() {
+    var search = ($('lSearch').value || '').trim().toLowerCase();
+    var q = IMO.client.from('leads')
+      .select('id, source, name, email, company, product, study_title, message, status, created_at')
+      .order('created_at', { ascending: false })
+      .limit(500);
+    if (leadSourceFilter !== 'all') q = q.eq('source', leadSourceFilter);
+
+    var resp = await q;
+    var tbody = $('lTbody');
+    if (resp.error) {
+      tbody.innerHTML = '<tr><td colspan="7"><div class="ad-empty"><h3>Erro ao carregar</h3><p>' + H.escapeHtml(resp.error.message) + '</p></div></td></tr>';
+      return;
+    }
+    leadsCache = resp.data || [];
+    refreshLeadsBadge();
+
+    var rows = leadsCache.filter(function (r) {
+      if (!search) return true;
+      return ((r.name || '') + ' ' + (r.email || '') + ' ' + (r.company || '')).toLowerCase().indexOf(search) !== -1;
+    });
+
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="7"><div class="ad-empty"><h3>Nenhum lead</h3><p>Os contatos do site (downloads e formulário) aparecem aqui.</p></div></td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = '';
+    rows.forEach(function (r) {
+      var interesse = r.source === 'download' ? (r.study_title || '—') : (r.product || '—');
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + H.formatDateTime(r.created_at) + '</td>' +
+        '<td><strong>' + H.escapeHtml(r.name || '—') + '</strong>' +
+          (r.message ? '<br><small style="color:#888">' + H.escapeHtml(r.message.slice(0, 90)) + (r.message.length > 90 ? '…' : '') + '</small>' : '') + '</td>' +
+        '<td><a href="mailto:' + H.escapeHtml(r.email) + '" style="color:#FF8000">' + H.escapeHtml(r.email) + '</a></td>' +
+        '<td>' + H.escapeHtml(r.company || '—') + '</td>' +
+        '<td><span class="ad-status ' + (r.source === 'download' ? 'active' : 'invited') + '">' + (LEAD_SOURCE_LABEL[r.source] || r.source) + '</span></td>' +
+        '<td>' + H.escapeHtml(interesse) + '</td>' +
+        '<td></td>';
+      var statusTd = tr.lastChild;
+      var sel = document.createElement('select');
+      sel.className = 'ad-select';
+      LEAD_STATUS.forEach(function (s) {
+        var o = document.createElement('option');
+        o.value = s.v; o.textContent = s.t;
+        if (s.v === r.status) o.selected = true;
+        sel.appendChild(o);
+      });
+      sel.addEventListener('change', async function () {
+        var prev = r.status;
+        sel.disabled = true;
+        var up = await IMO.client.from('leads').update({ status: sel.value }).eq('id', r.id);
+        sel.disabled = false;
+        if (up.error) { H.toast('Não foi possível atualizar o status.', 'error'); sel.value = prev; return; }
+        r.status = sel.value;
+        refreshLeadsBadge();
+        H.toast('Status atualizado.', 'success');
+      });
+      statusTd.appendChild(sel);
+      tbody.appendChild(tr);
+    });
+  }
+
+  function exportLeadsCsv() {
+    var data = leadsCache || [];
+    if (!data.length) { H.toast('Nada para exportar.', 'error'); return; }
+    var cols = ['created_at','source','name','email','company','product','study_title','message','status'];
+    var head = ['Data','Origem','Nome','E-mail','Empresa','Produto','Estudo','Mensagem','Status'];
+    function esc(v) { v = (v == null ? '' : String(v)); return '"' + v.replace(/"/g, '""') + '"'; }
+    var lines = [head.map(esc).join(',')];
+    data.forEach(function (r) { lines.push(cols.map(function (c) { return esc(r[c]); }).join(',')); });
+    var csv = '﻿' + lines.join('\r\n'); // BOM para acentos abrirem certo no Excel
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'leads-imo-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 })();
 </script>

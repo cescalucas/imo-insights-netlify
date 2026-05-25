@@ -16,6 +16,7 @@
  *   RESEND_FROM         — remetente (default em _shared/email.js)
  */
 const { sendEmail, briefingTemplate } = require('./_shared/email');
+const { getAdmin } = require('./_shared/supabase');
 const { ok, fail } = require('./_shared/respond');
 
 // Rate-limit best-effort em memória da Function (efêmero, mas ajuda).
@@ -100,6 +101,22 @@ exports.handler = async function (event) {
   } catch (err) {
     console.error('[send-briefing] falha ao enviar:', err && err.message);
     return fail(502, 'Falha ao enviar o briefing. Tente novamente em instantes.');
+  }
+
+  // Grava o lead no banco (best-effort: o e-mail já saiu, não falhar a resposta por isso)
+  try {
+    await getAdmin().from('leads').insert({
+      source:     'contato',
+      name:       nome,
+      email:      email,
+      company:    empresa || null,
+      product:    produto || null,
+      message:    mensagem || null,
+      ip_address: ip || null,
+      user_agent: userAgent || null
+    });
+  } catch (err) {
+    console.error('[send-briefing] lead não gravado (e-mail enviado):', err && err.message);
   }
 
   return ok({ ok: true });

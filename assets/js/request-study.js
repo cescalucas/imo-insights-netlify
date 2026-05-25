@@ -229,6 +229,15 @@
 
     var formData = new FormData(form);
 
+    // Registra o lead no banco (fire-and-forget; não bloqueia o download).
+    try {
+      fetch('/api/register-lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: encodeForm(formData) + '&source=download'
+      }).catch(function () {});
+    } catch (_) {}
+
     fetch('/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
