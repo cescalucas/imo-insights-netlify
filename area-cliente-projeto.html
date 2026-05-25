@@ -103,7 +103,7 @@
 <header class="wg-nav">
   <div class="wg-nav-inner">
     <div class="wg-nav-left">
-      <a href="index.html" class="wg-nav-logo" aria-label="IMO Insights — site público">
+      <a href="index.html" class="wg-nav-logo" aria-label="IMO Insights, site público">
         <span class="imo-logo sm"></span>
       </a>
       <div class="wg-nav-divider"></div>
@@ -307,8 +307,8 @@
 
     var period = '';
     if (project.starts_at) period += H.formatDate(project.starts_at);
-    if (project.ends_at)   period += (period ? ' — ' : '') + H.formatDate(project.ends_at);
-    else if (project.starts_at) period += ' — em curso';
+    if (project.ends_at)   period += (period ? ', ' : '') + H.formatDate(project.ends_at);
+    else if (project.starts_at) period += ', em curso';
     $('acPeriod').textContent = period || '—';
     $('acStatus').textContent = H.statusLabel(project.status);
 
@@ -330,7 +330,7 @@
     if (cResp.error) throw cResp.error;
     renderContents(cResp.data || [], profile);
 
-    // 3) Histórico — versões archived/approved não-current
+    // 3) Histórico, versões archived/approved não-current
     //    RLS já permite ao cliente ver status in ('approved','archived') do próprio projeto.
     var hResp = await IMO.client
       .from('file_versions')

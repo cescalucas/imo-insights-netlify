@@ -97,7 +97,7 @@
 <header class="wg-nav">
   <div class="wg-nav-inner">
     <div class="wg-nav-left">
-      <a href="index.html" class="wg-nav-logo" aria-label="IMO Insights — site público">
+      <a href="index.html" class="wg-nav-logo" aria-label="IMO Insights, site público">
         <span class="imo-logo sm"></span>
       </a>
       <div class="wg-nav-divider"></div>
@@ -321,7 +321,7 @@
       grid.appendChild(buildProjectCard(p, byProject[p.id] || { count: 0, latest: null, newSinceLast: 0 }));
     });
 
-    // Atualiza last_login_at agora (depois de renderizar — para não estragar o cálculo de "novos")
+    // Atualiza last_login_at agora (depois de renderizar, para não estragar o cálculo de "novos")
     try {
       await IMO.client
         .from('users')
@@ -346,7 +346,7 @@
     var lastUpdate = stats.latest ? H.formatDate(stats.latest) : '—';
     var period =
       (p.starts_at ? H.formatDate(p.starts_at) : '') +
-      ((p.starts_at || p.ends_at) ? ' — ' : '') +
+      ((p.starts_at || p.ends_at) ? ', ' : '') +
       (p.ends_at ? H.formatDate(p.ends_at) : (p.starts_at ? 'em curso' : ''));
 
     a.innerHTML =

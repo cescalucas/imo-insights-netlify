@@ -76,7 +76,7 @@
 <header class="wg-nav">
   <div class="wg-nav-inner">
     <div class="wg-nav-left">
-      <a href="index.html" class="wg-nav-logo" aria-label="IMO Insights — site público">
+      <a href="index.html" class="wg-nav-logo" aria-label="IMO Insights, site público">
         <span class="imo-logo sm"></span>
       </a>
       <div class="wg-nav-divider"></div>
@@ -162,7 +162,7 @@
     </section>
 
     <!-- ============================================================
-         LGPD — direitos do titular
+         LGPD, direitos do titular
          ============================================================ -->
     <section class="ac-section">
       <h2>Privacidade e seus dados</h2>
@@ -265,11 +265,11 @@
     $('company').value       = companyName;
     $('notifyByEmail').checked = !!profile.notify_by_email;
 
-    // LGPD: links abrem mailto pré-preenchido (rota simples — Function dedicada fica para v2)
+    // LGPD: links abrem mailto pré-preenchido (rota simples, Function dedicada fica para v2)
     var dpoEmail = 'dpo@imoinsights.com.br';
     $('exportBtn').href =
       'mailto:' + dpoEmail +
-      '?subject=' + encodeURIComponent('[LGPD] Solicitação de exportação de dados — ' + profile.email) +
+      '?subject=' + encodeURIComponent('[LGPD] Solicitação de exportação de dados, ' + profile.email) +
       '&body=' + encodeURIComponent(
         'Olá, equipe IMO.\n\n' +
         'Solicito uma cópia dos meus dados pessoais armazenados pela IMO Insights, conforme a LGPD.\n\n' +
@@ -280,7 +280,7 @@
       );
     $('deleteBtn').href =
       'mailto:' + dpoEmail +
-      '?subject=' + encodeURIComponent('[LGPD] Solicitação de exclusão de conta — ' + profile.email) +
+      '?subject=' + encodeURIComponent('[LGPD] Solicitação de exclusão de conta, ' + profile.email) +
       '&body=' + encodeURIComponent(
         'Olá, equipe IMO.\n\n' +
         'Solicito a exclusão da minha conta e dos meus dados pessoais, conforme a LGPD.\n\n' +
@@ -291,7 +291,7 @@
         'Aguardo retorno.'
       );
 
-    // Confirmação no clique de exclusão (não chama a Function automaticamente — mailto)
+    // Confirmação no clique de exclusão (não chama a Function automaticamente, mailto)
     $('deleteBtn').addEventListener('click', function (ev) {
       var ok = confirm('Esta ação inicia uma solicitação de exclusão. Tem certeza?');
       if (!ok) ev.preventDefault();

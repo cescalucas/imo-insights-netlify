@@ -149,7 +149,7 @@
 <header class="wg-nav">
   <div class="wg-nav-inner">
     <div class="wg-nav-left">
-      <a href="index.html" class="wg-nav-logo" aria-label="IMO Insights — site público">
+      <a href="index.html" class="wg-nav-logo" aria-label="IMO Insights, site público">
         <span class="imo-logo sm"></span>
       </a>
       <div class="wg-nav-divider"></div>
@@ -994,7 +994,7 @@
     tbody.innerHTML = '';
     rows.forEach(function (p) {
       var period = (p.starts_at ? H.formatDate(p.starts_at) : '') +
-                   ((p.starts_at && p.ends_at) ? ' — ' : '') +
+                   ((p.starts_at && p.ends_at) ? ', ' : '') +
                    (p.ends_at ? H.formatDate(p.ends_at) : (p.starts_at ? '— em curso' : ''));
       var tr = document.createElement('tr');
       tr.className = 'clickable';
