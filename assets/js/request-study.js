@@ -15,30 +15,30 @@
 
   var MODAL_ID = 'rs-modal';
 
-  // Catálogos de estudos disponíveis para o modo "picker".
-  // Adicione novos grupos aqui se outras páginas-hub precisarem oferecer escolha.
-  var STUDY_PICKERS = {
-    evb: {
-      label: 'Qual estudo você quer baixar?',
-      options: [
-        {
-          id: 'evb-brasil-movimento',
-          title: 'Brasil em Movimento (EVOB · 2023)',
-          file: 'assets/reports/boletim-sinais-fracos-q1-2025.pdf'
-        },
-        {
-          id: 'evb-cidades-medias',
-          title: 'Cidades Médias, Grandes Pistas (EVOB · 2024)',
-          file: 'assets/reports/mapa-implicacoes-fmcg-2025.pdf'
-        },
-        {
-          id: 'evb-futebol',
-          title: 'A Frequência da Torcida (EVOB · 2025)',
-          file: 'assets/reports/cenarios-2025-2027.pdf'
-        }
-      ]
-    }
-  };
+  // Os estudos vêm do banco (gerenciados em /area-cliente-admin → aba Estudos).
+  // Endpoint público que devolve { studies: [{ slug, title, subtitle, file_url }] }.
+  var MATERIALS_URL = '/api/list-materials';
+  var _materials = null;        // cache em memória
+  var _materialsPromise = null; // evita fetch duplicado
+
+  function loadMaterials() {
+    if (_materials) return Promise.resolve(_materials);
+    if (_materialsPromise) return _materialsPromise;
+    _materialsPromise = fetch(MATERIALS_URL, { headers: { 'Accept': 'application/json' } })
+      .then(function (r) { return r.ok ? r.json() : { studies: [] }; })
+      .then(function (j) { _materials = (j && j.studies) || []; return _materials; })
+      .catch(function () { _materials = []; return _materials; });
+    return _materialsPromise;
+  }
+
+  function toOption(m) {
+    return {
+      id:    m.slug,
+      title: m.title,
+      label: m.title + (m.subtitle ? ' (' + m.subtitle + ')' : ''),
+      file:  m.file_url
+    };
+  }
 
   function ensureModal() {
     if (document.getElementById(MODAL_ID)) return;
@@ -103,66 +103,75 @@
     var pickerWrap = modal.querySelector('#rs-picker-wrap');
     var pickerSelect = modal.querySelector('#rs-picker');
     var pickerLabel = modal.querySelector('#rs-picker-label');
+    var title = modal.querySelector('#rs-modal-title');
+    var fb = modal.querySelector('.rs-feedback');
+    var btn = modal.querySelector('.rs-submit');
 
-    var pickerKey = trigger.dataset.studyPicker || '';
-    var picker = pickerKey ? STUDY_PICKERS[pickerKey] : null;
+    var isPicker = !!trigger.dataset.studyPicker;
+    var slug = trigger.dataset.studyId || '';
 
-    if (picker) {
-      // Modo seletor: monta as opções e usa o primeiro estudo como default.
-      pickerLabel.textContent = picker.label;
-      pickerSelect.innerHTML = '';
-      picker.options.forEach(function (opt, idx) {
-        var el = document.createElement('option');
-        el.value = String(idx);
-        el.textContent = opt.title;
-        pickerSelect.appendChild(el);
-      });
-      pickerSelect.value = '0';
+    // Estado inicial limpo
+    var form = modal.querySelector('#rs-form');
+    form.reset();
+    fb.textContent = ''; fb.className = 'rs-feedback';
+    btn.innerHTML = 'Baixar estudo <span class="arr">→</span>';
+    pickerSelect.onchange = null;
+    title.textContent = 'Receba o estudo no seu e-mail.';
+
+    if (isPicker) {
+      // Modo seletor (hub EVB): opções vêm do banco.
+      pickerLabel.textContent = 'Qual estudo você quer baixar?';
       pickerWrap.removeAttribute('hidden');
-      applySelection(modal, picker.options[0]);
+      pickerSelect.innerHTML = '<option>Carregando…</option>';
+      pickerSelect.disabled = true;
+      btn.disabled = true;
 
-      // Atualiza o estudo escolhido a cada mudança do select.
-      pickerSelect.onchange = function () {
-        var idx = parseInt(pickerSelect.value, 10) || 0;
-        applySelection(modal, picker.options[idx]);
-      };
-    } else {
-      // Modo legado: estudo já vem nos data-attrs do trigger.
-      pickerWrap.setAttribute('hidden', '');
-      pickerSelect.onchange = null;
-      applySelection(modal, {
-        id: trigger.dataset.studyId || '',
-        title: trigger.dataset.studyTitle || '',
-        file: trigger.dataset.studyFile || ''
+      loadMaterials().then(function (list) {
+        var opts = (list || []).map(toOption);
+        if (!opts.length) {
+          pickerSelect.innerHTML = '<option>Nenhum estudo disponível</option>';
+          fb.textContent = 'Não foi possível carregar os estudos agora. Tente novamente em instantes.';
+          fb.className = 'rs-feedback rs-feedback-warn';
+          return;
+        }
+        pickerSelect.innerHTML = '';
+        opts.forEach(function (opt, idx) {
+          var el = document.createElement('option');
+          el.value = String(idx);
+          el.textContent = opt.label;
+          pickerSelect.appendChild(el);
+        });
+        pickerSelect.disabled = false;
+        pickerSelect.value = '0';
+        btn.disabled = false;
+        applySelection(modal, opts[0]);
+        pickerSelect.onchange = function () {
+          applySelection(modal, opts[parseInt(pickerSelect.value, 10) || 0]);
+        };
       });
-      // Reseta o título quando não há title (mantém o default da página).
-      if (!trigger.dataset.studyTitle) {
-        modal.querySelector('#rs-modal-title').textContent = 'Receba o estudo no seu e-mail.';
+    } else {
+      // Modo direto (página de um estudo). Usa os data-attrs como fallback e
+      // refina pelo banco (por slug = data-study-id), para refletir o arquivo atual.
+      pickerWrap.setAttribute('hidden', '');
+      btn.disabled = false;
+      applySelection(modal, {
+        id:    slug,
+        title: trigger.dataset.studyTitle || '',
+        file:  trigger.dataset.studyFile || ''
+      });
+      if (slug) {
+        loadMaterials().then(function (list) {
+          var m = (list || []).filter(function (x) { return x.slug === slug; })[0];
+          if (m && m.file_url) applySelection(modal, toOption(m));
+        });
       }
     }
-
-    // Reset form state
-    var form = modal.querySelector('#rs-form');
-    // Preserva o valor do picker depois do reset (form.reset() volta ao default do <option> selecionado).
-    form.reset();
-    if (picker) {
-      pickerSelect.value = '0';
-      applySelection(modal, picker.options[0]);
-    }
-    var fb = modal.querySelector('.rs-feedback');
-    fb.textContent = '';
-    fb.className = 'rs-feedback';
-    var btn = modal.querySelector('.rs-submit');
-    btn.disabled = false;
-    btn.innerHTML = 'Baixar estudo <span class="arr">→</span>';
 
     modal.removeAttribute('hidden');
     document.documentElement.style.overflow = 'hidden';
     setTimeout(function () {
-      var firstInput = picker
-        ? modal.querySelector('#rs-picker')
-        : modal.querySelector('input[name="nome"]');
-      if (firstInput) firstInput.focus();
+      var f = isPicker ? modal.querySelector('#rs-picker') : modal.querySelector('input[name="nome"]');
+      if (f) f.focus();
     }, 80);
   }
 

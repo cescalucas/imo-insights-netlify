@@ -182,6 +182,7 @@
         <button class="ad-tab"        data-tab="users"    role="tab" aria-selected="false">Usuários</button>
         <button class="ad-tab"        data-tab="projects" role="tab" aria-selected="false">Projetos</button>
         <button class="ad-tab"        data-tab="leads"    role="tab" aria-selected="false">Leads <span class="ad-tab-count" id="cntLeads" hidden>0</span></button>
+        <button class="ad-tab"        data-tab="estudos"  role="tab" aria-selected="false">Estudos</button>
         <button class="ad-tab"        data-tab="audit"    role="tab" aria-selected="false">Auditoria</button>
       </nav>
     </div>
@@ -341,6 +342,24 @@
     </div>
   </section>
 
+  <!-- ============================================================
+       Tab: Estudos (materiais de download do site público)
+       ============================================================ -->
+  <section class="ad-panel" id="panel-estudos" role="tabpanel" hidden>
+    <div class="ad-container">
+      <div class="ad-tools">
+        <input type="search" class="ad-search" id="eSearch" placeholder="Buscar por título…">
+        <button class="ad-btn" id="eNew">+ Novo estudo</button>
+      </div>
+      <table class="ad-table" id="eTable">
+        <thead><tr>
+          <th>Título</th><th>Edição</th><th>Arquivo</th><th>Publicado</th><th>Atualizado</th><th class="actions">Ações</th>
+        </tr></thead>
+        <tbody id="eTbody"><tr><td colspan="6"><div class="ad-skeleton" style="width:60%"></div></td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
 </main>
 
 <!-- ============================================================
@@ -435,7 +454,8 @@
       users:    loadUsers,
       projects: loadProjects,
       audit:    loadAudit,
-      leads:    loadLeads
+      leads:    loadLeads,
+      estudos:  loadStudies
     };
   }
 
@@ -1299,6 +1319,150 @@
     a.download = 'leads-imo-' + new Date().toISOString().slice(0, 10) + '.csv';
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  }
+
+  // ---------------- Estudos (materiais de download do site) ----------------
+  var studiesCache = [];
+
+  function slugify(s) {
+    return (s || '').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
+  }
+
+  async function loadStudies() {
+    $('eNew').addEventListener('click', function () { openStudyDrawer(); });
+    $('eSearch').addEventListener('input', renderStudies);
+    await refreshStudies();
+  }
+
+  async function refreshStudies() {
+    var resp = await IMO.client.from('study_materials')
+      .select('id, slug, title, subtitle, description, file_url, file_name, published, sort_order, updated_at')
+      .order('sort_order', { ascending: true }).order('created_at', { ascending: true });
+    if (resp.error) throw resp.error;
+    studiesCache = resp.data || [];
+    renderStudies();
+  }
+
+  function renderStudies() {
+    var q = ($('eSearch').value || '').trim().toLowerCase();
+    var rows = (studiesCache || []).filter(function (s) {
+      if (!q) return true;
+      return ((s.title || '') + ' ' + (s.subtitle || '')).toLowerCase().indexOf(q) !== -1;
+    });
+    var tbody = $('eTbody');
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="6"><div class="ad-empty"><h3>Nenhum estudo</h3><p>Clique em “Novo estudo” para adicionar.</p></div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = '';
+    rows.forEach(function (s) {
+      var tr = document.createElement('tr');
+      tr.className = 'clickable';
+      tr.innerHTML =
+        '<td><strong>' + H.escapeHtml(s.title) + '</strong></td>' +
+        '<td>' + H.escapeHtml(s.subtitle || '—') + '</td>' +
+        '<td>' + (s.file_url
+          ? '<a href="' + H.escapeHtml(s.file_url) + '" target="_blank" rel="noopener" style="color:#FF8000">PDF</a>'
+          : '<span style="color:#a85a00">sem arquivo</span>') + '</td>' +
+        '<td><span class="ad-status ' + (s.published ? 'active' : 'invited') + '">' + (s.published ? 'Publicado' : 'Rascunho') + '</span></td>' +
+        '<td>' + H.formatDate(s.updated_at) + '</td>' +
+        '<td class="actions"><button class="ad-btn ghost sm">Editar</button></td>';
+      tr.addEventListener('click', function (e) { if (e.target.tagName === 'A') return; openStudyDrawer(s); });
+      tbody.appendChild(tr);
+    });
+  }
+
+  function openStudyDrawer(study) {
+    var isNew = !study;
+    var s = study || { slug:'', title:'', subtitle:'', description:'', file_url:'', file_name:'', published:true, sort_order:0 };
+    var bodyHtml =
+      '<div class="ad-field"><label class="ad-label" for="esTitle">Título</label>' +
+        '<input id="esTitle" class="ad-input" maxlength="160" required value="' + H.escapeHtml(s.title) + '"></div>' +
+      '<div class="ad-row-2">' +
+        '<div class="ad-field"><label class="ad-label" for="esSub">Edição / subtítulo</label>' +
+          '<input id="esSub" class="ad-input" maxlength="80" placeholder="EVOB · 2025" value="' + H.escapeHtml(s.subtitle || '') + '"></div>' +
+        '<div class="ad-field"><label class="ad-label" for="esOrder">Ordem</label>' +
+          '<input id="esOrder" class="ad-input" type="number" value="' + (s.sort_order || 0) + '"></div>' +
+      '</div>' +
+      '<div class="ad-field"><label class="ad-label" for="esSlug">Slug (identificador)</label>' +
+        '<input id="esSlug" class="ad-input" maxlength="60" placeholder="gerado do título" value="' + H.escapeHtml(s.slug || '') + '"' + (isNew ? '' : ' readonly') + '></div>' +
+      '<div class="ad-field"><label class="ad-label" for="esDesc">Descrição (opcional)</label>' +
+        '<textarea id="esDesc" class="ad-textarea" maxlength="400">' + H.escapeHtml(s.description || '') + '</textarea></div>' +
+      '<div class="ad-field"><label class="ad-label" for="esFile">Arquivo PDF</label>' +
+        '<input id="esFile" class="ad-input" type="file" accept="application/pdf">' +
+        (s.file_url
+          ? '<small style="color:#888">Atual: <a href="' + H.escapeHtml(s.file_url) + '" target="_blank" rel="noopener" style="color:#FF8000">' + H.escapeHtml(s.file_name || 'arquivo') + '</a> — envie um novo só se quiser substituir.</small>'
+          : '<small style="color:#888">Selecione o PDF do estudo.</small>') +
+      '</div>' +
+      '<div class="ad-field"><label class="ad-label" for="esPub">Publicado</label>' +
+        '<select id="esPub" class="ad-select">' +
+          '<option value="true"'  + (s.published ? ' selected' : '') + '>Sim — aparece no site</option>' +
+          '<option value="false"' + (!s.published ? ' selected' : '') + '>Não — rascunho</option>' +
+        '</select></div>' +
+      '<div class="ad-msg" id="esMsg" style="display:none"></div>';
+
+    var footHtml = '<button class="ad-btn ghost" id="dFootClose">Cancelar</button>' +
+                   (isNew ? '' : '<button class="ad-btn danger" id="esDelete">Excluir</button>') +
+                   '<button class="ad-btn" id="esSave">' + (isNew ? 'Criar estudo' : 'Salvar') + '</button>';
+
+    openDrawer(isNew ? 'Novo estudo' : 'Editar estudo', bodyHtml, footHtml);
+
+    if (!isNew) {
+      document.getElementById('esDelete').addEventListener('click', async function () {
+        if (!window.confirm('Excluir “' + s.title + '”? Ele sai da lista de download do site.')) return;
+        var del = await IMO.client.from('study_materials').delete().eq('id', s.id);
+        if (del.error) { H.toast('Erro ao excluir.', 'error'); return; }
+        H.toast('Estudo excluído.', 'success'); closeDrawer(); await refreshStudies();
+      });
+    }
+
+    document.getElementById('esSave').addEventListener('click', async function () {
+      var title = $('esTitle').value.trim();
+      var sub = $('esSub').value.trim() || null;
+      var desc = $('esDesc').value.trim() || null;
+      var order = parseInt($('esOrder').value, 10) || 0;
+      var published = $('esPub').value === 'true';
+      var slug = ($('esSlug').value.trim() || slugify(title));
+      var fileInput = $('esFile');
+      var file = fileInput.files && fileInput.files[0];
+      var msg = $('esMsg');
+      function err(t) { msg.className = 'ad-msg err'; msg.textContent = t; msg.style.display = 'block'; }
+
+      if (!title) return err('Informe o título.');
+      if (!slug)  return err('Informe um slug.');
+      if (file && file.type !== 'application/pdf') return err('O arquivo deve ser PDF.');
+      if (file && file.size > 25 * 1024 * 1024) return err('PDF muito grande (máx. 25MB).');
+
+      var btn = document.getElementById('esSave');
+      btn.disabled = true; btn.innerHTML = 'Salvando…';
+      try {
+        var file_url = s.file_url || null;
+        var file_name = s.file_name || null;
+        if (file) {
+          var path = 'estudos/' + slug + '-' + Date.now() + '.pdf';
+          var up = await IMO.client.storage.from('materials').upload(path, file, { upsert: true, contentType: 'application/pdf' });
+          if (up.error) throw up.error;
+          file_url = IMO.client.storage.from('materials').getPublicUrl(path).data.publicUrl;
+          file_name = file.name;
+        }
+        var payload = { slug:slug, title:title, subtitle:sub, description:desc, file_url:file_url, file_name:file_name, published:published, sort_order:order };
+        if (isNew) {
+          var ins = await IMO.client.from('study_materials').insert(payload).select().single();
+          if (ins.error) throw ins.error;
+        } else {
+          var upd = await IMO.client.from('study_materials').update(payload).eq('id', s.id);
+          if (upd.error) throw upd.error;
+        }
+        H.toast(isNew ? 'Estudo criado.' : 'Estudo salvo.', 'success');
+        closeDrawer();
+        await refreshStudies();
+      } catch (e2) {
+        console.error('[IMO admin estudos] erro:', e2);
+        err((e2.message || 'Erro ao salvar.') + (/duplicate|unique/i.test(e2.message || '') ? ' (esse slug já existe)' : ''));
+        btn.disabled = false; btn.innerHTML = isNew ? 'Criar estudo' : 'Salvar';
+      }
+    });
   }
 })();
 </script>
