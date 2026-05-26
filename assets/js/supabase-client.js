@@ -51,7 +51,10 @@
       detectSessionInUrl: true,
       storage:           window.localStorage,
       storageKey:        'imo-auth',
-      flowType:          'pkce'
+      // 'implicit' (em vez de 'pkce') porque os links de invite/recovery
+      // gerados pelo admin no servidor não criam um code_verifier no
+      // navegador do destinatário — PKCE quebraria esse fluxo.
+      flowType:          'implicit'
     },
     global: {
       headers: { 'X-Client-Info': 'imo-insights-area-cliente/1.0' }
