@@ -946,6 +946,9 @@
     if (u.status === 'invited') {
       footHtml += '<button class="ad-btn ghost" id="usResend">Reenviar convite</button>';
     }
+    if (canChangeAdmin && u.id !== profile.id) {
+      footHtml += '<button class="ad-btn danger" id="usDelete">Excluir</button>';
+    }
     if (canEditTarget) footHtml += '<button class="ad-btn" id="usSave">Salvar alterações</button>';
     openDrawer('Gerenciar usuário', bodyHtml, footHtml);
 
@@ -967,6 +970,23 @@
           await H.callApi('invite-user', { method:'POST', body:{ resend_for: u.id }});
           H.toast('Convite reenviado.', 'success');
         } catch (err) { H.toast(err.message || 'Erro ao reenviar.', 'error'); }
+      });
+    }
+
+    if (document.getElementById('usDelete')) {
+      document.getElementById('usDelete').addEventListener('click', async function () {
+        if (!window.confirm('Excluir "' + (u.full_name || u.email) + '"? Esta ação é permanente: remove o usuário do sistema e ele não poderá mais acessar. Para apenas suspender o acesso, use o status "Desativado".')) return;
+        var btn = this;
+        btn.disabled = true; btn.innerHTML = 'Excluindo…';
+        try {
+          await H.callApi('delete-user', { method:'POST', body:{ user_id: u.id }});
+          H.toast('Usuário excluído.', 'success');
+          closeDrawer();
+          await refreshUsers();
+        } catch (err) {
+          H.toast(err.message || 'Erro ao excluir.', 'error');
+          btn.disabled = false; btn.innerHTML = 'Excluir';
+        }
       });
     }
 
