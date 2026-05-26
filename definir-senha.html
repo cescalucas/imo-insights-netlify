@@ -282,16 +282,9 @@
       } catch (e) {}
 
       var profile = await IMO.helpers.getProfile(true);
-      // admin/super_admin → vai pro setup de 2FA primeiro
-      if (profile && (profile.role === 'admin' || profile.role === 'super_admin')) {
-        var listResp = await IMO.client.auth.mfa.listFactors();
-        var totp = (listResp.data && listResp.data.totp) || [];
-        var hasVerified = totp.some(function (f) { return f.status === 'verified'; });
-        if (!hasVerified) {
-          window.location.replace('/area-cliente-2fa-setup.html');
-          return;
-        }
-      }
+      // O 2FA universal do projeto é por e-mail OTP (já enforçado no login).
+      // O TOTP por app é opcional e a página de setup ainda não foi implementada,
+      // então não exigimos aqui — o admin entra direto e pode configurar TOTP depois.
       window.location.replace((profile && IMO.helpers.homeForRole(profile.role)) || '/area-cliente.html');
     } catch (err) {
       console.error('[IMO definir-senha] erro:', err);
