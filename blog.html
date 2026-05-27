@@ -201,13 +201,15 @@
       var tags = (p.tags || []).slice(0, 2).map(function(t){
         return '<span class="bg-card-tag">' + escapeHtml(t) + '</span>';
       }).join('');
+      // Autor: display_author (override "IMO Insights") tem precedência sobre nome real
+      var author = p.display_author || (p.users && p.users.full_name) || 'IMO Insights';
       return '<a class="bg-card" href="blog-post.html?slug=' + encodeURIComponent(p.slug) + '">'
         + cover
         + '<div class="bg-card-body">'
         +   (tags ? '<div class="bg-card-tags">' + tags + '</div>' : '')
         +   '<h2 class="bg-card-title">' + escapeHtml(p.title) + '</h2>'
         +   (p.excerpt ? '<p class="bg-card-excerpt">' + escapeHtml(p.excerpt) + '</p>' : '')
-        +   '<div class="bg-card-meta"><span>' + fmtDate(p.published_at || p.created_at) + '</span><span class="arr">Ler →</span></div>'
+        +   '<div class="bg-card-meta"><span><strong style="color:#111;font-weight:700">' + escapeHtml(author) + '</strong> · ' + fmtDate(p.published_at || p.created_at) + '</span><span class="arr">Ler →</span></div>'
         + '</div>'
         + '</a>';
     }).join('');
@@ -247,7 +249,7 @@
 
     var q = window.IMO.client
       .from('blog_posts')
-      .select('slug,title,excerpt,cover_image_url,tags,published_at,created_at')
+      .select('slug,title,excerpt,cover_image_url,tags,published_at,created_at,display_author,users:author_id(full_name)')
       .eq('status', 'published')
       .order('published_at', { ascending: false, nullsFirst: false });
 

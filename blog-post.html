@@ -251,7 +251,7 @@
 
     var resp = await window.IMO.client
       .from('blog_posts')
-      .select('slug,title,excerpt,cover_image_url,content_md,tags,published_at,created_at,author_id,status')
+      .select('slug,title,excerpt,cover_image_url,content_md,tags,published_at,created_at,author_id,display_author,status,users:author_id(full_name)')
       .eq('slug', slug)
       .single();
 
@@ -267,13 +267,11 @@
       return;
     }
 
-    // Buscar nome do autor (RLS de users permite leitura entre members do mesmo contexto;
-    // se falhar, usa fallback "IMO Insights")
-    var authorName = 'IMO Insights';
-    try {
-      var u = await window.IMO.client.from('users').select('full_name').eq('id', post.author_id).maybeSingle();
-      if(u && u.data){ authorName = u.data.full_name || authorName; }
-    } catch(_){}
+    // Assinatura: display_author (override "IMO Insights") tem precedência sobre nome real.
+    // Quando o post foi assinado como institucional, nem tentamos buscar o nome real.
+    var authorName = post.display_author
+      || (post.users && post.users.full_name)
+      || 'IMO Insights';
 
     renderPost(post, authorName);
   }

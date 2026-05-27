@@ -1578,7 +1578,7 @@
     // se um editor abrir a aba, só verá posts published + os próprios drafts.
     var resp = await IMO.client
       .from('blog_posts')
-      .select('id, slug, title, excerpt, cover_image_url, tags, author_id, status, published_at, created_at, updated_at, users:author_id(full_name, email)')
+      .select('id, slug, title, excerpt, cover_image_url, content_md, tags, author_id, display_author, status, published_at, created_at, updated_at, users:author_id(full_name, email)')
       .order('updated_at', { ascending: false });
     if (resp.error) throw resp.error;
     blogCache = resp.data || [];
@@ -1632,11 +1632,17 @@
     var isNew = !post;
     var p = post || {
       slug: '', title: '', excerpt: '', cover_image_url: '', cover_image_path: '',
-      content_md: '', tags: [], status: 'draft'
+      content_md: '', tags: [], status: 'draft', display_author: null, author_id: null
     };
     var canPublish = profile && (profile.role === 'admin' || profile.role === 'super_admin');
     var isOwner    = !isNew && profile && p.author_id === profile.id;
     var canEdit    = isNew || canPublish || (isOwner && (p.status === 'draft' || p.status === 'pending_review'));
+
+    // Resolve nome real do autor para exibir no header do drawer
+    var realAuthorName = isNew
+      ? (profile && (profile.full_name || profile.email) || 'Você')
+      : ((p.users && (p.users.full_name || p.users.email)) || 'autor desconhecido');
+    var currentByline = p.display_author || realAuthorName;
 
     var statusInfo = isNew
       ? 'Será criado como Rascunho. Você pode salvar e voltar quando quiser; quando achar que está pronto, clique em "Enviar para revisão".'
@@ -1648,8 +1654,26 @@
 
     var tagsCsv = (p.tags || []).join(', ');
 
+    // Opções do seletor de assinatura: nome real do usuário OU "IMO Insights"
+    // display_author no DB: NULL = nome real; "IMO Insights" = institucional
+    var bylineIsImo = p.display_author === 'IMO Insights';
+
     var bodyHtml =
       '<div class="ad-msg ' + (p.status === 'pending_review' ? 'warn' : '') + '" style="display:block;margin-bottom:18px;background:#1a1a1a;border:1px solid #333;color:#bbb;padding:10px 14px;font-size:13px">' + H.escapeHtml(statusInfo) + '</div>' +
+
+      '<div style="display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 14px;background:var(--ad-surface);border:1px solid var(--ad-border);border-radius:6px;margin-bottom:18px">' +
+        '<div style="font-size:12px;color:var(--ad-dim)">' +
+          'Escrito por <b style="color:#fff;font-weight:600">' + H.escapeHtml(realAuthorName) + '</b>' +
+          (isNew ? '' : ' · ' + H.formatDateTime(p.created_at)) +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:8px">' +
+          '<label class="ad-label" for="bpByline" style="margin:0;font-size:10px">Assinar como</label>' +
+          '<select id="bpByline" class="ad-select" style="padding:6px 10px;font-size:12px;width:auto" ' + (canEdit ? '' : 'disabled') + '>' +
+            '<option value="real"' + (bylineIsImo ? '' : ' selected') + '>' + H.escapeHtml(realAuthorName) + '</option>' +
+            '<option value="imo"'  + (bylineIsImo ? ' selected' : '') + '>IMO Insights (institucional)</option>' +
+          '</select>' +
+        '</div>' +
+      '</div>' +
 
       '<div class="ad-field"><label class="ad-label" for="bpTitle">Título</label>' +
         '<input id="bpTitle" class="ad-input" maxlength="200" required value="' + H.escapeHtml(p.title) + '" ' + (canEdit ? '' : 'readonly') + '></div>' +
@@ -1677,26 +1701,51 @@
           '<label class="ad-label" for="bpContent" style="margin:0">Conteúdo (Markdown)</label>' +
           '<button type="button" class="ad-btn ghost sm" id="bpTogglePreview" style="padding:4px 10px;font-size:11px">👁 Preview ao lado</button>' +
         '</div>' +
+        // Barra de formatação markdown
+        (canEdit ? (
+          '<div id="bpToolbar" style="display:flex;flex-wrap:wrap;gap:4px;padding:6px;background:var(--ad-surface);border:1px solid var(--ad-border);border-bottom:none;border-radius:6px 6px 0 0">' +
+            '<button type="button" class="md-tool" data-md="bold"  title="Negrito (Cmd/Ctrl+B)" style="font-weight:700">B</button>' +
+            '<button type="button" class="md-tool" data-md="italic" title="Itálico (Cmd/Ctrl+I)" style="font-style:italic">I</button>' +
+            '<span class="md-sep"></span>' +
+            '<button type="button" class="md-tool" data-md="h2" title="Subtítulo">H2</button>' +
+            '<button type="button" class="md-tool" data-md="h3" title="Sub-subtítulo">H3</button>' +
+            '<span class="md-sep"></span>' +
+            '<button type="button" class="md-tool" data-md="link" title="Link">🔗 Link</button>' +
+            '<button type="button" class="md-tool" data-md="ul" title="Lista">• Lista</button>' +
+            '<button type="button" class="md-tool" data-md="ol" title="Lista numerada">1. Lista</button>' +
+            '<button type="button" class="md-tool" data-md="quote" title="Citação">❝ Quote</button>' +
+            '<button type="button" class="md-tool" data-md="code" title="Código">‹/›</button>' +
+            '<button type="button" class="md-tool" data-md="hr" title="Linha horizontal">— hr</button>' +
+            '<span class="md-sep"></span>' +
+            '<button type="button" class="md-tool" data-md="image" title="Inserir imagem (faz upload pro Storage)">🖼 Imagem</button>' +
+          '</div>' +
+          '<style>.md-tool{background:transparent;border:1px solid var(--ad-border);color:var(--ad-muted);padding:5px 9px;font-size:12px;cursor:pointer;border-radius:3px;font-family:inherit}.md-tool:hover{border-color:var(--ad-accent);color:var(--ad-accent)}.md-sep{display:inline-block;width:1px;background:var(--ad-border);margin:0 4px}</style>'
+        ) : '') +
         '<div id="bpEditorWrap" style="display:grid;grid-template-columns:1fr;gap:14px">' +
-          '<textarea id="bpContent" class="ad-textarea" rows="22" style="font-family:ui-monospace,Menlo,monospace;font-size:13.5px;line-height:1.55" placeholder="# Título do post\\n\\nParágrafo de abertura...\\n\\n## Seção\\n\\n- item de lista\\n- outro item\\n\\n[Link](https://exemplo.com), **negrito**, *itálico*, `código`, ![alt](url da imagem)" ' + (canEdit ? '' : 'readonly') + '>' + H.escapeHtml(p.content_md || '') + '</textarea>' +
+          '<textarea id="bpContent" class="ad-textarea" rows="22" style="font-family:ui-monospace,Menlo,monospace;font-size:13.5px;line-height:1.55;border-radius:' + (canEdit ? '0 0 6px 6px' : '6px') + ';' + (canEdit ? 'border-top:none' : '') + '" placeholder="# Título do post&#10;&#10;Use os botões da barra acima ou escreva markdown direto.&#10;&#10;## Subtítulo&#10;&#10;- item de lista&#10;- outro item&#10;&#10;**negrito** · *itálico* · [Link](https://exemplo.com)" ' + (canEdit ? '' : 'readonly') + '>' + H.escapeHtml(p.content_md || '') + '</textarea>' +
           '<div id="bpPreview" style="display:none;background:#0e0e0e;border:1px solid #333;padding:20px;max-height:600px;overflow-y:auto;color:#eee;font-size:14px;line-height:1.6"></div>' +
         '</div>' +
       '</div>' +
 
+      // Input invisível para upload de imagem inline (acionado pelo botão 🖼 da toolbar)
+      '<input id="bpInlineImage" type="file" accept="image/*" style="display:none">' +
+
       '<div class="ad-msg" id="bpMsg" style="display:none"></div>';
 
-    // Botões do rodapé dependem do role e status
+    // Botões do rodapé — variam por role e status do post.
+    // canDelete = super_admin pode deletar qualquer post (RLS); admin pode arquivar/despublicar.
+    var canDelete = profile && profile.role === 'super_admin';
+
     var footHtml = '<button class="ad-btn ghost" id="dFootClose">Fechar</button>';
+
     if (canEdit) {
       footHtml += '<button class="ad-btn ghost" id="bpSaveDraft">Salvar rascunho</button>';
     }
     if (canEdit && !isNew && p.status === 'pending_review' && !canPublish) {
-      // Editor pode cancelar a submissão pra rever
       footHtml += '<button class="ad-btn ghost" id="bpCancelReview">Devolver para rascunho</button>';
     }
     if (canEdit && (isNew || p.status === 'draft' || p.status === 'pending_review')) {
       if (canPublish) {
-        // Admin vê "Publicar" direto + (se for pending) também pode devolver
         if (!isNew && p.status === 'pending_review') {
           footHtml += '<button class="ad-btn ghost" id="bpReject">Devolver com nota</button>';
         }
@@ -1706,10 +1755,17 @@
       }
     }
     if (canPublish && !isNew && p.status === 'published') {
+      // Despublicar: volta pra rascunho mas mantém o post no banco
+      footHtml += '<button class="ad-btn ghost" id="bpUnpublish">Despublicar (volta a rascunho)</button>';
+      // Arquivar: tira do site e marca como arquivado (não some, fica na lista de arquivados)
       footHtml += '<button class="ad-btn ghost" id="bpArchive">Arquivar</button>';
     }
     if (canPublish && !isNew && p.status === 'archived') {
       footHtml += '<button class="ad-btn" id="bpUnarchive" style="background:#16a34a">Republicar</button>';
+    }
+    // Excluir definitivamente — disponível para super_admin em qualquer post existente
+    if (canDelete && !isNew) {
+      footHtml += '<button class="ad-btn danger" id="bpDelete">Excluir definitivamente</button>';
     }
 
     openDrawer(isNew ? 'Novo post' : 'Editar post', bodyHtml, footHtml);
@@ -1765,7 +1821,10 @@
       var excerpt = $('bpExcerpt').value.trim() || null;
       var content = $('bpContent').value || '';
       var tagsArr = ($('bpTags').value || '').split(',').map(function (t) { return t.trim(); }).filter(Boolean);
-      return { title: title, slug: slug, excerpt: excerpt, content_md: content, tags: tagsArr };
+      // display_author: null = nome real; 'IMO Insights' = institucional
+      var bylineEl   = $('bpByline');
+      var displayAuthor = (bylineEl && bylineEl.value === 'imo') ? 'IMO Insights' : null;
+      return { title: title, slug: slug, excerpt: excerpt, content_md: content, tags: tagsArr, display_author: displayAuthor };
     }
 
     function validate(d) {
@@ -1803,11 +1862,12 @@
         try { cover = await uploadCoverIfAny(); } catch (_uErr) { if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = savedLabel; } return; }
 
         var payload = {
-          slug:       data.slug,
-          title:      data.title,
-          excerpt:    data.excerpt,
-          content_md: data.content_md,
-          tags:       data.tags
+          slug:           data.slug,
+          title:          data.title,
+          excerpt:        data.excerpt,
+          content_md:     data.content_md,
+          tags:           data.tags,
+          display_author: data.display_author
         };
         if (cover) {
           payload.cover_image_url  = cover.url;
@@ -1874,6 +1934,119 @@
 
     var btnUnarchive = document.getElementById('bpUnarchive');
     if (btnUnarchive) btnUnarchive.addEventListener('click', function () { save('published'); });
+
+    var btnUnpublish = document.getElementById('bpUnpublish');
+    if (btnUnpublish) btnUnpublish.addEventListener('click', function () {
+      if (!window.confirm('Despublicar "' + p.title + '"? Ele volta a Rascunho e sai do site público — você pode publicar de novo depois.')) return;
+      save('draft');
+    });
+
+    // ---- Excluir definitivamente (super_admin) ----
+    var btnDelete = document.getElementById('bpDelete');
+    if (btnDelete) btnDelete.addEventListener('click', async function () {
+      if (!window.confirm('Excluir DEFINITIVAMENTE "' + p.title + '"?\n\nO post some do banco. Imagem de capa (se houver) também é removida do Storage. Esta ação não pode ser desfeita.')) return;
+      btnDelete.disabled = true; btnDelete.innerHTML = 'Excluindo…';
+      try {
+        // Deleta o registro no DB (RLS exige super_admin)
+        var del = await IMO.client.from('blog_posts').delete().eq('id', p.id);
+        if (del.error) throw del.error;
+        // Tenta limpar a imagem de capa do bucket (best-effort, não falha o flow se der erro)
+        if (p.cover_image_path) {
+          try { await IMO.client.storage.from('blog-covers').remove([p.cover_image_path]); } catch(_){}
+        }
+        H.toast('Post excluído.', 'success');
+        closeDrawer();
+        await refreshBlog();
+      } catch (e) {
+        console.error('[IMO admin blog] erro ao excluir:', e);
+        showErr(e.message || 'Não foi possível excluir.');
+        btnDelete.disabled = false; btnDelete.innerHTML = 'Excluir definitivamente';
+      }
+    });
+
+    // ---- Barra de formatação markdown ----
+    // Insere sintaxe markdown na posição do cursor da textarea. Selecionado vira "miolo".
+    function mdWrap(before, after, placeholder){
+      var ta = taContent;
+      var start = ta.selectionStart, end = ta.selectionEnd;
+      var sel = ta.value.substring(start, end) || placeholder || '';
+      var newValue = ta.value.substring(0, start) + before + sel + after + ta.value.substring(end);
+      ta.value = newValue;
+      ta.focus();
+      // Reposiciona o cursor depois do "before" para o usuário poder digitar
+      var cursorPos = start + before.length + sel.length;
+      ta.setSelectionRange(start + before.length, cursorPos);
+      ta.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    function mdLinePrefix(prefix){
+      var ta = taContent;
+      var start = ta.selectionStart, end = ta.selectionEnd;
+      var before = ta.value.substring(0, start);
+      var atLineStart = before.length === 0 || before.charAt(before.length - 1) === '\n';
+      var insert = (atLineStart ? '' : '\n') + prefix;
+      ta.value = ta.value.substring(0, start) + insert + ta.value.substring(end);
+      ta.focus();
+      ta.setSelectionRange(start + insert.length, start + insert.length);
+      ta.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    function mdAction(action){
+      switch(action){
+        case 'bold':   return mdWrap('**', '**', 'texto em negrito');
+        case 'italic': return mdWrap('*', '*', 'texto em itálico');
+        case 'code':   return mdWrap('`', '`', 'código');
+        case 'h2':     return mdLinePrefix('## ');
+        case 'h3':     return mdLinePrefix('### ');
+        case 'ul':     return mdLinePrefix('- ');
+        case 'ol':     return mdLinePrefix('1. ');
+        case 'quote':  return mdLinePrefix('> ');
+        case 'hr':     return mdLinePrefix('\n---\n\n');
+        case 'link': {
+          var url = window.prompt('URL do link (https://…):', 'https://');
+          if (!url || url === 'https://') return;
+          return mdWrap('[', '](' + url + ')', 'texto do link');
+        }
+        case 'image': {
+          // Aciona o input invisível; o handler de change cuida do upload
+          $('bpInlineImage').click();
+          return;
+        }
+      }
+    }
+    document.querySelectorAll('#bpToolbar .md-tool').forEach(function(btn){
+      btn.addEventListener('click', function(e){ e.preventDefault(); mdAction(btn.dataset.md); });
+    });
+
+    // Atalhos de teclado padrão Cmd/Ctrl+B e Cmd/Ctrl+I dentro da textarea
+    if (taContent) {
+      taContent.addEventListener('keydown', function(e){
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'b') { e.preventDefault(); mdAction('bold'); }
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'i') { e.preventDefault(); mdAction('italic'); }
+      });
+    }
+
+    // Upload de imagem inline (botão 🖼) — vai pro mesmo bucket blog-covers,
+    // só que numa subpasta /inline/. URL pública é colada como ![](url) no editor.
+    var inlineImg = $('bpInlineImage');
+    if (inlineImg) inlineImg.addEventListener('change', async function(){
+      var file = inlineImg.files && inlineImg.files[0];
+      if (!file) return;
+      if (!/^image\//.test(file.type)) { showErr('Selecione uma imagem.'); return; }
+      if (file.size > 5 * 1024 * 1024)   { showErr('Imagem muito grande (máx. 5 MB).'); return; }
+      var ext  = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
+      var path = 'inline/' + slugify(file.name.replace(/\.[^.]+$/,'')) + '-' + Date.now() + '.' + ext;
+      try {
+        var up = await IMO.client.storage.from('blog-covers').upload(path, file, { upsert: true, contentType: file.type });
+        if (up.error) throw up.error;
+        var publicUrl = IMO.client.storage.from('blog-covers').getPublicUrl(path).data.publicUrl;
+        mdWrap('![', '](' + publicUrl + ')', file.name.replace(/\.[^.]+$/,''));
+        H.toast('Imagem inserida.', 'success');
+      } catch (e) {
+        console.error('[IMO admin blog] upload inline falhou:', e);
+        showErr(e.message || 'Falha ao subir imagem.');
+      } finally {
+        inlineImg.value = '';
+      }
+    });
   }
 })();
 </script>
