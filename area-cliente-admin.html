@@ -1578,7 +1578,7 @@
     // se um editor abrir a aba, só verá posts published + os próprios drafts.
     var resp = await IMO.client
       .from('blog_posts')
-      .select('id, slug, title, excerpt, cover_image_url, tags, author_id, status, published_at, created_at, updated_at, users:author_id(full_name, name, email)')
+      .select('id, slug, title, excerpt, cover_image_url, tags, author_id, status, published_at, created_at, updated_at, users:author_id(full_name, email)')
       .order('updated_at', { ascending: false });
     if (resp.error) throw resp.error;
     blogCache = resp.data || [];
@@ -1594,7 +1594,7 @@
       var hay = [
         r.title || '',
         (r.tags || []).join(' '),
-        ((r.users && (r.users.full_name || r.users.name || r.users.email)) || '')
+        ((r.users && (r.users.full_name || r.users.email)) || '')
       ].join(' ').toLowerCase();
       return hay.indexOf(search) !== -1;
     });
@@ -1607,7 +1607,7 @@
 
     tbody.innerHTML = '';
     rows.forEach(function (r) {
-      var author = (r.users && (r.users.full_name || r.users.name || r.users.email)) || '—';
+      var author = (r.users && (r.users.full_name || r.users.email)) || '—';
       var tags   = (r.tags || []).slice(0, 3).map(function (t) {
         return '<span style="display:inline-block;background:rgba(255,128,0,.1);color:#FF8000;padding:2px 8px;font-size:11px;font-weight:700;margin-right:4px;border-radius:2px">' + H.escapeHtml(t) + '</span>';
       }).join('');

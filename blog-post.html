@@ -271,8 +271,8 @@
     // se falhar, usa fallback "IMO Insights")
     var authorName = 'IMO Insights';
     try {
-      var u = await window.IMO.client.from('users').select('full_name,name').eq('id', post.author_id).maybeSingle();
-      if(u && u.data){ authorName = u.data.full_name || u.data.name || authorName; }
+      var u = await window.IMO.client.from('users').select('full_name').eq('id', post.author_id).maybeSingle();
+      if(u && u.data){ authorName = u.data.full_name || authorName; }
     } catch(_){}
 
     renderPost(post, authorName);
