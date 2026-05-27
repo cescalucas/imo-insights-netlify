@@ -2,10 +2,12 @@
  * POST /api/register-lead
  *
  * Recebe leads do site público e grava na tabela `leads` do Supabase
- * (via service_role, que bypassa RLS). Usado por dois fluxos:
- *   - source="download"  → modal de download de estudo (assets/js/request-study.js)
- *   - source="contato"   → o form de contato grava direto na própria Function
- *                          send-briefing; este endpoint atende o fluxo de download.
+ * (via service_role, que bypassa RLS). Usado por três fluxos:
+ *   - source="download"   → modal de download de estudo (assets/js/request-study.js)
+ *   - source="contato"    → o form de contato grava direto na própria Function
+ *                           send-briefing; este endpoint atende o fluxo de download.
+ *   - source="newsletter" → landing da Curanews (imo-news-landing.html): captura
+ *                           nome, e-mail, empresa (→ company) e cargo (→ product).
  *
  * Não exige autenticação (endpoint público). Defesas anti-spam:
  *   - Honeypot `rs-bot-field` (deve vir vazio)
@@ -66,7 +68,7 @@ exports.handler = async function (event) {
   if (body['rs-bot-field']) return ok({ ok: true });
 
   const source = (body.source || 'download').toString().trim();
-  if (!['download', 'contato'].includes(source)) {
+  if (!['download', 'contato', 'newsletter'].includes(source)) {
     return fail(400, 'Origem inválida');
   }
 
@@ -78,12 +80,14 @@ exports.handler = async function (event) {
   const ip = clientIp(event);
   if (rateLimited(ip)) return fail(429, 'Muitas tentativas. Aguarde alguns minutos.');
 
+  // Aliases dos formulários do RD Station (cf_empresa, cf_cargo) também são aceitos
+  // para que o form da Curanews funcione sem precisar renomear campos no HTML.
   const lead = {
     source,
     name,
     email,
-    company:     clip(body.empresa || body.company, 200) || null,
-    product:     clip(body.produto || body.product, 200) || null,
+    company:     clip(body.empresa || body.company || body.cf_empresa, 200) || null,
+    product:     clip(body.produto || body.product || body.cargo || body.cf_cargo, 200) || null,
     study_id:    clip(body['study-id'] || body.study_id, 100) || null,
     study_title: clip(body['study-title'] || body.study_title, 300) || null,
     message:     clip(body.msg || body.mensagem || body.message, 4000) || null,

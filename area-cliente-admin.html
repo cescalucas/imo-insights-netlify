@@ -329,6 +329,7 @@
           <button class="ad-filter active" data-lsourcef="all">Todos</button>
           <button class="ad-filter" data-lsourcef="download">Downloads</button>
           <button class="ad-filter" data-lsourcef="contato">Contato</button>
+          <button class="ad-filter" data-lsourcef="newsletter">Newsletter</button>
         </div>
         <button class="ad-btn ghost" id="lReload">Atualizar</button>
         <button class="ad-btn" id="lExport">Exportar CSV</button>
@@ -1230,7 +1231,7 @@
   // ---------------- Leads (contatos do site público) ----------------
   var leadsCache = [];
   var leadSourceFilter = 'all';
-  var LEAD_SOURCE_LABEL = { download: 'Download', contato: 'Contato' };
+  var LEAD_SOURCE_LABEL = { download: 'Download', contato: 'Contato', newsletter: 'Newsletter' };
   var LEAD_STATUS = [
     { v: 'novo',        t: 'Novo' },
     { v: 'em_contato',  t: 'Em contato' },
@@ -1288,7 +1289,13 @@
 
     tbody.innerHTML = '';
     rows.forEach(function (r) {
-      var interesse = r.source === 'download' ? (r.study_title || '—') : (r.product || '—');
+      // Coluna "Interesse" muda conforme a origem do lead:
+      //   download   → título do estudo baixado
+      //   newsletter → cargo do inscrito (salvo em `product`)
+      //   contato    → produto de interesse
+      var interesse = r.source === 'download' ? (r.study_title || '—')
+                   : r.source === 'newsletter' ? (r.product ? 'Cargo: ' + r.product : 'Newsletter Curanews')
+                   : (r.product || '—');
       var tr = document.createElement('tr');
       tr.innerHTML =
         '<td>' + H.formatDateTime(r.created_at) + '</td>' +
