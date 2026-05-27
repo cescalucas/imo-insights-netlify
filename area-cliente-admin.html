@@ -183,6 +183,7 @@
         <button class="ad-tab"        data-tab="projects" role="tab" aria-selected="false">Projetos</button>
         <button class="ad-tab"        data-tab="leads"    role="tab" aria-selected="false">Leads <span class="ad-tab-count" id="cntLeads" hidden>0</span></button>
         <button class="ad-tab"        data-tab="estudos"  role="tab" aria-selected="false">Estudos</button>
+        <button class="ad-tab"        data-tab="blog"     role="tab" aria-selected="false">Blog <span class="ad-tab-count" id="cntBlog" hidden>0</span></button>
         <button class="ad-tab"        data-tab="audit"    role="tab" aria-selected="false">Auditoria</button>
       </nav>
     </div>
@@ -344,6 +345,39 @@
   </section>
 
   <!-- ============================================================
+       Tab: Blog (posts do site público)
+       Workflow: editor cria draft → "envia para revisão" (pending_review)
+       → admin aprova (published) ou devolve. Admin pode arquivar.
+       ============================================================ -->
+  <section class="ad-panel" id="panel-blog" role="tabpanel" hidden>
+    <div class="ad-container">
+      <div class="ad-tools" style="gap:8px">
+        <input type="search" class="ad-search" id="bSearch" placeholder="Buscar por título, tag ou autor…">
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="ad-filter active" data-bstatusf="all">Todos</button>
+          <button class="ad-filter" data-bstatusf="draft">Rascunhos</button>
+          <button class="ad-filter" data-bstatusf="pending_review">Para aprovar</button>
+          <button class="ad-filter" data-bstatusf="published">Publicados</button>
+          <button class="ad-filter" data-bstatusf="archived">Arquivados</button>
+        </div>
+        <button class="ad-btn ghost" id="bReload">Atualizar</button>
+        <button class="ad-btn" id="bNew">+ Novo post</button>
+      </div>
+      <table class="ad-table" id="bTable">
+        <thead><tr>
+          <th>Atualizado</th>
+          <th>Título</th>
+          <th>Autor</th>
+          <th>Tags</th>
+          <th>Status</th>
+          <th class="actions">Ações</th>
+        </tr></thead>
+        <tbody id="bTbody"><tr><td colspan="6"><div class="ad-skeleton" style="width:60%"></div></td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============================================================
        Tab: Estudos (materiais de download do site público)
        ============================================================ -->
   <section class="ad-panel" id="panel-estudos" role="tabpanel" hidden>
@@ -389,6 +423,8 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
 <script src="/assets/js/env-config.js"></script>
 <script src="/assets/js/supabase-client.js"></script>
 <script src="/assets/js/role-helpers.js"></script>
@@ -456,7 +492,8 @@
       projects: loadProjects,
       audit:    loadAudit,
       leads:    loadLeads,
-      estudos:  loadStudies
+      estudos:  loadStudies,
+      blog:     loadBlog
     };
   }
 
@@ -1490,6 +1527,353 @@
         btn.disabled = false; btn.innerHTML = isNew ? 'Criar estudo' : 'Salvar';
       }
     });
+  }
+
+  // ============================================================
+  // Blog (posts do site público) — workflow editor → admin
+  // Schema: blog_posts (slug, title, excerpt, cover_image_url,
+  //   cover_image_path, content_md, tags[], author_id, reviewed_by,
+  //   status, published_at, created_at, updated_at)
+  // Storage: bucket público 'blog-covers'
+  // ============================================================
+  var blogCache = [];
+  var blogStatusFilter = 'all';
+  var BLOG_STATUS_LABEL = {
+    draft:           'Rascunho',
+    pending_review:  'Para aprovar',
+    published:       'Publicado',
+    archived:        'Arquivado'
+  };
+  var BLOG_STATUS_CLASS = {
+    draft:           'invited',
+    pending_review:  'pending',
+    published:       'active',
+    archived:        'invited'
+  };
+
+  function refreshBlogBadge() {
+    // Mostra a contagem de "para aprovar" (relevante pro admin)
+    var pend = (blogCache || []).filter(function (x) { return x.status === 'pending_review'; }).length;
+    var el = $('cntBlog');
+    if (!el) return;
+    if (pend > 0) { el.textContent = pend; el.hidden = false; } else { el.hidden = true; }
+  }
+
+  async function loadBlog() {
+    $('bReload').addEventListener('click', refreshBlog);
+    $('bSearch').addEventListener('input', renderBlog);
+    $('bNew').addEventListener('click', function () { openBlogDrawer(); });
+    document.querySelectorAll('[data-bstatusf]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        blogStatusFilter = b.dataset.bstatusf;
+        document.querySelectorAll('[data-bstatusf]').forEach(function (x) { x.classList.toggle('active', x === b); });
+        renderBlog();
+      });
+    });
+    await refreshBlog();
+  }
+
+  async function refreshBlog() {
+    // Pega posts + nome do autor via join. RLS deixa editor+ ver tudo;
+    // se um editor abrir a aba, só verá posts published + os próprios drafts.
+    var resp = await IMO.client
+      .from('blog_posts')
+      .select('id, slug, title, excerpt, cover_image_url, tags, author_id, status, published_at, created_at, updated_at, users:author_id(full_name, name, email)')
+      .order('updated_at', { ascending: false });
+    if (resp.error) throw resp.error;
+    blogCache = resp.data || [];
+    refreshBlogBadge();
+    renderBlog();
+  }
+
+  function renderBlog() {
+    var search = ($('bSearch').value || '').trim().toLowerCase();
+    var rows = (blogCache || []).filter(function (r) {
+      if (blogStatusFilter !== 'all' && r.status !== blogStatusFilter) return false;
+      if (!search) return true;
+      var hay = [
+        r.title || '',
+        (r.tags || []).join(' '),
+        ((r.users && (r.users.full_name || r.users.name || r.users.email)) || '')
+      ].join(' ').toLowerCase();
+      return hay.indexOf(search) !== -1;
+    });
+
+    var tbody = $('bTbody');
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="6"><div class="ad-empty"><h3>Nenhum post</h3><p>Clique em “Novo post” para começar a escrever.</p></div></td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = '';
+    rows.forEach(function (r) {
+      var author = (r.users && (r.users.full_name || r.users.name || r.users.email)) || '—';
+      var tags   = (r.tags || []).slice(0, 3).map(function (t) {
+        return '<span style="display:inline-block;background:rgba(255,128,0,.1);color:#FF8000;padding:2px 8px;font-size:11px;font-weight:700;margin-right:4px;border-radius:2px">' + H.escapeHtml(t) + '</span>';
+      }).join('');
+      var moreTags = (r.tags || []).length > 3 ? '<span style="color:#888;font-size:11px">+' + ((r.tags || []).length - 3) + '</span>' : '';
+      var tr = document.createElement('tr');
+      tr.className = 'clickable';
+      tr.innerHTML =
+        '<td>' + H.formatDateTime(r.updated_at) + '</td>' +
+        '<td><strong>' + H.escapeHtml(r.title || '—') + '</strong>' +
+          (r.excerpt ? '<br><small style="color:#888">' + H.escapeHtml((r.excerpt || '').slice(0, 90)) + ((r.excerpt || '').length > 90 ? '…' : '') + '</small>' : '') +
+        '</td>' +
+        '<td>' + H.escapeHtml(author) + '</td>' +
+        '<td>' + (tags || '<span style="color:#888">—</span>') + moreTags + '</td>' +
+        '<td><span class="ad-status ' + (BLOG_STATUS_CLASS[r.status] || 'invited') + '">' + (BLOG_STATUS_LABEL[r.status] || r.status) + '</span></td>' +
+        '<td class="actions"><button class="ad-btn ghost sm">Abrir</button></td>';
+      tr.addEventListener('click', function () { openBlogDrawer(r); });
+      tbody.appendChild(tr);
+    });
+  }
+
+  function openBlogDrawer(post) {
+    var isNew = !post;
+    var p = post || {
+      slug: '', title: '', excerpt: '', cover_image_url: '', cover_image_path: '',
+      content_md: '', tags: [], status: 'draft'
+    };
+    var canPublish = profile && (profile.role === 'admin' || profile.role === 'super_admin');
+    var isOwner    = !isNew && profile && p.author_id === profile.id;
+    var canEdit    = isNew || canPublish || (isOwner && (p.status === 'draft' || p.status === 'pending_review'));
+
+    var statusInfo = isNew
+      ? 'Será criado como Rascunho. Você pode salvar e voltar quando quiser; quando achar que está pronto, clique em "Enviar para revisão".'
+      : (p.status === 'draft'         ? 'Está como Rascunho. Só você (autor) e o admin veem.'
+       : p.status === 'pending_review' ? 'Aguardando aprovação do admin para virar público.'
+       : p.status === 'published'      ? 'Publicado e visível no /blog do site público.'
+       : p.status === 'archived'       ? 'Arquivado. Não aparece no site.'
+       : '');
+
+    var tagsCsv = (p.tags || []).join(', ');
+
+    var bodyHtml =
+      '<div class="ad-msg ' + (p.status === 'pending_review' ? 'warn' : '') + '" style="display:block;margin-bottom:18px;background:#1a1a1a;border:1px solid #333;color:#bbb;padding:10px 14px;font-size:13px">' + H.escapeHtml(statusInfo) + '</div>' +
+
+      '<div class="ad-field"><label class="ad-label" for="bpTitle">Título</label>' +
+        '<input id="bpTitle" class="ad-input" maxlength="200" required value="' + H.escapeHtml(p.title) + '" ' + (canEdit ? '' : 'readonly') + '></div>' +
+
+      '<div class="ad-row-2">' +
+        '<div class="ad-field"><label class="ad-label" for="bpSlug">Slug (URL)</label>' +
+          '<input id="bpSlug" class="ad-input" maxlength="120" placeholder="gerado do título" value="' + H.escapeHtml(p.slug || '') + '" ' + (canEdit ? '' : 'readonly') + '>' +
+          '<small style="color:#888">/blog-post.html?slug=' + H.escapeHtml(p.slug || 'meu-post') + '</small></div>' +
+        '<div class="ad-field"><label class="ad-label" for="bpTags">Tags (separadas por vírgula)</label>' +
+          '<input id="bpTags" class="ad-input" maxlength="200" placeholder="cultura, marca, varejo" value="' + H.escapeHtml(tagsCsv) + '" ' + (canEdit ? '' : 'readonly') + '></div>' +
+      '</div>' +
+
+      '<div class="ad-field"><label class="ad-label" for="bpExcerpt">Resumo (aparece no card do blog)</label>' +
+        '<textarea id="bpExcerpt" class="ad-textarea" maxlength="400" rows="2" ' + (canEdit ? '' : 'readonly') + '>' + H.escapeHtml(p.excerpt || '') + '</textarea></div>' +
+
+      '<div class="ad-field"><label class="ad-label" for="bpCover">Imagem de capa</label>' +
+        '<input id="bpCover" class="ad-input" type="file" accept="image/*" ' + (canEdit ? '' : 'disabled') + '>' +
+        (p.cover_image_url
+          ? '<div style="margin-top:8px"><img src="' + H.escapeHtml(p.cover_image_url) + '" alt="" style="max-width:240px;border:1px solid #333"><br><small style="color:#888">Envie uma nova só se quiser substituir.</small></div>'
+          : '<small style="color:#888">JPG/PNG/WebP. Recomendado 1200×750. Opcional.</small>') +
+      '</div>' +
+
+      '<div class="ad-field">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
+          '<label class="ad-label" for="bpContent" style="margin:0">Conteúdo (Markdown)</label>' +
+          '<button type="button" class="ad-btn ghost sm" id="bpTogglePreview" style="padding:4px 10px;font-size:11px">👁 Preview ao lado</button>' +
+        '</div>' +
+        '<div id="bpEditorWrap" style="display:grid;grid-template-columns:1fr;gap:14px">' +
+          '<textarea id="bpContent" class="ad-textarea" rows="22" style="font-family:ui-monospace,Menlo,monospace;font-size:13.5px;line-height:1.55" placeholder="# Título do post\\n\\nParágrafo de abertura...\\n\\n## Seção\\n\\n- item de lista\\n- outro item\\n\\n[Link](https://exemplo.com), **negrito**, *itálico*, `código`, ![alt](url da imagem)" ' + (canEdit ? '' : 'readonly') + '>' + H.escapeHtml(p.content_md || '') + '</textarea>' +
+          '<div id="bpPreview" style="display:none;background:#0e0e0e;border:1px solid #333;padding:20px;max-height:600px;overflow-y:auto;color:#eee;font-size:14px;line-height:1.6"></div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="ad-msg" id="bpMsg" style="display:none"></div>';
+
+    // Botões do rodapé dependem do role e status
+    var footHtml = '<button class="ad-btn ghost" id="dFootClose">Fechar</button>';
+    if (canEdit) {
+      footHtml += '<button class="ad-btn ghost" id="bpSaveDraft">Salvar rascunho</button>';
+    }
+    if (canEdit && !isNew && p.status === 'pending_review' && !canPublish) {
+      // Editor pode cancelar a submissão pra rever
+      footHtml += '<button class="ad-btn ghost" id="bpCancelReview">Devolver para rascunho</button>';
+    }
+    if (canEdit && (isNew || p.status === 'draft' || p.status === 'pending_review')) {
+      if (canPublish) {
+        // Admin vê "Publicar" direto + (se for pending) também pode devolver
+        if (!isNew && p.status === 'pending_review') {
+          footHtml += '<button class="ad-btn ghost" id="bpReject">Devolver com nota</button>';
+        }
+        footHtml += '<button class="ad-btn" id="bpPublish" style="background:#16a34a">Publicar</button>';
+      } else {
+        footHtml += '<button class="ad-btn" id="bpSubmit">Enviar para revisão</button>';
+      }
+    }
+    if (canPublish && !isNew && p.status === 'published') {
+      footHtml += '<button class="ad-btn ghost" id="bpArchive">Arquivar</button>';
+    }
+    if (canPublish && !isNew && p.status === 'archived') {
+      footHtml += '<button class="ad-btn" id="bpUnarchive" style="background:#16a34a">Republicar</button>';
+    }
+
+    openDrawer(isNew ? 'Novo post' : 'Editar post', bodyHtml, footHtml);
+
+    // ---- Preview ao vivo
+    var previewOn = false;
+    var taContent = $('bpContent');
+    var preview   = $('bpPreview');
+    var wrap      = $('bpEditorWrap');
+    var togglePV  = $('bpTogglePreview');
+
+    function renderPreview() {
+      if (!previewOn) return;
+      try {
+        var raw = (window.marked && window.marked.parse) ? window.marked.parse(taContent.value || '', { breaks: true, gfm: true }) : H.escapeHtml(taContent.value);
+        var safe = (window.DOMPurify && window.DOMPurify.sanitize) ? window.DOMPurify.sanitize(raw) : raw;
+        preview.innerHTML = safe;
+      } catch (e) {
+        preview.innerHTML = '<p style="color:#FF5A1F">Erro: ' + H.escapeHtml(String(e.message || e)) + '</p>';
+      }
+    }
+    togglePV.addEventListener('click', function () {
+      previewOn = !previewOn;
+      if (previewOn) {
+        wrap.style.gridTemplateColumns = '1fr 1fr';
+        preview.style.display = 'block';
+        renderPreview();
+      } else {
+        wrap.style.gridTemplateColumns = '1fr';
+        preview.style.display = 'none';
+      }
+    });
+    taContent.addEventListener('input', renderPreview);
+
+    // Auto-slug a partir do título (só no novo / só se ainda vazio)
+    if (canEdit && isNew) {
+      $('bpTitle').addEventListener('input', function () {
+        if (!$('bpSlug').dataset.touched) {
+          $('bpSlug').value = slugify($('bpTitle').value);
+        }
+      });
+      $('bpSlug').addEventListener('input', function () { $('bpSlug').dataset.touched = '1'; });
+    }
+
+    // ---- Helpers de erro / status
+    var msg = $('bpMsg');
+    function showErr(t) { msg.className = 'ad-msg err'; msg.textContent = t; msg.style.display = 'block'; }
+    function clearErr() { msg.style.display = 'none'; }
+
+    function collect() {
+      var title   = $('bpTitle').value.trim();
+      var slug    = ($('bpSlug').value.trim() || slugify(title));
+      var excerpt = $('bpExcerpt').value.trim() || null;
+      var content = $('bpContent').value || '';
+      var tagsArr = ($('bpTags').value || '').split(',').map(function (t) { return t.trim(); }).filter(Boolean);
+      return { title: title, slug: slug, excerpt: excerpt, content_md: content, tags: tagsArr };
+    }
+
+    function validate(d) {
+      if (!d.title)   { showErr('Informe o título.'); return false; }
+      if (!d.slug)    { showErr('Informe um slug.');  return false; }
+      if (!/^[a-z0-9-]+$/.test(d.slug)) { showErr('Slug pode ter apenas letras minúsculas, números e hífen.'); return false; }
+      clearErr();
+      return true;
+    }
+
+    async function uploadCoverIfAny() {
+      var fileInput = $('bpCover');
+      var file = fileInput && fileInput.files && fileInput.files[0];
+      if (!file) return null;
+      if (!/^image\//.test(file.type)) { showErr('A capa deve ser uma imagem.'); throw new Error('cover not image'); }
+      if (file.size > 5 * 1024 * 1024)  { showErr('Capa muito grande (máx. 5 MB).'); throw new Error('cover too big'); }
+      var ext  = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
+      var path = 'covers/' + ($('bpSlug').value || slugify($('bpTitle').value) || 'post') + '-' + Date.now() + '.' + ext;
+      var up = await IMO.client.storage.from('blog-covers').upload(path, file, { upsert: true, contentType: file.type });
+      if (up.error) throw up.error;
+      var publicUrl = IMO.client.storage.from('blog-covers').getPublicUrl(path).data.publicUrl;
+      return { url: publicUrl, path: path };
+    }
+
+    async function save(targetStatus) {
+      var data = collect();
+      if (!validate(data)) return;
+
+      var saveBtn = document.activeElement;
+      var savedLabel = saveBtn ? saveBtn.innerHTML : '';
+      if (saveBtn) { saveBtn.disabled = true; saveBtn.innerHTML = 'Salvando…'; }
+
+      try {
+        var cover = null;
+        try { cover = await uploadCoverIfAny(); } catch (_uErr) { if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = savedLabel; } return; }
+
+        var payload = {
+          slug:       data.slug,
+          title:      data.title,
+          excerpt:    data.excerpt,
+          content_md: data.content_md,
+          tags:       data.tags
+        };
+        if (cover) {
+          payload.cover_image_url  = cover.url;
+          payload.cover_image_path = cover.path;
+        }
+        if (targetStatus) {
+          payload.status = targetStatus;
+        }
+
+        if (isNew) {
+          // No INSERT, status fica como veio (default 'draft') ou o targetStatus
+          if (!payload.status) payload.status = 'draft';
+          // author_id é forçado pelo trigger blog_posts_insert_guard
+          payload.author_id = profile.id;
+          var ins = await IMO.client.from('blog_posts').insert(payload).select().single();
+          if (ins.error) throw ins.error;
+        } else {
+          var upd = await IMO.client.from('blog_posts').update(payload).eq('id', p.id);
+          if (upd.error) throw upd.error;
+        }
+
+        H.toast(targetStatus === 'published'      ? 'Post publicado.'
+              : targetStatus === 'pending_review' ? 'Enviado para revisão do admin.'
+              : targetStatus === 'archived'       ? 'Post arquivado.'
+              : targetStatus === 'draft' && !isNew ? 'Devolvido para rascunho.'
+              : isNew                              ? 'Rascunho criado.'
+              :                                      'Salvo.', 'success');
+        closeDrawer();
+        await refreshBlog();
+      } catch (e) {
+        console.error('[IMO admin blog] erro ao salvar:', e);
+        var dup = /duplicate|unique/i.test(e.message || '');
+        showErr((e.message || 'Erro ao salvar.') + (dup ? ' (esse slug já existe — escolha outro)' : ''));
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = savedLabel; }
+      }
+    }
+
+    // ---- Bindings dos botões do rodapé
+    if (canEdit) {
+      $('bpSaveDraft').addEventListener('click', function () { save(isNew ? 'draft' : (p.status === 'pending_review' ? 'pending_review' : 'draft')); });
+    }
+    var btnSubmit = document.getElementById('bpSubmit');
+    if (btnSubmit) btnSubmit.addEventListener('click', function () { save('pending_review'); });
+
+    var btnPublish = document.getElementById('bpPublish');
+    if (btnPublish) btnPublish.addEventListener('click', function () { save('published'); });
+
+    var btnReject = document.getElementById('bpReject');
+    if (btnReject) btnReject.addEventListener('click', async function () {
+      var note = window.prompt('Mensagem (opcional) para o autor sobre o que ajustar:');
+      // Devolve para draft (a nota seria um futuro recurso de comentários)
+      await save('draft');
+      if (note) console.log('[IMO admin blog] devolvido com nota:', note);
+    });
+
+    var btnCancelReview = document.getElementById('bpCancelReview');
+    if (btnCancelReview) btnCancelReview.addEventListener('click', function () { save('draft'); });
+
+    var btnArchive = document.getElementById('bpArchive');
+    if (btnArchive) btnArchive.addEventListener('click', function () {
+      if (!window.confirm('Arquivar “' + p.title + '”? Ele sai do blog público.')) return;
+      save('archived');
+    });
+
+    var btnUnarchive = document.getElementById('bpUnarchive');
+    if (btnUnarchive) btnUnarchive.addEventListener('click', function () { save('published'); });
   }
 })();
 </script>

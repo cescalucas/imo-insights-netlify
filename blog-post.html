@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blog. IMO Insights</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180.png">
+<link rel="shortcut icon" href="favicon.ico">
+
+<meta name="description" content="Blog da IMO Insights">
+
+<link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+
+<style>
+  .post-wrap{max-width:780px;margin:0 auto;padding:60px var(--pad) 100px}
+  @media (max-width:640px){.post-wrap{padding:36px var(--pad) 70px}}
+
+  .post-head .back{display:inline-flex;align-items:center;gap:8px;color:#666;font-size:13px;font-weight:600;text-decoration:none;margin-bottom:30px;transition:color .15s}
+  .post-head .back:hover{color:var(--orange)}
+  .post-head .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+  .post-head .tag{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--orange);background:rgba(255,90,31,.08);padding:5px 10px}
+  .post-head h1{font-size:clamp(36px,5vw,60px);line-height:1.05;letter-spacing:-.025em;font-weight:800;margin:0 0 22px;color:#111}
+  .post-head .excerpt{font-size:20px;line-height:1.5;color:#444;margin:0 0 28px;font-weight:400}
+  .post-head .meta{display:flex;flex-wrap:wrap;gap:18px;align-items:center;padding:18px 0;border-top:1px solid rgba(0,0,0,.08);border-bottom:1px solid rgba(0,0,0,.08);font-size:13px;color:#666;margin-bottom:36px}
+  .post-head .meta .author{display:inline-flex;align-items:center;gap:10px;color:#111;font-weight:700}
+  .post-head .meta .avatar{width:32px;height:32px;border-radius:50%;background:#111;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex:none}
+
+  .post-cover{aspect-ratio:16/9;background:#f4f4f4 center/cover no-repeat;margin:0 0 40px}
+  .post-cover.no-img{display:none}
+
+  /* Corpo do post — renderizado a partir de markdown */
+  .post-body{font-size:18px;line-height:1.7;color:#222}
+  .post-body h2{font-size:30px;line-height:1.2;letter-spacing:-.02em;font-weight:800;margin:48px 0 18px;color:#111}
+  .post-body h3{font-size:22px;line-height:1.25;letter-spacing:-.015em;font-weight:700;margin:36px 0 14px;color:#111}
+  .post-body p{margin:0 0 22px}
+  .post-body a{color:var(--orange);text-decoration:underline;text-underline-offset:3px}
+  .post-body strong{font-weight:700;color:#111}
+  .post-body em{font-style:italic}
+  .post-body ul, .post-body ol{margin:0 0 22px;padding-left:24px}
+  .post-body ul li, .post-body ol li{margin-bottom:8px}
+  .post-body blockquote{margin:30px 0;padding:18px 24px;border-left:4px solid var(--orange);background:#faf6f3;color:#444;font-style:italic;font-size:18px}
+  .post-body blockquote p:last-child{margin-bottom:0}
+  .post-body code{background:#f4f4f4;padding:2px 6px;border-radius:3px;font-family:ui-monospace,Menlo,monospace;font-size:.92em}
+  .post-body pre{background:#111;color:#eee;padding:20px 22px;overflow-x:auto;margin:24px 0;font-size:14px;line-height:1.55}
+  .post-body pre code{background:transparent;padding:0;color:inherit}
+  .post-body img{max-width:100%;height:auto;margin:24px 0;border:1px solid rgba(0,0,0,.08)}
+  .post-body hr{border:none;border-top:1px solid rgba(0,0,0,.12);margin:40px 0}
+  .post-body table{width:100%;border-collapse:collapse;margin:24px 0;font-size:15px}
+  .post-body th, .post-body td{padding:10px 14px;border:1px solid rgba(0,0,0,.1);text-align:left}
+  .post-body th{background:#f6f6f6;font-weight:700}
+
+  .post-foot{margin-top:60px;padding-top:30px;border-top:1px solid rgba(0,0,0,.1);display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#666;gap:16px;flex-wrap:wrap}
+  .post-foot a{color:#111;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color .15s}
+  .post-foot a:hover{color:var(--orange)}
+
+  /* Newsletter CTA no fim */
+  .post-cta{background:#111;color:#fff;padding:50px 36px;margin:80px 0 0;text-align:center}
+  .post-cta h3{font-size:28px;font-weight:800;letter-spacing:-.02em;margin:0 0 12px}
+  .post-cta h3 .accent{color:var(--orange)}
+  .post-cta p{font-size:15px;color:#bbb;margin:0 0 22px}
+  .post-cta .btn{padding:14px 24px;background:var(--orange);color:#111;border:2px solid var(--orange);text-decoration:none;font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;display:inline-flex;align-items:center;gap:10px;transition:background .15s,color .15s}
+  .post-cta .btn:hover{background:#fff;border-color:#fff}
+
+  .post-loading{padding:80px var(--pad);text-align:center;color:#666}
+  .post-error{padding:80px var(--pad);text-align:center;color:#666}
+  .post-error h2{font-size:32px;color:#111;font-weight:800;margin:0 0 12px}
+</style>
+</head>
+<body>
+<aside class="side-rail" aria-hidden="true">
+  <span>IMO · INSIGHTS</span>
+  <span>BLOG · LEITURAS DE CULTURA</span>
+</aside>
+<header class="nav">
+  <div class="nav-inner">
+    <a href="index.html" aria-label="IMO" style="display:flex;align-items:center;gap:14px">
+      <span class="imo-logo"></span>
+    </a>
+    <nav class="links">
+      <a href="index.html">Home</a>
+      <a href="sobre.html">Sobre</a>
+      <a href="produtos.html">Produtos</a>
+      <a href="evb.html">Eu vi o Brasil</a>
+      <a href="abordagem.html">Abordagem</a>
+      <a href="blog.html" class="active">Blog</a>
+      <a href="time.html">Time</a>
+      <a href="contato.html">Contato</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:12px">
+      <a href="indice.html" class="nav-index" aria-label="Mapa do site" title="Mapa do site"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1.4"/><circle cx="4" cy="12" r="1.4"/><circle cx="4" cy="18" r="1.4"/></svg></a>
+      <a href="contato.html" class="nav-cta">Fale com a IMO →</a>
+      <a href="login.html" class="nav-cta login-cta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Área do Cliente</a>
+    </div>
+  </div>
+</header>
+
+<article class="post-wrap" id="postRoot">
+  <div class="post-loading" id="loading">Carregando…</div>
+</article>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-brand">
+      <div style="display:flex;align-items:center;gap:14px"><span class="imo-logo"></span></div>
+      <p class="tag">Inteligência de mercado para decisões que não podem ser no achismo.</p>
+    </div>
+    <div class="foot-col">
+      <h5>Produtos</h5>
+      <ul>
+        <li><a href="produto-projetos.html">Projetos para Insights</a></li>
+        <li><a href="produto-times-bi.html">Times Embarcados</a></li>
+        <li><a href="produto-treinamento.html">Treinamento em Insights</a></li>
+        <li><a href="produto-social-listening.html">Social Listening</a></li>
+        <li><a href="produto-tendencias.html">Tendências</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h5>Conteúdo</h5>
+      <ul>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="imo-news-landing.html">Curanews · Newsletter</a></li>
+        <li><a href="evb.html">Eu vi o Brasil</a></li>
+        <li><a href="indice.html">Mapa do site</a></li>
+      </ul>
+    </div>
+    <div class="foot-col">
+      <h5>IMO</h5>
+      <ul>
+        <li><a href="sobre.html">Manifesto</a></li>
+        <li><a href="abordagem.html">Abordagem</a></li>
+        <li><a href="time.html">Time</a></li>
+        <li><a href="contato.html">Contato</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <div>© IMO Insights · Inteligência de Mercado e Opinião · São Paulo</div>
+    <div class="socials">
+      <a href="https://www.linkedin.com/company/imo-insights/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://www.instagram.com/imo_insights/" target="_blank" rel="noopener">Instagram</a>
+      <a href="mailto:contato@imoinsights.com.br">contato@imoinsights.com.br</a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/mobile-nav.js" defer></script>
+
+<!-- Markdown → HTML + Sanitização -->
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/env-config.js"></script>
+<script src="assets/js/supabase-client.js"></script>
+<script>
+(function(){
+  var root = document.getElementById('postRoot');
+
+  function escapeHtml(s){
+    return String(s || '').replace(/[&<>"']/g, function(c){
+      return ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c];
+    });
+  }
+
+  function fmtDate(iso){
+    if(!iso) return '';
+    try {
+      return new Date(iso).toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
+    } catch(_){ return ''; }
+  }
+
+  function initials(name){
+    var p = (name || '').trim().split(/\s+/);
+    return ((p[0] || ' ').charAt(0) + (p[1] || ' ').charAt(0)).toUpperCase();
+  }
+
+  function renderError(title, msg){
+    root.innerHTML =
+      '<div class="post-error">'
+      + '<h2>' + escapeHtml(title) + '</h2>'
+      + '<p>' + escapeHtml(msg) + '</p>'
+      + '<p style="margin-top:30px"><a href="blog.html" style="color:var(--orange);text-decoration:underline">← Voltar para o blog</a></p>'
+      + '</div>';
+  }
+
+  function renderPost(p, authorName){
+    document.title = p.title + ' · Blog · IMO Insights';
+    var metaDesc = document.querySelector('meta[name="description"]');
+    if(metaDesc && p.excerpt) metaDesc.setAttribute('content', p.excerpt);
+
+    // Converter markdown → HTML sanitizado
+    var html = '';
+    try {
+      var raw = window.marked.parse(p.content_md || '', { breaks: true, gfm: true });
+      html = window.DOMPurify.sanitize(raw, {
+        ALLOWED_TAGS: ['h1','h2','h3','h4','h5','h6','p','a','strong','em','b','i','ul','ol','li','blockquote','code','pre','img','hr','table','thead','tbody','tr','th','td','br','span','div'],
+        ALLOWED_ATTR: ['href','title','target','rel','src','alt','width','height','class','colspan','rowspan']
+      });
+    } catch(e){
+      html = '<p>Erro ao renderizar conteúdo: ' + escapeHtml(String(e.message || e)) + '</p>';
+    }
+
+    var coverHtml = p.cover_image_url
+      ? '<div class="post-cover" style="background-image:url(\'' + encodeURI(p.cover_image_url) + '\')"></div>'
+      : '';
+
+    var tagsHtml = (p.tags || []).length
+      ? '<div class="tags">' + (p.tags || []).map(function(t){
+          return '<a href="blog.html?tag=' + encodeURIComponent(t) + '" class="tag">' + escapeHtml(t) + '</a>';
+        }).join('') + '</div>'
+      : '';
+
+    root.innerHTML =
+      '<header class="post-head">'
+      +   '<a href="blog.html" class="back">← Voltar para o blog</a>'
+      +   tagsHtml
+      +   '<h1>' + escapeHtml(p.title) + '</h1>'
+      +   (p.excerpt ? '<p class="excerpt">' + escapeHtml(p.excerpt) + '</p>' : '')
+      +   '<div class="meta">'
+      +     '<div class="author"><span class="avatar">' + escapeHtml(initials(authorName)) + '</span><span>' + escapeHtml(authorName || 'IMO Insights') + '</span></div>'
+      +     '<div>' + fmtDate(p.published_at || p.created_at) + '</div>'
+      +   '</div>'
+      + '</header>'
+      + coverHtml
+      + '<div class="post-body">' + html + '</div>'
+      + '<div class="post-foot">'
+      +   '<a href="blog.html">← Voltar para o blog</a>'
+      +   '<a href="contato.html">Fale com a IMO →</a>'
+      + '</div>'
+      + '<aside class="post-cta">'
+      +   '<h3>Recebe a <span class="accent">Curanews</span> toda semana.</h3>'
+      +   '<p>Curadoria de cultura, consumo e marcas por Mari Tozzini. Gratuita.</p>'
+      +   '<a class="btn" href="imo-news-landing.html">Assinar grátis →</a>'
+      + '</aside>';
+  }
+
+  async function load(){
+    var slug = new URL(window.location.href).searchParams.get('slug');
+    if(!slug){
+      renderError('Post não encontrado', 'O endereço está incompleto. Volte para o blog e escolha um texto.');
+      return;
+    }
+
+    if(!window.IMO || !window.IMO.client){
+      renderError('Erro de configuração', 'O cliente Supabase não foi inicializado.');
+      return;
+    }
+
+    var resp = await window.IMO.client
+      .from('blog_posts')
+      .select('slug,title,excerpt,cover_image_url,content_md,tags,published_at,created_at,author_id,status')
+      .eq('slug', slug)
+      .single();
+
+    if(resp.error || !resp.data){
+      renderError('Post não encontrado', 'Esse texto pode ter sido removido ou ainda não foi publicado.');
+      return;
+    }
+
+    var post = resp.data;
+    if(post.status !== 'published'){
+      // RLS já bloqueia para anon; este é um fallback caso o usuário esteja logado como editor
+      renderError('Post não publicado', 'Esse texto ainda não está disponível publicamente.');
+      return;
+    }
+
+    // Buscar nome do autor (RLS de users permite leitura entre members do mesmo contexto;
+    // se falhar, usa fallback "IMO Insights")
+    var authorName = 'IMO Insights';
+    try {
+      var u = await window.IMO.client.from('users').select('full_name,name').eq('id', post.author_id).maybeSingle();
+      if(u && u.data){ authorName = u.data.full_name || u.data.name || authorName; }
+    } catch(_){}
+
+    renderPost(post, authorName);
+  }
+
+  load();
+})();
+</script>
+
+</body>
+</html>

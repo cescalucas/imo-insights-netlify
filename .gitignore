@@ -47,3 +47,6 @@ zi6P4kTg
 # Imagens fonte (não usadas pelo site)
 assets/raw/
 _revisao.html
+
+# Arquivos de preview local (não vão pra produção)
+preview-*.html
