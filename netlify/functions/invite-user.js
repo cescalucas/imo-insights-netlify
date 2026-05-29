@@ -121,10 +121,12 @@ exports.handler = async function (event) {
   }
   const newUserId = created.user.id;
 
-  // 2) Insere em public.users (status='invited' até primeiro acesso)
+  // 2) Grava em public.users (status='invited' até primeiro acesso).
+  //    Usamos UPSERT porque a trigger on_auth_user_created já pode ter criado
+  //    um placeholder (role='editor', status='disabled') ao inserir o auth.users.
   const { error: uiErr } = await admin
     .from('users')
-    .insert({
+    .upsert({
       id: newUserId,
       email: email,
       full_name: fullName,
@@ -132,7 +134,7 @@ exports.handler = async function (event) {
       client_id: clientId,
       status: 'invited',
       notify_by_email: role === 'client'
-    });
+    }, { onConflict: 'id' });
   if (uiErr) {
     // Rollback do auth.users
     try { await admin.auth.admin.deleteUser(newUserId); } catch {}
