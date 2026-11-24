@@ -503,6 +503,8 @@ footer{background:var(--black);color:var(--white);padding:90px var(--pad) 40px}
 .foot-bottom{max-width:var(--max);margin:0 auto;padding-top:30px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#888;letter-spacing:.04em;flex-wrap:wrap;gap:20px}
 .foot-bottom .socials{display:flex;gap:24px}
 .foot-bottom .socials a:hover{color:var(--orange)}
+.foot-bottom .legal{display:flex;gap:24px;flex-wrap:wrap}
+.foot-bottom .legal a:hover{color:var(--orange)}
 
 /* MANIFESTO BLOCK */
 .manifesto-text{font-size:clamp(30px,3.2vw,48px);font-weight:700;line-height:1.1;letter-spacing:-.02em}
