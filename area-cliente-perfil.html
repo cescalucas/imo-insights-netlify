@@ -266,7 +266,7 @@
     $('notifyByEmail').checked = !!profile.notify_by_email;
 
     // LGPD: links abrem mailto pré-preenchido (rota simples, Function dedicada fica para v2)
-    var dpoEmail = 'dpo@imoinsights.com.br';
+    var dpoEmail = 'contato@imoinsights.com.br';
     $('exportBtn').href =
       'mailto:' + dpoEmail +
       '?subject=' + encodeURIComponent('[LGPD] Solicitação de exportação de dados, ' + profile.email) +
